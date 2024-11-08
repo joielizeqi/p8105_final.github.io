@@ -58,27 +58,25 @@ A [dataset](https://www.kaggle.com/datasets/sahirmaharajj/dog-licensing-dataset)
 
 *1.1 Trends in annual number of dog bite incidents*
   
-A combined bar and line chart illustrates the fluctuations in dog bite incidents in NYC from 2015 to 2021, with the years on the X-axis and both the frequency and rate of incidents plotted on the Y-axis. This dual-chart approach succinctly captures the yearly variance in the occurrences of dog bites, offering a clear visual representation of trends over the specified period.
+A combined bar and line chart illustrates the fluctuations in dog bite incidents in NYC from 2015 to 2021, with the years on the X-axis and both the frequency and rate of incidents plotted on the Y-axis.
 
 *1.2 Correlation between the number of dog bite incidents and dogs’ background*
   
-Aggregate data from 2015 to 2021 will be used to analyze the various background characteristics of dogs, including gender, breed, age, and neutering status, to determine their correlation with the number of dog bite incidents.
+Background characteristics of dogs includes gender, breed, age, and neutering status.
 
 **II. Correlation between dog bite incidents and the geographical distribution of dogs**
 
 *2.1  Spatial distribution of dog bite incidents*
   
-Display the spatial distribution of new dog licenses and dog bite incidents in NYC from 2015 to 2021. On a map of NYC, use color blocks to show the relative geographic increase in dog populations and mark the total number of dog bite incidents in each zipcode with dots. By comparing the map's background colors with the sizes of the dots, conduct a preliminary analysis of the spatial correlation between the increase in dog numbers and dog bite incidents.
+On a map of NYC, use color blocks to show the relative geographic increase in dog populations and mark the total number of dog bite incidents in each zipcode with dots. 
 
 *2.2  Spatial characteristics of dog bite incidents*
   
-Using the Global Moran's Index, assess whether the spatial distribution of dog bite incidents in New York City exhibits spatial correlation and clustering characteristics.
+Using the Global Moran's Index, assess whether the spatial distribution of dog bite incidents in NYC exhibits spatial correlation and clustering characteristics.
 
 **III. Cumulative impact of various factors on dog bite incidents**
 
-Use negative binomial regression (or Poisson regression, depending on test outcomes) to measure the combined effects of year, dog background (i.e., gender, age, and neutering status), and the borough rate of dog bite incidents. The dependent variable is the incidence rate of dog bites, adjusted for the population in each zipcode. The predictor variables include year, dog background, and the area of the incident. The year is measured as an ordinal variable ranging from 1 (corresponding to 2015) to 7 (corresponding to 2021). To capture potential curvilinear effects of the year on the incidence rate, a multiplicative term created by squaring the year variable is also included in the analysis. The area of the incident is categorized into a variable with values from 1 to 6, representing the five boroughs of NYC plus others. The dog gender is a binary variable, with 0 indicating unknown, 1 for male, and 2 for female. Similarly, the neutering status is a binary variable, with 0 indicating not neutered and 1 indicating neutered. The age variable encompasses several categorical intervals.
-
-
+Use negative binomial regression (or Poisson regression, depending on test outcomes) to measure the combined effects of year, dog background (i.e., gender, age, and neutering status), and the borough rate of dog bite incidents. 
 
 ## Timeline
 
