@@ -14,17 +14,29 @@ output: github_document
 
 ## Tentative project title
 
+Barking Up the Right Tree: Analyzing Trends, Geographic Hotspots, and Contributing Factors for Public Safety
+
 ## Motivation
 
 ## Intended final products
 
+The expected final website would be consist of following parts:
+
+**Introduction page**: Demonstrate the background of our study, display screen cast, pictures of dog breed in the dataset, a general map illustrating where dog bites occurred.
+
+**Statistics analysis**: This page will introduce the statistical methodologies used to analyze the relationship between dog bite occurrences and dog demographics. It will also present the results and diagnostic assessments.
+
+**Visualizations plot**: This section will include charts, graphs, and maps showcasing the geographical distribution of dog bites in New York. It will display occurrences across different dog breeds, sexes, and ages, and use facet plots to show trends over different years and boroughs. It will also compare the distribution of dog bites with the NYC dog licensing data.
+
+Meanwhile, we will prepare a detailed analysis report on the distribution of dog bites in New York, examining contributing factors such as sex, age, breed, and licensing status.
+
 ## Data sources
 
-* Dog bite incidents
+**Dog bite incidents**
 
 A [dataset](https://www.kaggle.com/datasets/muhmiqbal/dog-bites-nyc) of dog bite cases in New York City for different genders, breeds, and ages. Data were taken from NYC Open Data for 2015-2022.
 
-* Dog license
+**Dog license**
 
 A [dataset](https://www.kaggle.com/datasets/sahirmaharajj/dog-licensing-dataset)  of dog license records that were active during 2014-2023. Data is sourced from the DOHMH Dog Licensing System, where owners can apply for and renew dog licenses.
 
