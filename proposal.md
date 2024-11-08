@@ -17,6 +17,35 @@ Contributing Factors for Public Safety
 
 ## Motivation
 
+Dogs have always been known as “people’s best friend,” playing an
+important role in American households. However, while they bring us joy
+and companionship, we cannot overlook the rising number of dog bite
+incidents. In fact,
+[data](https://wisqars.cdc.gov/lcnf/?y1=2022&y2=2022&ct=20&cc=0&s=0&g=00&a=lcd1age&a1=0&a2=199&d=0)
+from 2022 shows that dog bites are among the top 15 reasons for nonfatal
+emergency department visits across all age groups, highlighting a
+serious public health issue.
+
+This project aims to investigate the complex relationships between dog
+bite incidents and various factors, such as dog characteristics,
+geographical distribution, and trends over time:
+
+- **Geographical Distribution:** By examining dog bite rates in
+  different zip code areas, we hope to pinpoint potential hotspots and
+  explore whether there is a correlation between the frequency of
+  incidents and the density of dog populations in those areas.
+
+- **Dog Characteristics:** We’ll look into whether specific traits of
+  dogs—like breed, age, gender, and whether they are neutered—are linked
+  to how often bites occur. This analysis could help in developing
+  targeted strategies to reduce the risk of dog bites.
+
+- **Trends Over Time:** Additionally, we will investigate how the rates
+  of dog bites have changed over time, particularly from 2015 to 2021.
+
+We hope this analysis could help in developing targeted strategies to
+reduce the risk of dog bites.
+
 ## Intended final products
 
 The expected final website will consist of the following parts:
@@ -47,7 +76,7 @@ such as sex, age, breed, and licensing status.
 
 A [dataset](https://www.kaggle.com/datasets/muhmiqbal/dog-bites-nyc) of
 dog bite cases in New York City for different genders, breeds, and ages.
-Data were taken from NYC Open Data for 2015-2022.
+Data were taken from NYC Open Data for 2015-2021.
 
 **Dog license**
 
