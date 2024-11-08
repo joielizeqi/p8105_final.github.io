@@ -34,14 +34,12 @@ geographical distribution, and trends over time:
   different zip code areas, we hope to pinpoint potential hotspots and
   explore whether there is a correlation between the frequency of
   incidents and the density of dog populations in those areas.
-
 - **Dog Characteristics:** We’ll look into whether specific traits of
   dogs—like breed, age, gender, and whether they are neutered—are linked
   to how often bites occur. This analysis could help in developing
   targeted strategies to reduce the risk of dog bites.
-
-- **Trends Over Time:** Additionally, we will investigate how the rates
-  of dog bites have changed over time, particularly from 2015 to 2021.
+- **Trends Over Time:** We will investigate how the rates of dog bites
+  have changed over time, particularly from 2015 to 2021.
 
 We hope this analysis could help in developing targeted strategies to
 reduce the risk of dog bites.
