@@ -19,7 +19,7 @@ Contributing Factors for Public Safety
 
 ## Intended final products
 
-The expected final website would be consist of following parts:
+The expected final website will consist of the following parts:
 
 **Introduction page**: Demonstrate the background of our study, display
 screen cast, pictures of dog breed in the dataset, a general map
