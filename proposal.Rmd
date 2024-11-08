@@ -1,0 +1,12 @@
+---
+title: "Final Project Proposal"
+date: "2024-11-08"
+output: github_document
+---
+
+# Team members
+
+* Zhenkun Fang (zf2352)
+* Weiqi Liang (wl3011)
+* Shiyu Zhang (sz3319)
+* Zeqi Li (zl3545)
