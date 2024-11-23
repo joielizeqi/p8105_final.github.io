@@ -1,0 +1,14 @@
+---
+title: "Exploratory Data Analysis"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+# Breed
+
+# Age
+
+# Gender
+
+# Spay / Neuter

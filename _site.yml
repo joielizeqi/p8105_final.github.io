@@ -1,0 +1,33 @@
+name: "P8105 Final Project"
+output_dir: "."
+navbar:
+  title: "Home"
+  left:
+    - text: "About"
+      menu:
+        - text: "Team"
+          href: team.html
+        - text: "Data source"
+          href: data_source.html
+    - text: "Report"
+      href: report.html
+  right:
+    - text: "Exploratory Data Analysis"
+      href: eda.html
+    - text: "Analyses"
+      menu: 
+        - text: "Dog bite incidence trends"
+          href: trends.html
+        - text: "Spatial correlations"
+          href: correlation.html
+        - text: "Modeling dog bite incidences"
+          href: regression.html
+    - text: "Shiny"
+      href: shiny.html
+    - icon: fa fa-youtube-play
+      href: https://www.youtube.com/
+    - icon: fa-github fa-lg
+      href: https://github.com/joielizeqi/p8105_final.github.io.git
+output:
+  html_document:
+    theme: flatly

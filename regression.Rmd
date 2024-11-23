@@ -1,0 +1,12 @@
+---
+title: "Cumulative impact of various factors on dog bite incidents"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+# Variable features
+
+# Regression
+
+# Conclusion

@@ -1,0 +1,10 @@
+---
+title: "Correlation between dog bite incidents and the background of dogs"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+# Trends in annual number of dog bite incidents
+
+# Correlation between the number of dog bite incidents and dogs’ background

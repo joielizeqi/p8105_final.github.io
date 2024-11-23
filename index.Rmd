@@ -1,0 +1,8 @@
+---
+title: "Barking Up the Right Tree: Analyzing Trends, Geographic Hotspots, and Contributing Factors for Public Safety"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+# Welcome :)
