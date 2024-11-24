@@ -1,5 +1,5 @@
 ---
-title: "Barking Up the Right Tree: Analyzing Trends, Geographic Hotspots, and Contributing Factors for Public Safety"
+title: "Barking Up the Right Tree: Analyzing Trends, Geographic Hotspots, and Contributing Factors of NYC Dogbites"
 output:
   html_document:
     toc: true

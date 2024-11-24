@@ -8,7 +8,7 @@ navbar:
         - text: "Team"
           href: team.html
         - text: "Data source"
-          href: data_source.html
+          href: datasource.html
     - text: "Report"
       href: report.html
   right:

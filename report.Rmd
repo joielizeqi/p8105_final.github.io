@@ -1,0 +1,29 @@
+---
+title: "Barking Up the Right Tree: Analyzing Trends, Geographic Hotspots, and Contributing Factors of NYC Dogbites"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+Zhenkun Fang, zf2352,
+Weiqi Liang, wl3011,
+Shiyu Zhang, sz3319,
+Zeqi Li, zl3545
+
+# Motivation
+
+# Related Work
+
+# Initial Questions
+
+# Evolution of Questions
+
+# Data
+
+# Exploratory Analysis
+
+# Additional analysis
+
+# Discussion
+
+# References
