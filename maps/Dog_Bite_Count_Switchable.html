@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<style>body{background-color:white;}</style>
+
+  <title>Dog Bite Count Interactive Map</title>
+  <script>
+      function showMap(mapId) {
+        document.getElementById('map2015').style.display = (mapId === 'map2015') ? 'block' : 'none';
+        document.getElementById('map2016').style.display = (mapId === 'map2016') ? 'block' : 'none';
+      }
+    </script>
+</head>
+<html>
+  <body>
+    <h1>Dog Bite Count Interactive Map</h1>
+    <div>
+      <button onclick="showMap(&#39;map2015&#39;)">Show 2015</button>
+      <button onclick="showMap(&#39;map2016&#39;)">Show 2016</button>
+    </div>
+    <div>
+      <iframe src="map_2015.html" id="map2015" style="width: 100%; height: 600px; border: none;"></iframe>
+      <iframe src="map_2016.html" id="map2016" style="width: 100%; height: 600px; border: none; display: none;"></iframe>
+    </div>
+  </body>
+</html>
+</html>
