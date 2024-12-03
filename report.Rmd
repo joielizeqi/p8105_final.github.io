@@ -5,10 +5,7 @@ output:
     toc: true
     toc_float: true
 ---
-Zhenkun Fang, zf2352,
-Weiqi Liang, wl3011,
-Shiyu Zhang, sz3319,
-Zeqi Li, zl3545
+*Shiyu Zhang, sz3319, Weiqi Liang, wl3011, Zhenkun Fang, zf2352, Zeqi Li, zl3545*
 
 # Motivation
 

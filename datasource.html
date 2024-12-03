@@ -29,10 +29,8 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
-<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
-<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
-<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
@@ -221,70 +219,10 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
-
-
-
 <style type="text/css">
-
-#TOC {
-  margin: 25px 0px 20px 0px;
-}
-@media (max-width: 768px) {
-#TOC {
-  position: relative;
-  width: 100%;
-}
-}
-
-@media print {
-.toc-content {
-  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
-  float: right;
-}
-}
-
-.toc-content {
-  padding-left: 30px;
-  padding-right: 40px;
-}
-
-div.main-container {
-  max-width: 1200px;
-}
-
-div.tocify {
-  width: 20%;
-  max-width: 260px;
-  max-height: 85%;
-}
-
-@media (min-width: 768px) and (max-width: 991px) {
-  div.tocify {
-    width: 25%;
-  }
-}
-
-@media (max-width: 767px) {
-  div.tocify {
-    width: 100%;
-    max-width: none;
-  }
-}
-
-.tocify ul, .tocify li {
-  line-height: 20px;
-}
-
-.tocify-subheader .tocify-item {
-  font-size: 0.90em;
-}
-
-.tocify .list-group-item {
-  border-radius: 0px;
-}
-
-
+.code-folding-btn { margin-bottom: 4px; }
 </style>
+
 
 
 
@@ -294,16 +232,6 @@ div.tocify {
 
 
 <div class="container-fluid main-container">
-
-
-<!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row">
-<div class="col-xs-12 col-sm-4 col-md-3">
-<div id="TOC" class="tocify">
-</div>
-</div>
-
-<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -383,6 +311,14 @@ div.tocify {
 
 <div id="header">
 
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">Data Source</h1>
@@ -390,17 +326,68 @@ div.tocify {
 </div>
 
 
-<div id="about-our-data" class="section level1">
-<h1>About Our Data</h1>
+<p><br><br></p>
+<div id="about-our-data" class="section level2">
+<h2>About Our Data</h2>
+<p>The dataset utilized for analyzing and visualizing dog bite cases in
+New York City includes information on various factors such as sex,
+breed, and age. The data, covering the period from 2015 to 2022, were
+sourced from <a
+href="https://data.cityofnewyork.us/Health/DOHMH-Dog-Bite-Data/rsgh-akpg/about_data">NYC
+OpenData</a>. Data is collected from reports received online, mail, fax
+or by phone to 311 or NYC DOHMH Animal Bite Unit. Each record represents
+a single dog bite incident.</p>
+<p>Another dataset used in this project documents active dog licenses in
+New York City for a given year. This data is derived from the DOHMH Dog
+Licensing System, which facilitates the application and renewal of dog
+licenses. The dataset is also sourced from <a
+href="https://data.cityofnewyork.us/Health/NYC-Dog-Licensing-Dataset/nu7n-tubp/about_data">NYC
+OpenData</a>.</p>
+<p><br><br></p>
 </div>
-<div id="data-dictionary" class="section level1">
-<h1>Data Dictionary</h1>
+<div id="data-dictionary" class="section level2">
+<h2>Data Dictionary</h2>
+<pre class="r"><code>dog_bites = 
+  read_csv(&quot;data/Dog_Bites_Data.csv&quot;)
+
+dog_licensing = 
+  read_csv(&quot;data/NYC_Dog_Licensing_Dataset.csv&quot;)</code></pre>
+<p>The dog bite dataset we ultilized has 22663 observations and includes
+the following variables:</p>
+<ul>
+<li><code>UniqueID</code>: Unique dog bite case identifier.</li>
+<li><code>DateOfBite</code>: Date bitten.</li>
+<li><code>Species</code>: Animal Type (Dog).</li>
+<li><code>Breed</code>: Breed type.</li>
+<li><code>Age</code>: Dog’s age at time of bite. Numbers with ‘M’
+indicate months.</li>
+<li><code>Gender</code>: Sex of Dog. M=Male, F=Female, U=Unknown.</li>
+<li><code>SpayNeuter</code>: Surgical removal of dog’s reproductive
+organs. True (reported to DOHMH as Spayed or Neutered), False (Unknown
+or Not Spayed or Neutered).</li>
+<li><code>Borough</code>: Dog bite Borough. Other’ indicates that the
+bite took place outside New York City.</li>
+<li><code>ZipCode</code>: Dog bite Zipcode. Blank ZipCode indicates that
+information was not available.</li>
+</ul>
+<p>The NYC dog licensing dataset we ultilized has 508196 observations
+and includes the following variables:</p>
+<ul>
+<li><code>AnimalName</code>: User-provided dog name (unless specified
+otherwise).</li>
+<li><code>AnimalGender</code>: M (Male) or F (Female) dog gender.</li>
+<li><code>AnimalBirthYear</code>: Year dog was born.</li>
+<li><code>BreedName</code>: Dog breed.</li>
+<li><code>ZipCode</code>: Owner zip code.</li>
+<li><code>LicenseIssuedDate</code>: Date the dog license was
+issued.</li>
+<li><code>LicenseExpiredDate</code>: Date the dog license expires.</li>
+<li><code>Extract Year</code>: Year the data was extracted.</li>
+</ul>
 </div>
 
 
 
-</div>
-</div>
 
 </div>
 
@@ -432,36 +419,12 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
-
 <script>
-$(document).ready(function ()  {
-
-    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
-    $('.unlisted.unnumbered').addClass('toc-ignore')
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
 });
 </script>
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
