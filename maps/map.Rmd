@@ -1,0 +1,288 @@
+---
+title: "2.1.Map"
+author: "Weiqi Liang"
+date: '`r Sys.Date()`'
+output: html_document
+---
+
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(knitr)
+
+library(sf)
+library(spdep)
+library(grid)
+library(gridExtra)
+library(ape)
+library(tmap)
+library(tmaptools)
+library(htmltools)
+```
+
+
+## II.	Correlation between dog bite incidents and the geographical distribution of dogs
+
+### 2.1  Spatial distribution of dog bite incidents
+
+```{r load_shp&bites, message=FALSE, warning=FALSE}
+# read shp file
+shp_NY = st_read("./data/NYC_zipcode/ZIP_CODE_040114.shp") |>
+  select(-BLDGZIP, -PO_NAME, -POPULATION, -STATE, -URL)
+
+# read Dog_Bites_Data
+bite = read.csv("./data/Dog_Bites_Data.csv", 
+           na = c("NA", ".", "")) |>
+  janitor::clean_names() |>
+ mutate(
+    date_of_bite = mdy(date_of_bite), 
+    year = year(date_of_bite)
+  ) |>
+  filter(grepl("^\\d{5}$", zip_code)) |>
+  filter(zip_code %in% shp_NY$ZIPCODE)
+```
+
+```{r load_license, message = FALSE}
+# read License Data
+license = read.csv("./data/NYC_Dog_Licensing_Dataset.csv", 
+           na = c("NA", ".", "")) |>
+  janitor::clean_names() |>
+  mutate(license_expired_date = as.Date(license_expired_date, format = "%m/%d/%Y")) |>
+   mutate(zip_code = as.character(zip_code)) |>
+  filter(grepl("^\\d{5}$", zip_code))
+
+license_2019 = license |>
+  filter(license_expired_date >= as.Date("2020-01-01")) |> # 筛选日期
+  mutate(extract_year = 2019)  # 修改 Extract Year
+
+license_2020 = license |>
+  filter(license_expired_date >= as.Date("2021-01-01")) |> # 筛选日期
+  mutate(extract_year = 2020) 
+
+license_2021 = license |>
+  filter(license_expired_date >= as.Date("2022-01-01")) |> # 筛选日期
+  mutate(extract_year = 2021)  
+
+license = license_2019 |>
+  bind_rows(license_2020) |>
+  bind_rows(license_2021) |>
+  bind_rows(license)
+
+rm(license_2019)
+rm(license_2020)
+rm(license_2021)
+
+license_counts = license |>
+  group_by(zip_code, extract_year) |>  
+  summarise(license_count = n())  
+```
+
+```{r clean_for_map}
+bite_counts = bite |>
+  group_by(zip_code, year) |>  
+  summarise(bite_count = n(), .groups = "drop") |>  
+  complete(zip_code, year, fill = list(bite_count = 0)) 
+```
+
+
+```{r prepare_map, message = FALSE}
+shp_NY2015 = shp_NY |>
+  left_join(bite_counts |> filter(year == 2015), 
+            by = c("ZIPCODE" = "zip_code")
+            ) |>  
+  mutate(bite_count = ifelse(is.na(bite_count), 0, bite_count))  
+#########################################################################
+shp_NY2022 = shp_NY |>
+  left_join(license_counts |> filter(extract_year == 2022), 
+            by = c("ZIPCODE" = "zip_code")
+            ) |>  
+   mutate(license_count = ifelse(is.na(license_count), 0, license_count))
+#########################################################################
+years = 2016:2021
+
+for (year in years) {
+  assign(
+    paste0("shp_NY", year),
+    shp_NY |>
+      left_join(bite_counts |> filter(year == !!year), 
+                by = c("ZIPCODE" = "zip_code")) |>  
+      left_join(license_counts |> filter(extract_year == !!year), 
+                by = c("ZIPCODE" = "zip_code")) |>  
+      mutate(
+        bite_count = ifelse(is.na(bite_count), 0, bite_count),
+        license_count = ifelse(is.na(license_count), 0, license_count)
+      )
+  )
+}
+```
+
+The following map displays the spatial distribution of dog licenses and dog bite incidents across various zip codes in New York City from 2015 to 2022. The color fill of the map indicates the number of dog licenses in each zip code, while the dots represent the total number of dog bite incidents in each area.
+
+This article preliminarily suggests that the geographic distribution of dog bite incidents exhibits spatial autocorrelation, indicating that certain zip codes form regions with high frequencies of such incidents.
+
+```{r map, message = FALSE}
+map_2015 = tm_shape(shp_NY2015 |> filter(bite_count > 0), name = "2015 Bite Count") +
+  tm_bubbles(
+    "bite_count", 
+    col = "red",
+    border.col = NA, 
+    alpha = 0.5,  
+    scale = 2,  
+    title.size = "Bite Count (Custom Gradient)",
+  ) +
+  tm_layout(title = "Spatial Distribution of License Count - 2015")
+
+map_2016 = tm_shape(shp_NY2016, name = "2016 License Count") +
+  tm_polygons("license_count", palette = "Reds", title = "License Count") +
+  tm_shape(shp_NY2016 |> filter(bite_count > 0), name = "2016 Bite Count") +  
+  tm_bubbles(
+    "bite_count", 
+    col = "red",
+    border.col = NA, 
+    alpha = 0.5,  
+    scale = 2,  
+    title.size = "Bite Count (Custom Gradient)",
+  ) +
+  tm_layout(title = "Spatial Distribution of Dog Bite Count and License Count - 2016")
+
+map_2017 = tm_shape(shp_NY2017, name = "2017 License Count") +
+  tm_polygons("license_count", palette = "Oranges", title = "License Count") +
+  tm_shape(shp_NY2017 |> filter(bite_count > 0), name = "2017 Bite Count") +  
+  tm_bubbles(
+    "bite_count", 
+    col = "red",
+    border.col = NA, 
+    alpha = 0.5,  
+    scale = 2,  
+    title.size = "Bite Count (Custom Gradient)",
+  ) +
+  tm_layout(title = "Spatial Distribution of Dog Bite Count and License Count - 2017")
+
+map_2018 = tm_shape(shp_NY2018, name = "2018 License Count") +
+  tm_polygons("license_count", palette = "Greens", title = "License Count") +
+  tm_shape(shp_NY2018 |> filter(bite_count > 0), name = "2018 Bite Count") +  
+  tm_bubbles(
+    "bite_count", 
+    col = "red",
+    border.col = NA, 
+    alpha = 0.5,  
+    scale = 2,  
+    title.size = "Bite Count (Custom Gradient)",
+  ) +
+  tm_layout(title = "Spatial Distribution of Dog Bite Count and License Count - 2018")
+
+map_2019 = tm_shape(shp_NY2019, name = "2019 License Count") +
+  tm_polygons("license_count", palette = "Blues", title = "License Count") +
+  tm_shape(shp_NY2019 |> filter(bite_count > 0), name = "2019 Bite Count") +  
+  tm_bubbles(
+    "bite_count", 
+    col = "red",
+    border.col = NA, 
+    alpha = 0.5,  
+    scale = 2,  
+    title.size = "Bite Count (Custom Gradient)",
+  ) +
+  tm_layout(title = "Spatial Distribution of Dog Bite Count and License Count - 2019")
+
+map_2020 = tm_shape(shp_NY2020, name = "2020 License Count") +
+  tm_polygons("license_count", palette = "Oranges", title = "License Count") +
+  tm_shape(shp_NY2020 |> filter(bite_count > 0), name = "2020 Bite Count") +  
+  tm_bubbles(
+    "bite_count", 
+    col = "red",
+    border.col = NA, 
+    alpha = 0.5,  
+    scale = 2,  
+    title.size = "Bite Count (Custom Gradient)",
+  ) +
+  tm_layout(title = "Spatial Distribution of Dog Bite Count and License Count - 2020")
+
+map_2021 = tm_shape(shp_NY2021, name = "2021 License Count") +
+  tm_polygons("license_count", palette = "Greens", title = "License Count") +
+  tm_shape(shp_NY2021 |> filter(bite_count > 0), name = "2021 Bite Count") +  
+  tm_bubbles(
+    "bite_count", 
+    col = "red",
+    border.col = NA, 
+    alpha = 0.5,  
+    scale = 2,  
+    title.size = "Bite Count (Custom Gradient)",
+  ) +
+  tm_layout(title = "Spatial Distribution of Dog Bite Count and License Count - 2021")
+
+map_2022 <- tm_shape(shp_NY2022) +
+  tm_polygons("license_count", palette = "Blues", title = "License Count (2022)") +
+  tm_layout(title = "Spatial Distribution of License Count - 2022")
+
+# 保存两个地图为 HTML 片段
+tmap_save(map_2015, "map_2015.html")
+tmap_save(map_2016, "map_2016.html")
+tmap_save(map_2017, "map_2017.html")
+tmap_save(map_2018, "map_2018.html")
+tmap_save(map_2019, "map_2019.html")
+tmap_save(map_2020, "map_2020.html")
+tmap_save(map_2021, "map_2021.html")
+tmap_save(map_2022, "map_2022.html")
+
+# 创建 HTML 页面，带按钮切换功能
+html_page <- tags$html(
+  tags$head(
+    tags$title("Dog Bite Count Interactive Map"),
+    tags$script("
+      function showMap(mapId) {
+        document.getElementById('map2015').style.display = (mapId === 'map2015') ? 'block' : 'none';
+        document.getElementById('map2016').style.display = (mapId === 'map2016') ? 'block' : 'none';
+        document.getElementById('map2017').style.display = (mapId === 'map2017') ? 'block' : 'none';
+        document.getElementById('map2018').style.display = (mapId === 'map2018') ? 'block' : 'none';
+        document.getElementById('map2019').style.display = (mapId === 'map2019') ? 'block' : 'none';
+        document.getElementById('map2020').style.display = (mapId === 'map2020') ? 'block' : 'none';
+        document.getElementById('map2021').style.display = (mapId === 'map2021') ? 'block' : 'none';
+        document.getElementById('map2022').style.display = (mapId === 'map2022') ? 'block' : 'none';
+      }
+    ")
+  ),
+  tags$body(
+    tags$h1("Dog Bite Count Interactive Map"),
+    tags$div(
+      tags$button("2015", onclick = "showMap('map2015')"),
+      tags$button("2016", onclick = "showMap('map2016')"),
+      tags$button("2017", onclick = "showMap('map2017')"),
+      tags$button("2018", onclick = "showMap('map2018')"),
+      tags$button("2019", onclick = "showMap('map2019')"),
+      tags$button("2020", onclick = "showMap('map2020')"),
+      tags$button("2021", onclick = "showMap('map2021')"),
+      tags$button("2022", onclick = "showMap('map2022')"),
+    ),
+    tags$div(
+      tags$iframe(src = "map_2015.html", id = "map2015", style = "width: 100%; height: 600px; border: none;"),
+      tags$iframe(src = "map_2016.html", id = "map2016", style = "width: 100%; height: 600px; border: none; display: none;"),
+      tags$iframe(src = "map_2017.html", id = "map2017", style = "width: 100%; height: 600px; border: none; display: none;"),
+      tags$iframe(src = "map_2018.html", id = "map2018", style = "width: 100%; height: 600px; border: none; display: none;"),
+      tags$iframe(src = "map_2019.html", id = "map2019", style = "width: 100%; height: 600px; border: none; display: none;"),
+      tags$iframe(src = "map_2020.html", id = "map2020", style = "width: 100%; height: 600px; border: none; display: none;"),
+      tags$iframe(src = "map_2021.html", id = "map2021", style = "width: 100%; height: 600px; border: none; display: none;"),
+      tags$iframe(src = "map_2022.html", id = "map2022", style = "width: 100%; height: 600px; border: none; display: none;")
+    )
+  )
+)
+
+# 保存 HTML 页面
+save_html(html_page, "Dog_Bite_Count_Switchable.html")
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
