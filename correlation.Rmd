@@ -26,11 +26,11 @@ library(htmltools)
 
 ```{r load_shp&bites, message=FALSE, warning=FALSE}
 # read shp file
-shp_NY = st_read("./data/NYC_zipcode/ZIP_CODE_040114.shp") |>
+shp_NY = st_read("./maps/data/NYC_zipcode/ZIP_CODE_040114.shp") |>
   select(-BLDGZIP, -PO_NAME, -POPULATION, -STATE, -URL)
 
 # read Dog_Bites_Data
-bite = read.csv("./data/Dog_Bites_Data.csv", 
+bite = read.csv("./maps/data/Dog_Bites_Data.csv", 
            na = c("NA", ".", "")) |>
   janitor::clean_names() |>
  mutate(
@@ -43,7 +43,7 @@ bite = read.csv("./data/Dog_Bites_Data.csv",
 
 ```{r load_license, message = FALSE}
 # read License Data
-license = read.csv("./data/NYC_Dog_Licensing_Dataset.csv", 
+license = read.csv("./maps/data/NYC_Dog_Licensing_Dataset.csv", 
            na = c("NA", ".", "")) |>
   janitor::clean_names() |>
   mutate(license_expired_date = as.Date(license_expired_date, format = "%m/%d/%Y")) |>
