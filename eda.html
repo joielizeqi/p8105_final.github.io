@@ -13,7 +13,7 @@
 
 <title>Exploratory Data Analysis</title>
 
-<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -33,8 +33,17 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
+<script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.10.4/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="site_libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
 <link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
 
@@ -221,6 +230,9 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
 
 
@@ -383,6 +395,14 @@ div.tocify {
 
 <div id="header">
 
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">Exploratory Data Analysis</h1>
@@ -390,17 +410,130 @@ div.tocify {
 </div>
 
 
+<pre class="r"><code>library(tidyverse)
+library(knitr)
+library(rvest)
+library(broom)
+library(dplyr)
+library(purrr)
+library(ggplot2)
+library(plotly)
+library(readxl)
+library(reshape2)
+library(akima)
+library(wordcloud)
+library(tm)</code></pre>
+<pre class="r"><code># NYC zip code
+url = &quot;https://p8105.com/data/zip_codes.html&quot;
+ny_zip_codes = read_html(url) |&gt;
+  html_table() |&gt; 
+  data.frame() |&gt; 
+  janitor::clean_names() |&gt; 
+  mutate(
+    borough = factor(
+      county,
+      levels=c(&quot;Bronx&quot;,&quot;Kings&quot;,&quot;New York&quot;, &quot;Queens&quot;,&quot;Richmond&quot;),
+      labels=c(&quot;Bronx&quot;,&quot;Brooklyn&quot;,&quot;Manhattan&quot;,&quot;Queens&quot;,
+ &quot;Staten Island&quot;))) 
+
+valid_zipcodes = pull(ny_zip_codes, zip_code)</code></pre>
+<pre class="r"><code># Dog bite 
+dog_bites_df = read_csv(&quot;data/Dog_Bites_Data.csv&quot;, na = c(&quot;NA&quot;, &quot;&quot;, &quot;.&quot;)) |&gt; 
+  janitor::clean_names() |&gt; 
+  rename_with(~ gsub(&quot;^x&quot;, &quot;&quot;, .))
+
+# glimpse(dog_bites_df)
+# summary(dog_bites_df)
+unique_breeds &lt;- dog_bites_df %&gt;%
+  pull(breed) %&gt;%
+  unique() %&gt;%
+  paste(collapse = &quot;, &quot;)</code></pre>
+<pre class="r"><code>dog_licensing_df = read_csv(&quot;data/NYC_Dog_Licensing_Dataset.csv&quot;, na = c(&quot;NA&quot;, &quot;&quot;, &quot;.&quot;)) |&gt; 
+  janitor::clean_names() |&gt; 
+  rename_with(~ gsub(&quot;^x&quot;, &quot;&quot;, .))</code></pre>
+<pre class="r"><code># data clean
+dog_bites_clean = dog_bites_df |&gt; 
+  mutate(date_of_bite = as.Date(date_of_bite, format = &quot;%B %d %Y&quot;)) |&gt; 
+  mutate(year = format(date_of_bite, &quot;%Y&quot;),
+         month = format(date_of_bite, &quot;%m&quot;),
+         day = format(date_of_bite, &quot;%d&quot;)) |&gt; 
+  mutate(year = as.factor(as.numeric(year)),
+         month = factor(as.numeric(month), levels = 1:12),
+         day = as.factor(as.numeric(day))
+         ) |&gt; 
+  mutate(breed = str_to_lower(breed))</code></pre>
 <div id="breed" class="section level1">
 <h1>Breed</h1>
-</div>
-<div id="age" class="section level1">
-<h1>Age</h1>
+<pre class="r"><code># ploty
+top_breeds = dog_bites_clean |&gt; 
+  group_by(breed) |&gt; 
+  summarise(count = n()) |&gt; 
+  arrange(desc(count)) |&gt; 
+  filter(!is.na(breed) &amp; breed != &quot;unknown&quot;) |&gt; 
+  slice_head(n = 10)
+
+top_breed_inter = plot_ly(
+  data = top_breeds,
+  labels = ~breed,
+  values = ~count,
+  type = &#39;pie&#39;,
+  textinfo = &#39;label+percent&#39;,
+  hoverinfo = &#39;label+value+percent&#39;,
+  marker = list(line = list(color = &#39;#FFFFFF&#39;, width = 2))
+) |&gt;
+  layout(
+    title = &quot;Top 10 Breeds Involved in Bite Count&quot;,
+    xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+    yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE)
+  )
+
+top_breed_inter</code></pre>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-bc65ff9d84e9872dcb70" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-bc65ff9d84e9872dcb70">{"x":{"visdat":{"bfbb55cc19d4":["function () ","plotlyVisDat"]},"cur_data":"bfbb55cc19d4","attrs":{"bfbb55cc19d4":{"labels":{},"values":{},"textinfo":"label+percent","hoverinfo":"label+value+percent","marker":{"line":{"color":"#FFFFFF","width":2}},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"pie"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Top 10 Breeds Involved in Bite Count","xaxis":{"showgrid":false,"zeroline":false,"showticklabels":false},"yaxis":{"showgrid":false,"zeroline":false,"showticklabels":false},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"labels":["pit bull","shih tzu","chihuahua","german shepherd","mixed/other","american pit bull mix / pit bull mix","american pit bull terrier/pit bull","yorkshire terrier","mixed breed","maltese"],"values":[4013,732,647,624,559,520,511,482,388,373],"textinfo":"label+percent","hoverinfo":["label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent"],"marker":{"color":"rgba(31,119,180,1)","line":{"color":"#FFFFFF","width":2}},"type":"pie","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code>breeds &lt;- dog_bites_clean |&gt; 
+  filter(breed != &quot;unknown&quot;) |&gt; 
+  drop_na(breed) |&gt; 
+  pull(breed)
+
+breeds &lt;- tolower(breeds)
+
+breed_text &lt;- paste(breeds, collapse = &quot; &quot;)
+
+breed_source &lt;- VectorSource(breed_text)
+breed_corpus &lt;- Corpus(breed_source)
+breed_tdm &lt;- TermDocumentMatrix(breed_corpus)
+
+breed_matrix &lt;- as.matrix(breed_tdm)
+breed_freq &lt;- sort(rowSums(breed_matrix), decreasing = TRUE)
+
+set.seed(1234)
+wordcloud(
+  names(breed_freq), 
+  freq = breed_freq, 
+  scale = c(4, 0.5),  
+  max.words = 200,  
+  colors = brewer.pal(8, &quot;Dark2&quot;)  
+)</code></pre>
+<p><img src="eda_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 </div>
 <div id="gender" class="section level1">
 <h1>Gender</h1>
-</div>
-<div id="spay-neuter" class="section level1">
-<h1>Spay / Neuter</h1>
+<pre class="r"><code>gender_spay_plot = ggplot(dog_bites_clean, aes(x = gender, fill = spay_neuter)) +
+  geom_bar(position = &quot;dodge&quot;) +
+  theme_minimal() +
+  labs(title = &quot;Dog Bites by Gender and Spay/Neuter Status&quot;,
+       x = &quot;Gender&quot;,
+       y = &quot;Count of Dog Bites&quot;,
+       fill = &quot;Spay/Neuter Status&quot;) +
+  scale_fill_brewer(palette = &quot;Set1&quot;) +
+  theme(plot.title = element_text(hjust = 0.5, size = 15))
+
+# Display the static plot
+gender_spay_plot_inter = ggplotly(gender_spay_plot)
+gender_spay_plot_inter</code></pre>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-f58b06679f3999e6fd8a" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-f58b06679f3999e6fd8a">{"x":{"data":[{"orientation":"v","width":[0.44999999999999996,0.45000000000000018,0.45000000000000018],"base":[0,0,0],"x":[0.77500000000000002,1.7749999999999999,2.7749999999999999],"y":[1667,4653,10467],"text":["count:  1667<br />gender: F<br />spay_neuter: FALSE","count:  4653<br />gender: M<br />spay_neuter: FALSE","count: 10467<br />gender: U<br />spay_neuter: FALSE"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(228,26,28,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"FALSE","legendgroup":"FALSE","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.45000000000000018,0.45000000000000018,0.45000000000000018],"base":[0,0,0],"x":[1.2250000000000001,2.2250000000000001,3.2250000000000001],"y":[1722,4086,68],"text":["count:  1722<br />gender: F<br />spay_neuter:  TRUE","count:  4086<br />gender: M<br />spay_neuter:  TRUE","count:    68<br />gender: U<br />spay_neuter:  TRUE"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(55,126,184,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"TRUE","legendgroup":"TRUE","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":46.153590701535919,"r":7.3059360730593621,"b":40.182648401826498,"l":54.794520547945211},"font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Dog Bites by Gender and Spay/Neuter Status","font":{"color":"rgba(0,0,0,1)","family":"","size":19.925280199252807},"x":0.5,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,3.6000000000000001],"tickmode":"array","ticktext":["F","M","U"],"tickvals":[1,2,3],"categoryorder":"array","categoryarray":["F","M","U"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Gender","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-523.35000000000002,10990.35],"tickmode":"array","ticktext":["0","2500","5000","7500","10000"],"tickvals":[0,2500,5000,7500,10000],"categoryorder":"array","categoryarray":["0","2500","5000","7500","10000"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Count of Dog Bites","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"title":{"text":"Spay/Neuter Status","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"bfbb17b6adce":{"x":{},"fill":{},"type":"bar"}},"cur_data":"bfbb17b6adce","visdat":{"bfbb17b6adce":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>In New York City,</p>
 </div>
 
 
@@ -438,6 +571,11 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 <script>
 $(document).ready(function ()  {
