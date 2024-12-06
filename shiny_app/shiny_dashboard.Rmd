@@ -153,10 +153,10 @@ renderLeaflet({
     addHeatmap(
       lng = ~long,
       lat = ~lat,
-      intensity = ~2,   # Optionally replace `1` with a variable like age or count if needed
-      blur = 19,        # Adjusts the blur of the heatmap
-      max = 1,          # Maximum intensity for scaling
-      radius = 20       # Radius of each heatmap point
+      intensity = ~2,   
+      blur = 19,        
+      max = 1,          
+      radius = 20       
     )
 })
 
@@ -167,3 +167,4 @@ leafletOutput("heatmap", height = "600px")
 
 Column {data-width=350}
 -----------------------------------------------------------------------
+
