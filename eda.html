@@ -13,7 +13,7 @@
 
 <title>Exploratory Data Analysis</title>
 
-<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -423,6 +423,8 @@ library(reshape2)
 library(akima)
 library(wordcloud)
 library(tm)</code></pre>
+<div id="import-and-tidy-up-data" class="section level1">
+<h1>Import and tidy up data</h1>
 <pre class="r"><code># NYC zip code
 url = &quot;https://p8105.com/data/zip_codes.html&quot;
 ny_zip_codes = read_html(url) |&gt;
@@ -436,8 +438,9 @@ ny_zip_codes = read_html(url) |&gt;
       labels=c(&quot;Bronx&quot;,&quot;Brooklyn&quot;,&quot;Manhattan&quot;,&quot;Queens&quot;,
  &quot;Staten Island&quot;))) 
 
-valid_zipcodes = pull(ny_zip_codes, zip_code)</code></pre>
-<pre class="r"><code># Dog bite 
+valid_zipcodes = pull(ny_zip_codes, zip_code)
+
+# Dog bite 
 dog_bites_df = read_csv(&quot;data/Dog_Bites_Data.csv&quot;, na = c(&quot;NA&quot;, &quot;&quot;, &quot;.&quot;)) |&gt; 
   janitor::clean_names() |&gt; 
   rename_with(~ gsub(&quot;^x&quot;, &quot;&quot;, .))
@@ -447,11 +450,8 @@ dog_bites_df = read_csv(&quot;data/Dog_Bites_Data.csv&quot;, na = c(&quot;NA&quo
 unique_breeds &lt;- dog_bites_df %&gt;%
   pull(breed) %&gt;%
   unique() %&gt;%
-  paste(collapse = &quot;, &quot;)</code></pre>
-<pre class="r"><code>dog_licensing_df = read_csv(&quot;data/NYC_Dog_Licensing_Dataset.csv&quot;, na = c(&quot;NA&quot;, &quot;&quot;, &quot;.&quot;)) |&gt; 
-  janitor::clean_names() |&gt; 
-  rename_with(~ gsub(&quot;^x&quot;, &quot;&quot;, .))</code></pre>
-<pre class="r"><code># data clean
+  paste(collapse = &quot;, &quot;)
+
 dog_bites_clean = dog_bites_df |&gt; 
   mutate(date_of_bite = as.Date(date_of_bite, format = &quot;%B %d %Y&quot;)) |&gt; 
   mutate(year = format(date_of_bite, &quot;%Y&quot;),
@@ -461,11 +461,23 @@ dog_bites_clean = dog_bites_df |&gt;
          month = factor(as.numeric(month), levels = 1:12),
          day = as.factor(as.numeric(day))
          ) |&gt; 
-  mutate(breed = str_to_lower(breed))</code></pre>
-<div id="breed" class="section level1">
-<h1>Breed</h1>
-<pre class="r"><code># ploty
-top_breeds = dog_bites_clean |&gt; 
+  mutate(breed = str_to_lower(breed))
+
+dog_licensing_df = read_csv(&quot;data/NYC_Dog_Licensing_Dataset.csv&quot;, na = c(&quot;NA&quot;, &quot;&quot;, &quot;.&quot;)) |&gt; 
+  janitor::clean_names() |&gt; 
+  rename_with(~ gsub(&quot;^x&quot;, &quot;&quot;, .))</code></pre>
+<p>This project used three datasets: NYC zip code data, NYC dog bite
+incidences data, and NYC dog licensing data. The NYC zip code dataset
+was obtained from the P8105 course website; the NYC dog bite incidences
+dataset was obtained from NYC Open Data; the NYC dog licensing dataset
+was obtained from the DOHMH Dog Licensing System.</p>
+<p>In our exploratory data analysis below, we will examine how dog bite
+incidences are distributed by different variables in our data, including
+breed, gender, neuter status, borough, time, and license status.</p>
+</div>
+<div id="dog-bites-by-breeds" class="section level1">
+<h1>Dog bites by breeds</h1>
+<pre class="r"><code>top_breeds = dog_bites_clean |&gt; 
   group_by(breed) |&gt; 
   summarise(count = n()) |&gt; 
   arrange(desc(count)) |&gt; 
@@ -488,8 +500,21 @@ top_breed_inter = plot_ly(
   )
 
 top_breed_inter</code></pre>
-<div class="plotly html-widget html-fill-item" id="htmlwidget-bc65ff9d84e9872dcb70" style="width:672px;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-bc65ff9d84e9872dcb70">{"x":{"visdat":{"bfbb55cc19d4":["function () ","plotlyVisDat"]},"cur_data":"bfbb55cc19d4","attrs":{"bfbb55cc19d4":{"labels":{},"values":{},"textinfo":"label+percent","hoverinfo":"label+value+percent","marker":{"line":{"color":"#FFFFFF","width":2}},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"pie"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Top 10 Breeds Involved in Bite Count","xaxis":{"showgrid":false,"zeroline":false,"showticklabels":false},"yaxis":{"showgrid":false,"zeroline":false,"showticklabels":false},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"labels":["pit bull","shih tzu","chihuahua","german shepherd","mixed/other","american pit bull mix / pit bull mix","american pit bull terrier/pit bull","yorkshire terrier","mixed breed","maltese"],"values":[4013,732,647,624,559,520,511,482,388,373],"textinfo":"label+percent","hoverinfo":["label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent"],"marker":{"color":"rgba(31,119,180,1)","line":{"color":"#FFFFFF","width":2}},"type":"pie","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-2a84cf5139b51556ab94" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-2a84cf5139b51556ab94">{"x":{"visdat":{"19066df5f97d":["function () ","plotlyVisDat"]},"cur_data":"19066df5f97d","attrs":{"19066df5f97d":{"labels":{},"values":{},"textinfo":"label+percent","hoverinfo":"label+value+percent","marker":{"line":{"color":"#FFFFFF","width":2}},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"pie"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Top 10 Breeds Involved in Bite Count","xaxis":{"showgrid":false,"zeroline":false,"showticklabels":false},"yaxis":{"showgrid":false,"zeroline":false,"showticklabels":false},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"labels":["pit bull","shih tzu","chihuahua","german shepherd","mixed/other","american pit bull mix / pit bull mix","american pit bull terrier/pit bull","yorkshire terrier","mixed breed","maltese"],"values":[4013,732,647,624,559,520,511,482,388,373],"textinfo":"label+percent","hoverinfo":["label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent"],"marker":{"color":"rgba(31,119,180,1)","line":{"color":"#FFFFFF","width":2}},"type":"pie","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>The top 10 dog breeds that contributed to the most dog bite
+incidences are shown in the pie chart above. Pit bulls are involved in
+the most dog bite incidences, with a leading proportion of 45.3%, which
+is almost half of the incidences recorded in New York City. Shih Tzu is
+the second most frequent breed in these incidences (8.27%), followed by
+Chihuahua (7.31%) and other breeds.</p>
+<p>In the pie chart, we notice that 5.88% of incidences were attributed
+to the American pit bull mix and 5.77% were attributed to the American
+pit bull terriers. Since the specific ancestry information for these
+dogs were not documented, it is unclear whether they are more related to
+the pit bull breed or the mixed breed. If they were to be classified as
+pit bulls, the pit bull category would make up an even bigger proportion
+of total dog bite incidences than it does now.</p>
 <pre class="r"><code>breeds &lt;- dog_bites_clean |&gt; 
   filter(breed != &quot;unknown&quot;) |&gt; 
   drop_na(breed) |&gt; 
@@ -504,9 +529,8 @@ breed_corpus &lt;- Corpus(breed_source)
 breed_tdm &lt;- TermDocumentMatrix(breed_corpus)
 
 breed_matrix &lt;- as.matrix(breed_tdm)
-breed_freq &lt;- sort(rowSums(breed_matrix), decreasing = TRUE)
-
-set.seed(1234)
+breed_freq &lt;- sort(rowSums(breed_matrix), decreasing = TRUE)</code></pre>
+<pre class="r"><code>set.seed(1234)
 wordcloud(
   names(breed_freq), 
   freq = breed_freq, 
@@ -514,10 +538,11 @@ wordcloud(
   max.words = 200,  
   colors = brewer.pal(8, &quot;Dark2&quot;)  
 )</code></pre>
-<p><img src="eda_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="eda_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>COMMENT</p>
 </div>
-<div id="gender" class="section level1">
-<h1>Gender</h1>
+<div id="dog-bites-by-gender-and-neuter-status" class="section level1">
+<h1>Dog bites by gender and neuter status</h1>
 <pre class="r"><code>gender_spay_plot = ggplot(dog_bites_clean, aes(x = gender, fill = spay_neuter)) +
   geom_bar(position = &quot;dodge&quot;) +
   theme_minimal() +
@@ -531,9 +556,396 @@ wordcloud(
 # Display the static plot
 gender_spay_plot_inter = ggplotly(gender_spay_plot)
 gender_spay_plot_inter</code></pre>
-<div class="plotly html-widget html-fill-item" id="htmlwidget-f58b06679f3999e6fd8a" style="width:672px;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-f58b06679f3999e6fd8a">{"x":{"data":[{"orientation":"v","width":[0.44999999999999996,0.45000000000000018,0.45000000000000018],"base":[0,0,0],"x":[0.77500000000000002,1.7749999999999999,2.7749999999999999],"y":[1667,4653,10467],"text":["count:  1667<br />gender: F<br />spay_neuter: FALSE","count:  4653<br />gender: M<br />spay_neuter: FALSE","count: 10467<br />gender: U<br />spay_neuter: FALSE"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(228,26,28,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"FALSE","legendgroup":"FALSE","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.45000000000000018,0.45000000000000018,0.45000000000000018],"base":[0,0,0],"x":[1.2250000000000001,2.2250000000000001,3.2250000000000001],"y":[1722,4086,68],"text":["count:  1722<br />gender: F<br />spay_neuter:  TRUE","count:  4086<br />gender: M<br />spay_neuter:  TRUE","count:    68<br />gender: U<br />spay_neuter:  TRUE"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(55,126,184,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"TRUE","legendgroup":"TRUE","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":46.153590701535919,"r":7.3059360730593621,"b":40.182648401826498,"l":54.794520547945211},"font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Dog Bites by Gender and Spay/Neuter Status","font":{"color":"rgba(0,0,0,1)","family":"","size":19.925280199252807},"x":0.5,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,3.6000000000000001],"tickmode":"array","ticktext":["F","M","U"],"tickvals":[1,2,3],"categoryorder":"array","categoryarray":["F","M","U"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Gender","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-523.35000000000002,10990.35],"tickmode":"array","ticktext":["0","2500","5000","7500","10000"],"tickvals":[0,2500,5000,7500,10000],"categoryorder":"array","categoryarray":["0","2500","5000","7500","10000"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Count of Dog Bites","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"title":{"text":"Spay/Neuter Status","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"bfbb17b6adce":{"x":{},"fill":{},"type":"bar"}},"cur_data":"bfbb17b6adce","visdat":{"bfbb17b6adce":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
-<p>In New York City,</p>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-167b52da7d8ded0dccda" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-167b52da7d8ded0dccda">{"x":{"data":[{"orientation":"v","width":[0.44999999999999996,0.45000000000000018,0.45000000000000018],"base":[0,0,0],"x":[0.77500000000000002,1.7749999999999999,2.7749999999999999],"y":[1667,4653,10467],"text":["count:  1667<br />gender: F<br />spay_neuter: FALSE","count:  4653<br />gender: M<br />spay_neuter: FALSE","count: 10467<br />gender: U<br />spay_neuter: FALSE"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(228,26,28,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"FALSE","legendgroup":"FALSE","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.45000000000000018,0.45000000000000018,0.45000000000000018],"base":[0,0,0],"x":[1.2250000000000001,2.2250000000000001,3.2250000000000001],"y":[1722,4086,68],"text":["count:  1722<br />gender: F<br />spay_neuter:  TRUE","count:  4086<br />gender: M<br />spay_neuter:  TRUE","count:    68<br />gender: U<br />spay_neuter:  TRUE"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(55,126,184,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"TRUE","legendgroup":"TRUE","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":46.153590701535919,"r":7.3059360730593621,"b":40.182648401826498,"l":54.794520547945211},"font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Dog Bites by Gender and Spay/Neuter Status","font":{"color":"rgba(0,0,0,1)","family":"","size":19.925280199252807},"x":0.5,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,3.6000000000000001],"tickmode":"array","ticktext":["F","M","U"],"tickvals":[1,2,3],"categoryorder":"array","categoryarray":["F","M","U"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Gender","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-523.35000000000002,10990.35],"tickmode":"array","ticktext":["0","2500","5000","7500","10000"],"tickvals":[0,2500,5000,7500,10000],"categoryorder":"array","categoryarray":["0","2500","5000","7500","10000"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Count of Dog Bites","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"title":{"text":"Spay/Neuter Status","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"1906a876be9":{"x":{},"fill":{},"type":"bar"}},"cur_data":"1906a876be9","visdat":{"1906a876be9":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>Across dog bite data with known genders, dog bite incidences appeared
+more than twice as frequent for male dogs compared to female dogs, for
+both neutered and un-neutered dogs. Comparing their neutered status,
+there is only a slight difference in dog bite incidences between the
+neutered and un-neutered groups. Neutered female dogs contributed to
+slightly more dog bite incidences than un-neitered female dogs, while
+un-neutered male dogs contributed to slightly more dog bite
+incidences.</p>
+<p>It is worth noting that a significant portion of dog bite data had
+missing data for the dogs’ gender, and that among the unknown gender
+group, most dogs appeared to be neutered. The amount of missing
+information in these two variables could be leading us to an incomplete
+analysis of how dog bites were associated with gender and neuter
+status.</p>
+</div>
+<div id="dog-bites-by-borough" class="section level1">
+<h1>Dog bites by borough</h1>
+<pre class="r"><code>ggplot(dog_bites_clean, aes(x = borough)) +
+  geom_bar(fill = &quot;skyblue&quot;) +
+  theme_minimal() +
+  labs(title = &quot;Distribution of Dog Bites by Borough&quot;,
+       x = &quot;Borough&quot;,
+       y = &quot;Count of Dog Bites&quot;)</code></pre>
+<p><img src="eda_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>COMMENT</p>
+</div>
+<div id="dog-bites-by-time" class="section level1">
+<h1>Dog bites by time</h1>
+<pre class="r"><code>bites_by_year_month = dog_bites_clean |&gt;
+  count(year, month, name = &quot;Bite_Count&quot;) |&gt; 
+  mutate(hover_text = paste(&quot;Year:&quot;, year, &quot;&lt;br&gt;Month:&quot;, month, &quot;&lt;br&gt;Count:&quot;, Bite_Count))</code></pre>
+<pre class="r"><code>heatmap_interactive = plot_ly(
+  data = bites_by_year_month,
+  x = ~month,
+  y = ~year,
+  z = ~Bite_Count,
+  type = &quot;heatmap&quot;,
+  colors = c(&quot;white&quot;, &quot;red&quot;),
+  text = ~hover_text,
+  hoverinfo = &quot;text&quot;
+) |&gt;
+  layout(
+    title = &quot;Dog Bites by Month &amp; Year&quot;,
+    xaxis = list(title = &quot;Month&quot;),
+    yaxis = list(title = &quot;Year&quot;),
+    colorbar = list(title = &quot;Count for Dog Bites&quot;)
+  )
+
+heatmap_interactive</code></pre>
+<pre><code>## Warning: &#39;layout&#39; objects don&#39;t have these attributes: &#39;colorbar&#39;
+## Valid attributes include:
+## &#39;_deprecated&#39;, &#39;activeshape&#39;, &#39;annotations&#39;, &#39;autosize&#39;, &#39;autotypenumbers&#39;, &#39;calendar&#39;, &#39;clickmode&#39;, &#39;coloraxis&#39;, &#39;colorscale&#39;, &#39;colorway&#39;, &#39;computed&#39;, &#39;datarevision&#39;, &#39;dragmode&#39;, &#39;editrevision&#39;, &#39;editType&#39;, &#39;font&#39;, &#39;geo&#39;, &#39;grid&#39;, &#39;height&#39;, &#39;hidesources&#39;, &#39;hoverdistance&#39;, &#39;hoverlabel&#39;, &#39;hovermode&#39;, &#39;images&#39;, &#39;legend&#39;, &#39;mapbox&#39;, &#39;margin&#39;, &#39;meta&#39;, &#39;metasrc&#39;, &#39;modebar&#39;, &#39;newshape&#39;, &#39;paper_bgcolor&#39;, &#39;plot_bgcolor&#39;, &#39;polar&#39;, &#39;scene&#39;, &#39;selectdirection&#39;, &#39;selectionrevision&#39;, &#39;separators&#39;, &#39;shapes&#39;, &#39;showlegend&#39;, &#39;sliders&#39;, &#39;smith&#39;, &#39;spikedistance&#39;, &#39;template&#39;, &#39;ternary&#39;, &#39;title&#39;, &#39;transition&#39;, &#39;uirevision&#39;, &#39;uniformtext&#39;, &#39;updatemenus&#39;, &#39;width&#39;, &#39;xaxis&#39;, &#39;yaxis&#39;, &#39;barmode&#39;, &#39;bargap&#39;, &#39;mapType&#39;</code></pre>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-3d5b931db053a571bd93" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-3d5b931db053a571bd93">{"x":{"visdat":{"1906122a18b1":["function () ","plotlyVisDat"]},"cur_data":"1906122a18b1","attrs":{"1906122a18b1":{"x":{},"y":{},"z":{},"text":{},"hoverinfo":"text","colors":["white","red"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"heatmap"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Dog Bites by Month & Year","xaxis":{"domain":[0,1],"automargin":true,"title":"Month","type":"category","categoryorder":"array","categoryarray":["1","2","3","4","5","6","7","8","9","10","11","12"]},"yaxis":{"domain":[0,1],"automargin":true,"title":"Year","type":"category","categoryorder":"array","categoryarray":["2015","2016","2017","2018","2019","2020","2021"]},"colorbar":{"title":"Count for Dog Bites"},"scene":{"zaxis":{"title":"Bite_Count"}},"hovermode":"closest","showlegend":false,"legend":{"yanchor":"top","y":0.5}},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"colorbar":{"title":"Bite_Count","ticklen":2,"len":0.5,"lenmode":"fraction","y":1,"yanchor":"top"},"colorscale":[["0","rgba(255,255,255,1)"],["0.0416666666666667","rgba(255,247,244,1)"],["0.0833333333333333","rgba(255,239,233,1)"],["0.125","rgba(255,231,222,1)"],["0.166666666666667","rgba(255,223,212,1)"],["0.208333333333333","rgba(255,215,201,1)"],["0.25","rgba(255,207,191,1)"],["0.291666666666667","rgba(255,199,180,1)"],["0.333333333333333","rgba(255,191,170,1)"],["0.375","rgba(255,183,160,1)"],["0.416666666666667","rgba(255,175,149,1)"],["0.458333333333333","rgba(255,166,139,1)"],["0.5","rgba(255,158,129,1)"],["0.541666666666667","rgba(255,149,119,1)"],["0.583333333333333","rgba(255,141,109,1)"],["0.625","rgba(255,132,100,1)"],["0.666666666666667","rgba(255,123,90,1)"],["0.708333333333333","rgba(255,113,80,1)"],["0.75","rgba(255,104,70,1)"],["0.791666666666667","rgba(255,93,60,1)"],["0.833333333333333","rgba(255,82,50,1)"],["0.875","rgba(255,70,40,1)"],["0.916666666666667","rgba(255,56,29,1)"],["0.958333333333333","rgba(255,37,16,1)"],["1","rgba(255,0,0,1)"]],"showscale":true,"x":["1","2","3","4","5","6","7","8","9","10","11","12","1","2","3","4","5","6","7","8","9","10","11","12","1","2","3","4","5","6","7","8","9","10","11","12","1","2","3","4","5","6","7","8","9","10","11","12","1","2","3","4","5","6","7","8","9","10","11","12","1","2","3","4","5","6","7","8","9","10","11","12","1","2","3","4","5","6","7","8","9","10","11","12"],"y":["2015","2015","2015","2015","2015","2015","2015","2015","2015","2015","2015","2015","2016","2016","2016","2016","2016","2016","2016","2016","2016","2016","2016","2016","2017","2017","2017","2017","2017","2017","2017","2017","2017","2017","2017","2017","2018","2018","2018","2018","2018","2018","2018","2018","2018","2018","2018","2018","2019","2019","2019","2019","2019","2019","2019","2019","2019","2019","2019","2019","2020","2020","2020","2020","2020","2020","2020","2020","2020","2020","2020","2020","2021","2021","2021","2021","2021","2021","2021","2021","2021","2021","2021","2021"],"z":[201,206,241,304,368,351,378,374,303,258,288,285,243,206,228,308,313,280,297,333,294,250,239,221,214,239,254,286,306,367,394,357,328,281,242,243,224,201,260,256,329,401,392,340,288,257,220,209,200,215,253,331,343,373,347,346,315,295,274,242,244,242,186,110,185,223,235,268,240,233,199,186,151,172,212,257,296,315,321,298,221,227,256,195],"text":["Year: 2015 <br>Month: 1 <br>Count: 201","Year: 2015 <br>Month: 2 <br>Count: 206","Year: 2015 <br>Month: 3 <br>Count: 241","Year: 2015 <br>Month: 4 <br>Count: 304","Year: 2015 <br>Month: 5 <br>Count: 368","Year: 2015 <br>Month: 6 <br>Count: 351","Year: 2015 <br>Month: 7 <br>Count: 378","Year: 2015 <br>Month: 8 <br>Count: 374","Year: 2015 <br>Month: 9 <br>Count: 303","Year: 2015 <br>Month: 10 <br>Count: 258","Year: 2015 <br>Month: 11 <br>Count: 288","Year: 2015 <br>Month: 12 <br>Count: 285","Year: 2016 <br>Month: 1 <br>Count: 243","Year: 2016 <br>Month: 2 <br>Count: 206","Year: 2016 <br>Month: 3 <br>Count: 228","Year: 2016 <br>Month: 4 <br>Count: 308","Year: 2016 <br>Month: 5 <br>Count: 313","Year: 2016 <br>Month: 6 <br>Count: 280","Year: 2016 <br>Month: 7 <br>Count: 297","Year: 2016 <br>Month: 8 <br>Count: 333","Year: 2016 <br>Month: 9 <br>Count: 294","Year: 2016 <br>Month: 10 <br>Count: 250","Year: 2016 <br>Month: 11 <br>Count: 239","Year: 2016 <br>Month: 12 <br>Count: 221","Year: 2017 <br>Month: 1 <br>Count: 214","Year: 2017 <br>Month: 2 <br>Count: 239","Year: 2017 <br>Month: 3 <br>Count: 254","Year: 2017 <br>Month: 4 <br>Count: 286","Year: 2017 <br>Month: 5 <br>Count: 306","Year: 2017 <br>Month: 6 <br>Count: 367","Year: 2017 <br>Month: 7 <br>Count: 394","Year: 2017 <br>Month: 8 <br>Count: 357","Year: 2017 <br>Month: 9 <br>Count: 328","Year: 2017 <br>Month: 10 <br>Count: 281","Year: 2017 <br>Month: 11 <br>Count: 242","Year: 2017 <br>Month: 12 <br>Count: 243","Year: 2018 <br>Month: 1 <br>Count: 224","Year: 2018 <br>Month: 2 <br>Count: 201","Year: 2018 <br>Month: 3 <br>Count: 260","Year: 2018 <br>Month: 4 <br>Count: 256","Year: 2018 <br>Month: 5 <br>Count: 329","Year: 2018 <br>Month: 6 <br>Count: 401","Year: 2018 <br>Month: 7 <br>Count: 392","Year: 2018 <br>Month: 8 <br>Count: 340","Year: 2018 <br>Month: 9 <br>Count: 288","Year: 2018 <br>Month: 10 <br>Count: 257","Year: 2018 <br>Month: 11 <br>Count: 220","Year: 2018 <br>Month: 12 <br>Count: 209","Year: 2019 <br>Month: 1 <br>Count: 200","Year: 2019 <br>Month: 2 <br>Count: 215","Year: 2019 <br>Month: 3 <br>Count: 253","Year: 2019 <br>Month: 4 <br>Count: 331","Year: 2019 <br>Month: 5 <br>Count: 343","Year: 2019 <br>Month: 6 <br>Count: 373","Year: 2019 <br>Month: 7 <br>Count: 347","Year: 2019 <br>Month: 8 <br>Count: 346","Year: 2019 <br>Month: 9 <br>Count: 315","Year: 2019 <br>Month: 10 <br>Count: 295","Year: 2019 <br>Month: 11 <br>Count: 274","Year: 2019 <br>Month: 12 <br>Count: 242","Year: 2020 <br>Month: 1 <br>Count: 244","Year: 2020 <br>Month: 2 <br>Count: 242","Year: 2020 <br>Month: 3 <br>Count: 186","Year: 2020 <br>Month: 4 <br>Count: 110","Year: 2020 <br>Month: 5 <br>Count: 185","Year: 2020 <br>Month: 6 <br>Count: 223","Year: 2020 <br>Month: 7 <br>Count: 235","Year: 2020 <br>Month: 8 <br>Count: 268","Year: 2020 <br>Month: 9 <br>Count: 240","Year: 2020 <br>Month: 10 <br>Count: 233","Year: 2020 <br>Month: 11 <br>Count: 199","Year: 2020 <br>Month: 12 <br>Count: 186","Year: 2021 <br>Month: 1 <br>Count: 151","Year: 2021 <br>Month: 2 <br>Count: 172","Year: 2021 <br>Month: 3 <br>Count: 212","Year: 2021 <br>Month: 4 <br>Count: 257","Year: 2021 <br>Month: 5 <br>Count: 296","Year: 2021 <br>Month: 6 <br>Count: 315","Year: 2021 <br>Month: 7 <br>Count: 321","Year: 2021 <br>Month: 8 <br>Count: 298","Year: 2021 <br>Month: 9 <br>Count: 221","Year: 2021 <br>Month: 10 <br>Count: 227","Year: 2021 <br>Month: 11 <br>Count: 256","Year: 2021 <br>Month: 12 <br>Count: 195"],"hoverinfo":"text","type":"heatmap","xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>COmment</p>
+</div>
+<div id="dog-bites-by-licensing-data" class="section level1">
+<h1>Dog bites by licensing data</h1>
+<pre class="r"><code>breed_counts &lt;- dog_licensing_df |&gt;
+  mutate(breed_name = tolower(breed_name)) |&gt; 
+  filter(!is.na(breed_name), breed_name != &quot;unknown&quot;) |&gt;
+  count(breed_name, name = &quot;count&quot;) |&gt;  
+  arrange(desc(count)) 
+
+set.seed(1234)  
+wordcloud(words = breed_counts$breed_name, 
+          freq = breed_counts$count, 
+          min.freq = 1, 
+          max.words = 200, 
+          random.order = FALSE, 
+          rot.per = 0.35, 
+          colors = brewer.pal(8, &quot;Dark2&quot;))</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : yorkshire terrier could not be fit on page. It will not
+## be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : american pit bull mix / pit bull mix could not be fit on
+## page. It will not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : american pit bull terrier/pit bull could not be fit on
+## page. It will not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : dachshund smooth coat miniature could not be fit on page.
+## It will not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : dachshund, long haired miniature could not be fit on
+## page. It will not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : cocker spaniel crossbreed could not be fit on page. It
+## will not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : jack russell terrier crossbreed could not be fit on page.
+## It will not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : siberian husky crossbreed could not be fit on page. It
+## will not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : australian cattle dog could not be fit on page. It will
+## not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : west highland white terrier could not be fit on page. It
+## will not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : shar-pei, chinese could not be fit on page. It will not
+## be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : great pyrenees could not be fit on page. It will not be
+## plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : schnauzer crossbreed could not be fit on page. It will
+## not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : catahoula leopard dog could not be fit on page. It will
+## not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : portuguese water dog could not be fit on page. It will
+## not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : scottish terrier could not be fit on page. It will not be
+## plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : english cocker spaniel could not be fit on page. It will
+## not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : miniature american shepherd could not be fit on page. It
+## will not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : belgian malinois could not be fit on page. It will not be
+## plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : coonhound, black and tan could not be fit on page. It
+## will not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : soft coated wheaten terrier could not be fit on page. It
+## will not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : german shorthaired pointer could not be fit on page. It
+## will not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : english springer spaniel could not be fit on page. It
+## will not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : coonhound, treeing walker could not be fit on page. It
+## will not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : bull dog, american could not be fit on page. It will not
+## be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : rottweiler crossbreed could not be fit on page. It will
+## not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : brittany spaniel could not be fit on page. It will not be
+## plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : schnauzer, miniature crossbreed could not be fit on page.
+## It will not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : old english sheepdog could not be fit on page. It will
+## not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : norfolk terrier could not be fit on page. It will not be
+## plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : welsh corgi, cardigan could not be fit on page. It will
+## not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : anatolian shepherd dog could not be fit on page. It will
+## not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : rat terrier crossbreed could not be fit on page. It will
+## not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : dachshund, wirehaired, miniature could not be fit on
+## page. It will not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : cardigan welsh corgi could not be fit on page. It will
+## not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : treeing walker coonhound could not be fit on page. It
+## will not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : alaskan klee kai could not be fit on page. It will not be
+## plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : dachshund, wirehaired could not be fit on page. It will
+## not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : japanese chin/spaniel could not be fit on page. It will
+## not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : pointer, german shorthaired could not be fit on page. It
+## will not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : parson russell terrier could not be fit on page. It will
+## not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : irish terrier could not be fit on page. It will not be
+## plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : japanese chin could not be fit on page. It will not be
+## plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : chinese crested could not be fit on page. It will not be
+## plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : basset hound crossbreed could not be fit on page. It will
+## not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : redbone coonhound could not be fit on page. It will not
+## be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : dutch shepherd could not be fit on page. It will not be
+## plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : manchester terrier could not be fit on page. It will not
+## be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : black and tan coonhound could not be fit on page. It will
+## not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : bluetick coonhound could not be fit on page. It will not
+## be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : affenpinscher could not be fit on page. It will not be
+## plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : australian silky terrier could not be fit on page. It
+## will not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : pembroke welsh corgi crossbreed could not be fit on page.
+## It will not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : collie, rough coat could not be fit on page. It will not
+## be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : akita crossbreed could not be fit on page. It will not be
+## plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : flat-coated retriever could not be fit on page. It will
+## not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : keeshond could not be fit on page. It will not be
+## plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : collie, smooth coat could not be fit on page. It will not
+## be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : australian kelpie could not be fit on page. It will not
+## be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : mastiff, old english could not be fit on page. It will
+## not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : nova scotia duck tolling retriever could not be fit on
+## page. It will not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : dogo argentino could not be fit on page. It will not be
+## plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : canaan dog could not be fit on page. It will not be
+## plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : saint bernard could not be fit on page. It will not be
+## plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : american english coonhound could not be fit on page. It
+## will not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : coonhound, blue tick could not be fit on page. It will
+## not be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : schipperke could not be fit on page. It will not be
+## plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : norwegian elkhound could not be fit on page. It will not
+## be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : australian terrier could not be fit on page. It will not
+## be plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : pharaoh hound could not be fit on page. It will not be
+## plotted.</code></pre>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : bedlington terrier could not be fit on page. It will not
+## be plotted.</code></pre>
+<p><img src="eda_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre><code>## Warning in wordcloud(words = breed_counts$breed_name, freq =
+## breed_counts$count, : english setter could not be fit on page. It will not be
+## plotted.</code></pre>
+<p>COMMENT</p>
+<pre class="r"><code>ny_zip_codes_filtered = ny_zip_codes |&gt; 
+  select(zip_code, borough)
+
+license_borough = dog_licensing_df |&gt; 
+  filter(zip_code %in% valid_zipcodes) |&gt; 
+  merge( ny_zip_codes_filtered, by = &quot;zip_code&quot;, all.x = TRUE)
+
+bites_by_borough = dog_bites_clean |&gt;
+  group_by(borough) |&gt;
+  summarise(Bite_Count = n())
+
+licenses_by_borough = license_borough |&gt;
+  group_by(borough) |&gt;
+  summarise(License_Count = n())
+
+
+borough_data = merge(bites_by_borough, licenses_by_borough, by = &quot;borough&quot;, all = TRUE) |&gt; 
+  drop_na()
+
+borough_data_long = borough_data |&gt;
+  pivot_longer(cols = c(&quot;License_Count&quot;, &quot;Bite_Count&quot;),
+               names_to = &quot;Count_Type&quot;,
+               values_to = &quot;Count&quot;)</code></pre>
+<pre class="r"><code>borough_grouped_bar_plot = ggplot(borough_data_long, aes(x = borough, y = Count, fill = Count_Type)) +
+  geom_bar(stat = &quot;identity&quot;, position = position_dodge(width = 0.7), width = 0.6) +
+  scale_fill_manual(name = &quot;Count Type&quot;, values = c(&quot;License_Count&quot; = &quot;skyblue&quot;, &quot;Bite_Count&quot; = &quot;orange&quot;),
+                    labels = c(&quot;License_Count&quot; = &quot;Licenses&quot;, &quot;Bite_Count&quot; = &quot;Bites&quot;)) +
+  labs(title = &quot;Dog Licenses and Bites by Borough&quot;, x = &quot;Borough&quot;, y = &quot;Count&quot;) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, size = 15))
+
+borough_interactive = ggplotly(borough_grouped_bar_plot)
+borough_interactive</code></pre>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-a25cabfd025d5605a523" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-a25cabfd025d5605a523">{"x":{"data":[{"orientation":"v","width":[0.30000000000000004,0.29999999999999982,0.29999999999999982,0.29999999999999982,0.29999999999999893],"base":[0,0,0,0,0],"x":[0.82499999999999996,1.825,2.8250000000000002,3.8250000000000002,4.8250000000000002],"y":[3782,4985,5270,5773,1872],"text":["borough: Bronx<br />Count:   3782<br />Count_Type: Bite_Count","borough: Brooklyn<br />Count:   4985<br />Count_Type: Bite_Count","borough: Manhattan<br />Count:   5270<br />Count_Type: Bite_Count","borough: Queens<br />Count:   5773<br />Count_Type: Bite_Count","borough: Staten Island<br />Count:   1872<br />Count_Type: Bite_Count"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(255,165,0,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Bite_Count","legendgroup":"Bite_Count","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.30000000000000027,0.29999999999999982,0.29999999999999982,0.29999999999999893,0.29999999999999893],"base":[0,0,0,0,0],"x":[1.175,2.1749999999999998,3.1749999999999998,4.1749999999999998,5.1749999999999998],"y":[52627,135596,182398,104288,44477],"text":["borough: Bronx<br />Count:  52627<br />Count_Type: License_Count","borough: Brooklyn<br />Count: 135596<br />Count_Type: License_Count","borough: Manhattan<br />Count: 182398<br />Count_Type: License_Count","borough: Queens<br />Count: 104288<br />Count_Type: License_Count","borough: Staten Island<br />Count:  44477<br />Count_Type: License_Count"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(135,206,235,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"License_Count","legendgroup":"License_Count","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":46.153590701535919,"r":7.3059360730593621,"b":40.182648401826498,"l":60.639269406392714},"font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Dog Licenses and Bites by Borough","font":{"color":"rgba(0,0,0,1)","family":"","size":19.925280199252807},"x":0.5,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,5.5999999999999996],"tickmode":"array","ticktext":["Bronx","Brooklyn","Manhattan","Queens","Staten Island"],"tickvals":[1,2,3,4,5],"categoryorder":"array","categoryarray":["Bronx","Brooklyn","Manhattan","Queens","Staten Island"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Borough","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-9119.8999999999996,191517.89999999999],"tickmode":"array","ticktext":["0","50000","100000","150000"],"tickvals":[0,50000,100000.00000000001,150000],"categoryorder":"array","categoryarray":["0","50000","100000","150000"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Count","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"title":{"text":"Count Type","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"19066de6c089":{"x":{},"y":{},"fill":{},"type":"bar"}},"cur_data":"19066de6c089","visdat":{"19066de6c089":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>COMMENT</p>
+<pre class="r"><code>bite_borough_data = borough_data |&gt;
+  mutate(Bite_Percentage = Bite_Count / sum(Bite_Count) * 100,
+         Bite_Label = paste0(borough, &quot; (&quot;, round(Bite_Percentage, 1), &quot;%)&quot;))
+
+bite_pie_interactive = plot_ly(
+  data = bite_borough_data,
+  labels = ~borough,
+  values = ~Bite_Count,
+  type = &#39;pie&#39;,
+  textinfo = &#39;label+percent&#39;,
+  hoverinfo = &#39;label+value+percent&#39;,
+  title = &quot;Dog Bites by Borough&quot;,
+  domain = list(x = c(0, 0.3)), 
+  marker = list(colors = RColorBrewer::brewer.pal(n = length(bite_borough_data$borough), name = &quot;Set3&quot;))
+) 
+
+license_pie_data = borough_data |&gt;
+  mutate(License_Percentage = License_Count / sum(License_Count) * 100,
+         License_Label = paste0(borough, &quot; (&quot;, round(License_Percentage, 1), &quot;%)&quot;))
+
+license_pie_interactive = plot_ly(
+  data = license_pie_data,
+  labels = ~borough,
+  values = ~License_Count,
+  type = &#39;pie&#39;,
+  textinfo = &#39;label+percent&#39;,
+  hoverinfo = &#39;label+value+percent&#39;,
+  title = &quot;Dog Licenses by Borough&quot;,
+  domain = list(x = c(0.35, 0.65)),
+  marker = list(colors = RColorBrewer::brewer.pal(n = length(license_pie_data$borough), name = &quot;Set3&quot;))
+) 
+
+rate_borough_data = borough_data |&gt;
+  mutate(Bite_to_License_Ratio = Bite_Count / License_Count,
+         Ratio_Percentage = Bite_to_License_Ratio / sum(Bite_to_License_Ratio) * 100,
+         Ratio_Label = paste0(borough, &quot; (&quot;, round(Ratio_Percentage, 1), &quot;%)&quot;))
+
+ratio_pie_interactive = plot_ly(
+  data = rate_borough_data,
+  labels = ~borough,
+  values = ~Bite_to_License_Ratio,
+  type = &#39;pie&#39;,
+  textinfo = &#39;label+percent&#39;,
+  hoverinfo = &#39;label+value+percent&#39;,
+  title = &quot;Ratio of Bites to Licenses by Borough&quot;,
+  domain = list(x = c(0.7, 1)), 
+  marker = list(colors = RColorBrewer::brewer.pal(n = length(rate_borough_data$borough), name = &quot;Set3&quot;))
+) </code></pre>
+<pre class="r"><code>combined_pies = subplot(
+  bite_pie_interactive, 
+  license_pie_interactive, 
+  ratio_pie_interactive,
+  nrows = 1 
+)
+
+combined_pies</code></pre>
+<pre><code>## Warning: &#39;layout&#39; objects don&#39;t have these attributes: &#39;NA&#39;
+## Valid attributes include:
+## &#39;_deprecated&#39;, &#39;activeshape&#39;, &#39;annotations&#39;, &#39;autosize&#39;, &#39;autotypenumbers&#39;, &#39;calendar&#39;, &#39;clickmode&#39;, &#39;coloraxis&#39;, &#39;colorscale&#39;, &#39;colorway&#39;, &#39;computed&#39;, &#39;datarevision&#39;, &#39;dragmode&#39;, &#39;editrevision&#39;, &#39;editType&#39;, &#39;font&#39;, &#39;geo&#39;, &#39;grid&#39;, &#39;height&#39;, &#39;hidesources&#39;, &#39;hoverdistance&#39;, &#39;hoverlabel&#39;, &#39;hovermode&#39;, &#39;images&#39;, &#39;legend&#39;, &#39;mapbox&#39;, &#39;margin&#39;, &#39;meta&#39;, &#39;metasrc&#39;, &#39;modebar&#39;, &#39;newshape&#39;, &#39;paper_bgcolor&#39;, &#39;plot_bgcolor&#39;, &#39;polar&#39;, &#39;scene&#39;, &#39;selectdirection&#39;, &#39;selectionrevision&#39;, &#39;separators&#39;, &#39;shapes&#39;, &#39;showlegend&#39;, &#39;sliders&#39;, &#39;smith&#39;, &#39;spikedistance&#39;, &#39;template&#39;, &#39;ternary&#39;, &#39;title&#39;, &#39;transition&#39;, &#39;uirevision&#39;, &#39;uniformtext&#39;, &#39;updatemenus&#39;, &#39;width&#39;, &#39;xaxis&#39;, &#39;yaxis&#39;, &#39;barmode&#39;, &#39;bargap&#39;, &#39;mapType&#39;</code></pre>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-038824d23db6689f9404" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-038824d23db6689f9404">{"x":{"data":[{"labels":["Bronx","Brooklyn","Manhattan","Queens","Staten Island"],"values":[3782,4985,5270,5773,1872],"textinfo":"label+percent","hoverinfo":["label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent"],"title":"Dog Bites by Borough","domain":{"x":[0,0.29999999999999999]},"marker":{"color":"rgba(31,119,180,1)","colors":["#8DD3C7","#FFFFB3","#BEBADA","#FB8072","#80B1D3"],"line":{"color":"rgba(255,255,255,1)"}},"type":"pie","frame":null},{"labels":["Bronx","Brooklyn","Manhattan","Queens","Staten Island"],"values":[52627,135596,182398,104288,44477],"textinfo":"label+percent","hoverinfo":["label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent"],"title":"Dog Licenses by Borough","domain":{"x":[0.34999999999999998,0.65000000000000002]},"marker":{"color":"rgba(255,127,14,1)","colors":["#8DD3C7","#FFFFB3","#BEBADA","#FB8072","#80B1D3"],"line":{"color":"rgba(255,255,255,1)"}},"type":"pie","frame":null},{"labels":["Bronx","Brooklyn","Manhattan","Queens","Staten Island"],"values":[0.071864252189940525,0.036763621345762415,0.02889286066733188,0.055356320957348881,0.042089169683207049],"textinfo":"label+percent","hoverinfo":["label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent"],"title":"Ratio of Bites to Licenses by Borough","domain":{"x":[0.69999999999999996,1]},"marker":{"color":"rgba(44,160,44,1)","colors":["#8DD3C7","#FFFFB3","#BEBADA","#FB8072","#80B1D3"],"line":{"color":"rgba(255,255,255,1)"}},"type":"pie","frame":null}],"layout":{"NA":{"anchor":[],"domain":[0,1]},"NA2":{"anchor":[],"domain":[0,1]},"NA3":{"anchor":[],"domain":[0,1]},"margin":{"b":40,"l":60,"t":25,"r":10},"hovermode":"closest","showlegend":true},"attrs":{"19066ef04d8":{"labels":{},"values":{},"textinfo":"label+percent","hoverinfo":"label+value+percent","title":"Dog Bites by Borough","domain":{"x":[0,0.29999999999999999]},"marker":{"colors":["#8DD3C7","#FFFFB3","#BEBADA","#FB8072","#80B1D3"]},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"pie"},"190636270476":{"labels":{},"values":{},"textinfo":"label+percent","hoverinfo":"label+value+percent","title":"Dog Licenses by Borough","domain":{"x":[0.34999999999999998,0.65000000000000002]},"marker":{"colors":["#8DD3C7","#FFFFB3","#BEBADA","#FB8072","#80B1D3"]},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"pie"},"19063b95fac0":{"labels":{},"values":{},"textinfo":"label+percent","hoverinfo":"label+value+percent","title":"Ratio of Bites to Licenses by Borough","domain":{"x":[0.69999999999999996,1]},"marker":{"colors":["#8DD3C7","#FFFFB3","#BEBADA","#FB8072","#80B1D3"]},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"pie"}},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"subplot":true,"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>COMMENT</p>
 </div>
 
 
