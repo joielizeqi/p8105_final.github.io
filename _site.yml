@@ -23,7 +23,7 @@ navbar:
         - text: "Modeling dog bite incidences"
           href: regression.html
     - text: "Shiny"
-      href: shiny.html
+      href: https://zhenkunnfang.shinyapps.io/shiny_app-1/
     - icon: fa fa-youtube-play
       href: https://www.youtube.com/
     - icon: fa-github fa-lg
