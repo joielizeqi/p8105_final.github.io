@@ -1,0 +1,169 @@
+---
+title: "NYC Dog Bites"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(plotly)
+library(rsconnect)
+library(leaflet)
+library(readr)
+library(ggplot2)
+library(knitr)
+library(shiny)
+#install.packages("leaflet.extras")
+library(leaflet.extras)
+#install.packages(c("knitr", "rmarkdown"))
+
+#install.packages("tidygeocoder")
+library(tidygeocoder)
+library(dplyr)
+
+#install.packages("rsconnect")
+library(rsconnect)
+```
+
+```{r}
+bite = read_csv("./data/Dog_Bites_w_Location_data.csv", 
+           na = c("NA", ".", "")) |>
+  janitor::clean_names() %>% 
+  filter(gender != "U") %>% 
+  na.omit()
+```
+
+Select Squirrel Details {.sidebar}
+-----------------------------------------------------------------------
+
+### NYC Dog Bites
+
+
+```{r}
+
+breed_vec <- c("All", bite |> filter(!is.na(breed)) |> pull(breed) |> unique())
+
+year_vec <- c("All", bite |> filter(!is.na(year)) |> pull(year) |> unique())
+
+selectInput(
+  inputId = "year_choice",
+  label = "Year of Bite",
+  choices = year_vec,
+  selected = "All"
+)
+
+selectInput(
+  inputId = "breed_choice",
+  label = "Breed",
+  choices = breed_vec,
+  selected = "All"
+)
+
+spay_status_vec <- c("All", bite |> 
+  mutate(spay_status = case_when(
+    spay_neuter == TRUE ~ "Spayed/Neutered",
+    spay_neuter == FALSE ~ "Not Spayed/Neutered",
+    .default = "Unknown"
+  )) |> 
+  pull(spay_status) |> 
+  unique())
+
+selectInput(
+  inputId = "spay_status_choice",
+  label = "Spay/Neuter Status",
+  choices = spay_status_vec,
+  selected = "All"
+)
+
+gender_vec <- c("All", bite |> pull(gender) |> unique())
+
+selectInput(
+  inputId = "gender_choice",
+  label = "Gender",
+  choices = gender_vec,
+  selected = "All"
+)
+
+
+```
+
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+### A
+
+```{r}
+bite <- bite |> 
+  mutate(year = as.numeric(format(as.Date(date_of_bite), "%Y")),
+      rounded_lat = round(lat, 3), 
+      rounded_long = round(long, 3)
+         )
+
+bite_mutated <- bite |> 
+  mutate(spay_status = case_when(
+    spay_neuter == TRUE ~ "Spayed/Neutered",
+    spay_neuter == FALSE ~ "Not Spayed/Neutered",
+    .default = "Unknown"
+  ))
+
+
+
+dog_bite_map <- bite_mutated |> 
+  filter(!is.na(lat) & !is.na(long))
+
+renderLeaflet({
+  # Filter the dataset
+  dog_bite_map <- bite |> 
+    mutate(
+      spay_status = case_when(
+        spay_neuter == TRUE ~ "Spayed/Neutered",
+        spay_neuter == FALSE ~ "Not Spayed/Neutered",
+        .default = "Unknown"
+      ),
+      year = as.numeric(format(as.Date(date_of_bite), "%Y"))
+    ) |> 
+    filter(!is.na(lat) & !is.na(long))
+
+  # Apply user-selected filters
+  if (!is.null(input[["breed_choice"]]) && input[["breed_choice"]] != "All") {
+    dog_bite_map <- dog_bite_map |> filter(breed == input[["breed_choice"]])
+  }
+
+  if (!is.null(input[["spay_status_choice"]]) && input[["spay_status_choice"]] != "All") {
+    dog_bite_map <- dog_bite_map |> filter(spay_status == input[["spay_status_choice"]])
+  }
+
+  if (!is.null(input[["gender_choice"]]) && input[["gender_choice"]] != "All") {
+    dog_bite_map <- dog_bite_map |> filter(gender == input[["gender_choice"]])
+  }
+
+  if (!is.null(input[["year_choice"]]) && input[["year_choice"]] != "All") {
+    dog_bite_map <- dog_bite_map |> filter(year == as.numeric(input[["year_choice"]]))
+  }
+
+
+  # Generate the heat map
+  leaflet(data = dog_bite_map) |> 
+    addTiles() |> 
+    addProviderTiles("CartoDB.Positron") |> 
+    addHeatmap(
+      lng = ~long,
+      lat = ~lat,
+      intensity = ~2,   # Optionally replace `1` with a variable like age or count if needed
+      blur = 19,        # Adjusts the blur of the heatmap
+      max = 1,          # Maximum intensity for scaling
+      radius = 20       # Radius of each heatmap point
+    )
+})
+
+leafletOutput("heatmap", height = "600px")
+
+
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
