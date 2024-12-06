@@ -8,3 +8,247 @@ output:
 # Spatial distribution of dog bite incidents
 
 # Spatial characteristics of dog bite incidents
+
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(knitr)
+
+library(sf)
+library(spdep)
+library(grid)
+library(gridExtra)
+library(ape)
+library(tmap)
+library(tmaptools)
+library(htmltools)
+```
+
+```{r load_shp&bites, message=FALSE, warning=FALSE}
+# read shp file
+shp_NY = st_read("./data/NYC_zipcode/ZIP_CODE_040114.shp") |>
+  select(-BLDGZIP, -PO_NAME, -POPULATION, -STATE, -URL)
+
+# read Dog_Bites_Data
+bite = read.csv("./data/Dog_Bites_Data.csv", 
+           na = c("NA", ".", "")) |>
+  janitor::clean_names() |>
+ mutate(
+    date_of_bite = mdy(date_of_bite), 
+    year = year(date_of_bite)
+  ) |>
+  filter(grepl("^\\d{5}$", zip_code)) |>
+  filter(zip_code %in% shp_NY$ZIPCODE) 
+```
+
+```{r load_license, message = FALSE}
+# read License Data
+license = read.csv("./data/NYC_Dog_Licensing_Dataset.csv", 
+           na = c("NA", ".", "")) |>
+  janitor::clean_names() |>
+  mutate(license_expired_date = as.Date(license_expired_date, format = "%m/%d/%Y")) |>
+   mutate(zip_code = as.character(zip_code)) |>
+  filter(grepl("^\\d{5}$", zip_code))
+
+license_2019 = license |>
+  filter(license_expired_date >= as.Date("2020-01-01")) |> 
+  mutate(extract_year = 2019)  
+
+license_2020 = license |>
+  filter(license_expired_date >= as.Date("2021-01-01")) |> 
+  mutate(extract_year = 2020) 
+
+license_2021 = license |>
+  filter(license_expired_date >= as.Date("2022-01-01")) |> 
+  mutate(extract_year = 2021)  
+
+license = license_2019 |>
+  bind_rows(license_2020) |>
+  bind_rows(license_2021) |>
+  bind_rows(license)
+
+rm(license_2019)
+rm(license_2020)
+rm(license_2021)
+
+license_counts = license |>
+  group_by(zip_code, extract_year) |>  
+  summarise(license_count = n())  
+```
+
+
+```{r clean_for_map, message=FALSE, warning=FALSE}
+bite_counts = bite |>
+  group_by(zip_code, year) |>  
+  summarise(bite_count = n(), .groups = "drop") |>  
+  complete(zip_code, year, fill = list(bite_count = 0)) 
+```
+
+### 2.2  Spatial distribution of dog bite incidents
+
+```{r clean_for_Molan, message=FALSE, warning=FALSE}
+bite_counts_all = bite |>
+  group_by(zip_code) |>  
+  summarise(count = n())  
+
+shp_NYall = shp_NY |>
+  left_join(bite_counts_all, 
+            by = c("ZIPCODE" = "zip_code")
+            ) |>  
+  mutate(count = ifelse(is.na(count), 0, count))  
+
+all_zip_years <- expand.grid(
+  zip_code = shp_NY$ZIPCODE, 
+  year = unique(bite$year)   
+)
+
+bite_counts = bite |>
+  group_by(zip_code, year) |>  
+  summarise(count = n(), .groups = "drop") |>  
+  complete(zip_code, year, fill = list(count = 0)) |>
+  full_join(all_zip_years, by = c("zip_code", "year")) |> 
+  mutate(count = ifelse(is.na(count), 0, count))
+
+```
+
+The figure below shows the adjacency relationships used in this study. It posits that areas connected by red lines experience a spillover effect in dog bite incidents.
+
+```{r Relative_relationship, message=FALSE, warning=FALSE}
+#Relative
+shp_point = st_centroid(st_geometry(shp_NY))
+relative_point = relativeneigh(shp_point)
+
+weigh_relative = graph2nb(relative_point)
+
+plot(st_geometry(shp_NY), main = "Relative neighbor graph")
+plot(weigh_relative, shp_point, add = T, col = "red")
+
+weight_NY =nb2listwdist(weigh_relative, shp_NY, type="idw", style="raw", 
+             alpha = 1, dmax = NULL, longlat = NULL,
+             zero.policy=TRUE)
+
+weight_NY_matrix = listw2mat(weight_NY)
+```
+
+The Moran scatter plot below illustrates the spatial autocorrelation of dog bite incidents. On this plot, the horizontal axis represents the count of dog bite events, while the vertical axis depicts the spatially lagged values of this variable. Each point corresponds to a specific zipcode.
+
+The correlation line, demonstrating a positive slope, indicates positive spatial autocorrelation, suggesting that similar values are clustered together spatially.
+
+Additionally, the concentration of data points primarily in the first and third quadrants supports the presence of positive spatial autocorrelation, where spatially similar values are clustered. The presence of several outliers, especially in the second and fourth quadrants, may indicate that regions whose spatial distribution patterns deviate from those of their surrounding areas.
+
+```{r global_Moran_all, message=FALSE, warning=FALSE}
+
+shp_NYall = shp_NYall |>
+  mutate(sc = as.vector(scale(shp_NYall$count)))
+
+dat = moran.plot(shp_NYall$sc, listw = weight_NY)
+
+```
+
+Analyzing dog bite incidents from 2015 to 2021, the observed global Moran's Index is 0.35, which is greater than 0, and both the expected Moran’s I and the p-value are close to 0. Consequently, the distribution of dog bite incidents in New York City significantly exhibits positive spatial autocorrelation.
+
+```{r global_Moran_table, message=FALSE, warning=FALSE}
+
+result <- moran.test(shp_NYall$count, listw = weight_NY) 
+
+summary_table <- data.frame(
+   Metric = c("Observed Moran's I", "Expected Moran's I", "Standard Deviation", "P-value"),
+  Value = c(result$estimate[[1]], result$estimate["Expectation"], sqrt(result$estimate["Variance"]), result$p.value)
+)
+
+kable(summary_table, caption = "Summary of Moran's I Test")
+```
+
+The annual global Moran's Indices for the distribution of dog bite incidents are as follows, indicating that there is indeed a spatial correlation in New York City.
+
+```{r global_Moran_year, message=FALSE, warning=FALSE}
+Moran_all = tapply(bite_counts$count, bite_counts$year, Moran.I, weight_NY_matrix) 
+
+moran_dat = data.frame()
+for (i in names(Moran_all)){
+  moran_df = data.frame(year = i, 
+                        moran = Moran_all[[i]][[1]], 
+                        expected = Moran_all[[i]][[2]], 
+                        sd =  Moran_all[[i]][[3]],
+                        p.value = Moran_all[[i]][[4]] )
+  moran_dat = rbind(moran_dat, moran_df)
+}
+
+kable(
+  moran_dat, 
+  caption = "Moran's I Results for Each Year",
+  col.names = c("Year", "Observed Moran's I", "Expected Moran's I", "sd", "P-value"),
+  digits = 3 
+)
+```
+
+```{r local_Moran, message=FALSE, warning=FALSE}
+locaI = localmoran(shp_NYall$sc, weight_NY, alternative = "greater") |>
+  as.data.frame() |>
+  setNames(c("I", "Expected_I", "Variance", "Z_score", "P_value"))
+
+shp_locaI <- cbind(shp_NY, locaI) |>  
+   mutate(I = ifelse(is.na(I), 0, I)) |>
+   select(-ST_FIPS, -CTY_FIPS, -SHAPE_AREA, -SHAPE_LEN)
+```
+
+Similarly, we can discover the correlation in the distribution of dog licenses across New York City. The global Moran's Index of 0.29 suggests that similar values tend to cluster spatially, indicating that certain adjacent zip code areas may exhibit concentrations of dog ownership or areas where few dogs are kept.
+
+```{r license_Moran, message=FALSE, warning=FALSE}
+license_counts_all = license |>
+  group_by(zip_code) |>  
+  summarise(license_count = n())  
+
+shp_NYall = shp_NYall |>
+  left_join(license_counts_all, 
+            by = c("ZIPCODE" = "zip_code")
+            ) |>  
+  mutate(license_count = ifelse(is.na(license_count), 0, license_count))  
+
+shp_NYall = shp_NYall |>
+  mutate(license_sc = as.vector(scale(shp_NYall$license_count)))
+
+result <- moran.test(shp_NYall$license_count, listw = weight_NY) 
+
+summary_table <- data.frame(
+   Metric = c("Observed Moran's I", "Expected Moran's I", "Standard Deviation", "P-value"),
+  Value = c(result$estimate[[1]], result$estimate["Expectation"], sqrt(result$estimate["Variance"]), result$p.value)
+)
+
+kable(summary_table, caption = "Summary of Moran's I Test")
+
+locaI_license = localmoran(shp_NYall$license_sc, weight_NY, alternative = "greater") |>
+  as.data.frame() |>
+  setNames(c("I", "Expected_I", "Variance", "Z_score", "P_value"))
+
+shp_locaI_license <- cbind(shp_NY, locaI_license) |>  
+   mutate(I = ifelse(is.na(I), 0, I)) |>
+   select(-ST_FIPS, -CTY_FIPS, -SHAPE_AREA, -SHAPE_LEN)
+
+```
+
+The map below displays the local Moran's Indices for each zip code in New York City from 2015 to 2021. Zip code areas highlighted in red exhibit significant high-high spatial clustering for dog bite incidents, while those outlined in yellow show significant high-high clustering for dog licenses. This aligns with the characteristics of the study area. It is generally believed that dog owners tend to walk their dogs near their homes. Therefore, dogs with a higher likelihood of causing harm are more likely to impact nearby zip codes, leading to clusters of high incidence areas for dog bites. Given this behavior, it is reasonable that there are no significant high-low or low-high clustering patterns for dog bite incidents in the study area. Moreover, if an area with dog bite incidents shows a significant low-low clustering, it simply indicates that this neighboring region has fewer dogs compared to others. As there is no significant low-low clustering of dog licenses in New York City, the absence of significant low-low clustering of dog bite incidents is also justified.
+
+```{r local_map, message=FALSE, warning=FALSE}
+tmap_mode("view")
+
+map_locaI =
+  tm_shape(shp_locaI, name = "all zipcode") +
+  tm_polygons(col = "#f4f4f4") +
+  tm_shape(shp_locaI |> filter(I > 0 & Z_score > 0 & P_value < 0.05), name = "High-High") +
+ tm_polygons(
+   "I", 
+   palette = c("#f4f4f4","red","yellow"), 
+   title = "Local Moran's I", 
+   breaks = c(0, 0.000001, 100, 1000),
+   labels = c("Non-Significant", "High-High (Dog Bite)", "High-High (License)")) +
+  tm_shape(shp_locaI_license |> filter(I > 0 & Z_score > 0 & P_value < 0.05), name = "High-High") +
+ tm_borders(lty = "solid", lwd = 2, col = "yellow") +
+  tm_layout(title = "Local Moran's I for Dog Bite and License", legend.show = TRUE)
+
+map_locaI
+```
+
+```{r}
+rm(list = ls())
+```
