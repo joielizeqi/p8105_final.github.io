@@ -38,6 +38,13 @@ Our project aims to investigate the complex relationships between dog bite incid
 
 # Features
 
+* **Exploratory Data Analysis**: Explores patterns, trends, and insights from NYC dog bite incidents by visualizing and summarizing data on breed, location, spay/neuter status, gender, and temporal characteristics.
+
+* **Data Analysis**: Builds regression models to examine factors influencing NYC dog bites and their association with dog licensing status.
+
+* **Shiny App**: Provides an interactive platform to explore NYC dog bite data by visualizing trends and filtering by breed, location, spay status, gender, and year.
+
+* **Detailed Report**: Delve into our in-depth reports highlighting key findings and analysis.
 
 ---
 

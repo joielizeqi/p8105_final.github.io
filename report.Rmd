@@ -1,26 +1,31 @@
 ---
 title: "Barking Up the Right Tree: Analyzing Trends, Geographic Hotspots, and Contributing Factors of NYC Dogbites"
-output:
-  html_document:
-    toc: true
-    toc_float: true
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, message = FALSE)
+```
+
 *Shiyu Zhang, sz3319, Weiqi Liang, wl3011, Zhenkun Fang, zf2352, Zeqi Li, zl3545*
 
-# Motivation
+<br><br> 
 
-# Related Work
+## Motivation
 
-# Initial Questions
+Dogs have always been known as "people's best friend," playing a significant role in American families. However, dog bite incidents have been increasing. Data from 2022 shows that dog bites ranked among the top 15 reasons for nonfatal emergency department visits across all age groups, highlighting this serious public health issue. This project aims to investigate the complex relationships between dog bite incidents and various factors, such as dog characteristics, geographical distribution, and trends over time. By examining dog bite rates in different zip code areas, we hope to pinpoint potential hotspots that can inform public safety measures. We’ll also look into whether specific traits of dogs—like breed, age, gender, and whether they are neutered—are linked to how often bites occur. This analysis could help in developing targeted strategies to reduce the risk of dog bites.
 
-# Evolution of Questions
+## Related Work
 
-# Data
+## Initial Questions
 
-# Exploratory Analysis
+## Evolution of Questions
 
-# Additional analysis
+## Data
 
-# Discussion
+## Exploratory Analysis
 
-# References
+## Additional analysis
+
+## Discussion
+
+## References
