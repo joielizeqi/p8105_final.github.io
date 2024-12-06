@@ -172,13 +172,13 @@ ggplot(dog_bites_clean, aes(x = borough)) +
 COMMENT
 
 # Dog bites by time
-```{r}
+```{r, warning=FALSE, message=FALSE}
 bites_by_year_month = dog_bites_clean |>
   count(year, month, name = "Bite_Count") |> 
   mutate(hover_text = paste("Year:", year, "<br>Month:", month, "<br>Count:", Bite_Count))
 ```
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 heatmap_interactive = plot_ly(
   data = bites_by_year_month,
   x = ~month,
@@ -202,7 +202,7 @@ heatmap_interactive
 COmment
 
 # Dog bites by licensing data
-```{r}
+```{r, warning=FALSE, message=FALSE}
 breed_counts <- dog_licensing_df |>
   mutate(breed_name = tolower(breed_name)) |> 
   filter(!is.na(breed_name), breed_name != "unknown") |>
@@ -221,7 +221,7 @@ wordcloud(words = breed_counts$breed_name,
 
 COMMENT
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 ny_zip_codes_filtered = ny_zip_codes |> 
   select(zip_code, borough)
 
@@ -247,7 +247,7 @@ borough_data_long = borough_data |>
                values_to = "Count")
 ```
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 borough_grouped_bar_plot = ggplot(borough_data_long, aes(x = borough, y = Count, fill = Count_Type)) +
   geom_bar(stat = "identity", position = position_dodge(width = 0.7), width = 0.6) +
   scale_fill_manual(name = "Count Type", values = c("License_Count" = "skyblue", "Bite_Count" = "orange"),
@@ -262,7 +262,7 @@ borough_interactive
 
 COMMENT
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 bite_borough_data = borough_data |>
   mutate(Bite_Percentage = Bite_Count / sum(Bite_Count) * 100,
          Bite_Label = paste0(borough, " (", round(Bite_Percentage, 1), "%)"))
@@ -313,7 +313,7 @@ ratio_pie_interactive = plot_ly(
 ) 
 ```
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 combined_pies = subplot(
   bite_pie_interactive, 
   license_pie_interactive, 
