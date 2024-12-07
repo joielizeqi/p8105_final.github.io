@@ -227,30 +227,63 @@ body {
   top: 0;
 }
 
-/* Make sure the dropdown hides when not hovered */
 .nav-item.dropdown .dropdown-menu {
   display: none;
 }
 
-/* Show dropdown when hovering over the dropdown container */
 .nav-item.dropdown:hover .dropdown-menu {
-  display: block;  /* Show the dropdown */
+  display: block;  
+}
+
+
+.nav-item .dropdown-menu .dropdown-submenu {
+  display: none;
+}
+
+.nav-item.dropdown .dropdown-menu:hover .dropdown-submenu {
+  display: block;
+  background-color: #f4f5f6;
+  color: #db4566;
+}
+
+.nav-item.dropdown .dropdown-menu .dropdown-submenu {
+  position: absolute;
+  left: -98%; 
+  top: 0;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+
+.dropdown-menu .dropdown-submenu {
+  background-color: #ffffff !important;  
+  border-radius: 5px;
+  padding: 10px 0;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); 
+}
+
+.dropdown-submenu .dropdown-item  {
+  color: #514f4f;  
+  background-color: #ffffff;  
+}
+
+.dropdown-submenu .dropdown-item:hover {
+  background-color: #f4f5f6;  
 }
 
 .dropdown-menu {
-  background-color: #ffffff;  /* Set to white or match the navbar background */
+  background-color: #ffffff;  
   border-radius: 5px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);  /* Add shadow for dropdown */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); 
 }
 
-.dropdown-item {
-  color: #514f4f;  /* Ensure text color is consistent */
-  padding: 10px 25px;  /* Adjust padding to match the navbar links */
+.dropdown-menu .dropdown-item {
+  color: #514f4f;  
+  padding: 10px 25px; 
 }
 
-.dropdown-item:hover {
-  background-color: #f4f5f6;  /* Hover effect matching other nav links */
-  color: #db4566;  /* Hover color */
+.dropdown-menu .dropdown-item:hover {
+  background-color: #f4f5f6; 
+  color: #db4566;  
 }
 
 .user_option {
@@ -365,8 +398,12 @@ body {
 
 
 /* Screencast Section */
-.screencast_section .heading_container h2 {
+.screencast_section {
   margin: 50px 0;
+}
+
+
+.screencast_section .heading_container h2 {
   text-align: left;
   font-size: 30px;
 }
@@ -390,15 +427,18 @@ body {
 }
 
 /* Map Section*/
-.map_section h2{
+.map_section {
   margin: 50px 0;
+}
+
+.map_section h2{
   text-align: left !important;
   font-size: 30px;
 }
 
 /* More Info Section */
 .more_info_section {
-  padding: 50px 0;
+  margin: 50px 0;
   background-color: #f7f7f7;
 }
 
@@ -414,6 +454,10 @@ body {
 }
 
 /* Feature Section */
+.feature_section {
+  margin: 50px 0;
+}
+
 .feature_section .heading_container h2 {
   margin-bottom: 20px;
   text-align: left;

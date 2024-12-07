@@ -449,6 +449,7 @@ This plot shows the spread of residuals versus fitted values and helps to check 
 
 This plot is critical for identifying observations with high leverage values—points that have a significant impact on the model's fit. Ideally, no points should exceed the threshold set by Cook’s distance, indicated by the dashed lines.
 
+#### 残差分析
 ```{r, warning=FALSE, message=FALSE}
 library(DHARMa)
 residuals_sim = simulateResiduals(model_stepwise)
@@ -486,7 +487,19 @@ glmm_model = glmer.nb(
 summary(glmm_model)
 ```
 
+
+#### 残差分析
+```{r, warning=FALSE, message=FALSE}
+library(DHARMa)
+residuals_glmm_sim = simulateResiduals(glmm_model)
+plot(residuals_glmm_sim)
+```
+有outlier，所以该模型并不。。。
+
 # Model对比： 
+
+三者相比，AIC。。。
+并且，残差分析显示，只有with interaction的有意义。
 
 # Conclusion
 
