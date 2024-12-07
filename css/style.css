@@ -1,5 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 @import url("font-awesome.min.css");
+html {
+  background-color: #f9ece6;
+}
+
 body {
   font-family: "poppins", sans-serif;
   color: #101010;
@@ -53,8 +57,9 @@ body {
 
 /*header section*/
 .hero_area {
-  padding: 70px;
-  test-align: center;
+  margin: 0px 70px 50px 70px;
+  align-items: center;
+  height: 100vh; 
 }
 
 .hero_area.sub_pages {
@@ -78,8 +83,16 @@ body {
   text-transform: none;
 }
 
+.hero_area .header_section {
+  width: 100%;
+  max-width: 1200px;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 auto;
+}
+
 .hero_area .header_section .navbar-brand {
-  padding: 0px 10px 0px 0px;
+  margin-top: 40px;
 }
 
 #navbarSupportedContent {
@@ -115,7 +128,7 @@ body {
 }
 
 .navbar-nav .nav-link:hover{
-  background-color: #f4f5f6;  /* Hover effect matching other nav links */
+  background-color: #f4f5f6; 
   color: #db4566 !important;
 }
 
@@ -288,6 +301,16 @@ body {
   color: #ffffff;
 }
 
+.hero_area .slider_section {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+
 .slider_section .slider_container {
   color: #fefefe;
   background-color: #f89cab;
@@ -309,7 +332,8 @@ body {
 }
 
 .slider_section .img-box img {
-  width: 275px;  /* Image size */
+  width: 100%; 
+  max-width: 500px;
 }
 
 .slider_section .detail-box {
@@ -342,7 +366,7 @@ body {
 
 /* Screencast Section */
 .screencast_section .heading_container h2 {
-  margin-bottom: 20px;
+  margin: 50px 0;
   text-align: left;
   font-size: 30px;
 }
@@ -367,6 +391,7 @@ body {
 
 /* Map Section*/
 .map_section h2{
+  margin: 50px 0;
   text-align: left !important;
   font-size: 30px;
 }
