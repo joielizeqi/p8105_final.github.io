@@ -403,19 +403,6 @@ bite incidents</h1>
 </div>
 
 
-<pre class="r"><code>library(tidyverse)
-library(knitr)
-library(rvest)
-library(broom)
-library(dplyr)
-library(purrr)
-library(ggplot2)
-library(plotly)
-library(readxl)
-library(reshape2)
-library(akima)
-library(wordcloud)
-library(tm)</code></pre>
 <div id="variable-features" class="section level1">
 <h1>Variable features</h1>
 <p>回归使用zipcode中累积的dogbite数量为因变量。</p>
@@ -547,6 +534,7 @@ summary(model)</code></pre>
 </div>
 <div id="with-interaction" class="section level3">
 <h3>With Interaction</h3>
+<<<<<<< HEAD
 <p>To further increase the precision of the model fit, interaction terms
 between variables were added. After using stepwise reduction to simplify
 the model complexity, the final Negative Binomial Regression model is as
@@ -951,6 +939,8 @@ model_stepwise &lt;- stepAIC(model_all_interactions, direction = &quot;both&quot
 ## - year:borough               24 7084.8
 ## - year:spay_neuter            6 7096.0
 ## - spay_neuter:borough         4 7340.9</code></pre>
+=======
+>>>>>>> 2b57a62d9781ec3e19e243ab8f8d1db467e3fe19
 <pre class="r"><code>filter_model = glm.nb(bite_count ~ year + month + gender + spay_neuter + 
     borough + year:spay_neuter + year:borough + month:spay_neuter + 
     gender:spay_neuter + gender:borough + spay_neuter:borough, 
@@ -1136,8 +1126,8 @@ model_stepwise &lt;- stepAIC(model_all_interactions, direction = &quot;both&quot
 ## 
 ##  2 x log-likelihood:  -6895.762</code></pre>
 </div>
-<div id="model" class="section level3">
-<h3>Model</h3>
+<div id="model-evaluation" class="section level3">
+<h3>Model evaluation</h3>
 <pre class="r"><code># Predicted vs Actual Bite Count
 inter_predict = bites_by_group |&gt; 
   mutate(predicted = predict(model_stepwise, type = &quot;response&quot;))
@@ -1157,6 +1147,107 @@ plot(model_stepwise)</code></pre>
 <p><img src="regression_files/figure-html/unnamed-chunk-7-1.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-7-2.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-7-3.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-7-4.png" width="672" /></p>
 </div>
 </div>
+<div id="regularized-model-lasso" class="section level1">
+<h1>Regularized Model (Lasso)</h1>
+<pre class="r"><code># lasso
+library(glmnet)</code></pre>
+<pre><code>## Loading required package: Matrix</code></pre>
+<pre><code>## 
+## Attaching package: &#39;Matrix&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:tidyr&#39;:
+## 
+##     expand, pack, unpack</code></pre>
+<pre><code>## Loaded glmnet 4.1-8</code></pre>
+<pre class="r"><code># 将数据转换为矩阵
+x = model.matrix(bite_count ~ year + month + gender + spay_neuter + borough, data = bites_by_group)
+y = bites_by_group |&gt; pull(bite_count)
+
+# Lasso 回归
+cv_model = cv.glmnet(x, y, family = &quot;poisson&quot;, alpha = 1)  # Lasso：alpha = 1
+summary(cv_model)</code></pre>
+<pre><code>##            Length Class   Mode     
+## lambda     70     -none-  numeric  
+## cvm        70     -none-  numeric  
+## cvsd       70     -none-  numeric  
+## cvup       70     -none-  numeric  
+## cvlo       70     -none-  numeric  
+## nzero      70     -none-  numeric  
+## call        5     -none-  call     
+## name        1     -none-  character
+## glmnet.fit 12     fishnet list     
+## lambda.min  1     -none-  numeric  
+## lambda.1se  1     -none-  numeric  
+## index       2     -none-  numeric</code></pre>
+<pre class="r"><code>cv_results &lt;- data.frame(
+  log_lambda = log(cv_model$lambda),
+  mean_mse = cv_model$cvm,
+  lower_mse = cv_model$cvlo,
+  upper_mse = cv_model$cvup
+)
+
+best_lambda &lt;- cv_model$lambda.min
+log_best_lambda &lt;- log(best_lambda)
+
+ggplot(cv_results, aes(x = log_lambda, y = mean_mse)) +
+  geom_line(color = &quot;blue&quot;, size = 1) +
+  geom_ribbon(aes(ymin = lower_mse, ymax = upper_mse), alpha = 0.2, fill = &quot;blue&quot;) +
+  geom_vline(xintercept = log_best_lambda, linetype = &quot;dashed&quot;, color = &quot;red&quot;) +
+  labs(
+    title = &quot;Cross-Validation for Lasso Regression&quot;,
+    x = &quot;Log(Lambda)&quot;,
+    y = &quot;Mean Cross-Validated Error&quot;
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))</code></pre>
+<p><img src="regression_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre class="r"><code># 获取模型在最佳 lambda 下的系数
+lasso_coefficients &lt;- coef(cv_model, s = &quot;lambda.min&quot;)
+
+# 将系数转换为数据框以便查看
+lasso_coefficients_df &lt;- as.data.frame(as.matrix(lasso_coefficients)) %&gt;%
+  rownames_to_column(&quot;Variable&quot;) %&gt;%
+  rename(Coefficient = 1) %&gt;%
+  filter(Coefficient != 0)  # 筛选非零系数的变量
+
+print(lasso_coefficients_df)</code></pre>
+<pre><code>##             Coefficient           s1
+## 1          X.Intercept.  1.099801956
+## 2        X.Intercept..1  0.000000000
+## 3              year2016  0.060919855
+## 4              year2017  0.149129991
+## 5              year2018  0.073152001
+## 6              year2019  0.096986077
+## 7              year2020 -0.281514521
+## 8              year2021 -0.284247504
+## 9                month2 -0.013783521
+## 10               month3  0.004909783
+## 11               month4  0.108573609
+## 12               month5  0.161786633
+## 13               month6  0.230240597
+## 14               month7  0.188210282
+## 15               month8  0.210135475
+## 16               month9  0.123686574
+## 17              month10  0.073065927
+## 18              month11  0.063997436
+## 19              month12  0.000000000
+## 20              genderM  0.888757411
+## 21  spay_neuterNeutered -0.104073381
+## 22      boroughBrooklyn  0.300860807
+## 23     boroughManhattan  0.228158366
+## 24        boroughQueens  0.496004768
+## 25 boroughStaten.Island -0.557155290</code></pre>
+<ul>
+<li>使用Lasso回归的结果进行预测</li>
+</ul>
+<pre class="r"><code>final_model &lt;- glmnet(x, y, family = &quot;poisson&quot;, alpha = 1, lambda = best_lambda)
+final_model</code></pre>
+<pre><code>## 
+## Call:  glmnet(x = x, y = y, family = &quot;poisson&quot;, alpha = 1, lambda = best_lambda) 
+## 
+##   Df  %Dev   Lambda
+## 1 22 60.62 0.004183</code></pre>
+<pre class="r"><code>#predictions_lasso &lt;- bites_by_group |&gt; mutate(predicted = predict(final_model, type = &quot;response&quot;))</code></pre>
+</div>
 <div id="generalized-linear-mixed-model-glmm" class="section level1">
 <h1>Generalized Linear Mixed Model (GLMM)</h1>
 <p>另一方面，本文进一步使用Generalized Linear Mixed Model
@@ -1172,9 +1263,15 @@ the mean of the response variable distribution, allowing the dependent
 variable to deviate from a normal distribution and enabling modeling of
 various types of data, including binary, count, and continuous
 outcomes.</p>
+<<<<<<< HEAD
 <p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD Let the response variable <span
 class="math inline">\(y\)</span> belongs to the exponential family, its
 conditional distribution can be expressed as follows:</p>
+=======
+<p>Let the response variable <span class="math inline">\(y\)</span>
+belongs to the exponential family, its conditional distribution can be
+expressed as follows:</p>
+>>>>>>> 2b57a62d9781ec3e19e243ab8f8d1db467e3fe19
 <p><span class="math display">\[f(y|b) = \prod\limits_{i = 1}^n
 {f({y_i}|{\eta _i})}\]</span></p>
 <p>Where <span class="math inline">\({\eta _i} = {x_i}^ \top \beta  +
@@ -1275,7 +1372,7 @@ summary(glmm_model)</code></pre>
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </div>
-<div id="model-1" class="section level1">
+<div id="model" class="section level1">
 <h1>Model</h1>
 <blockquote>
 <blockquote>

@@ -118,7 +118,6 @@ dog_licensing_df = read_csv("data/NYC_Dog_Licensing_Dataset.csv", na = c("NA", "
 # Variable features
 回归使用zipcode中累积的dogbite数量为因变量。
 
-
 # Negative Binomial Regression Analysis
 
 To measure the combined effects of year, dog background characteristics (i.e., gender and whether neutered) and the Borough they belong to on the incidence of dog bites, we first conduct a negative binomial regression analysis using records of dog bite incidents in New York.
@@ -160,7 +159,7 @@ summary(model)
 
 ### With Interaction
 
-To further increase the precision of the model fit, interaction terms between variables were added. After using stepwise reduction to simplify the model complexity, the final Negative Binomial Regression model is as follows:
+To further increase the precision of the model fit, interaction terms between variables were added. After using stepwise reduction to simplify the model complexity, the final negative binomial regression model is as follows.
 
 ```{r, warning=FALSE, message=FALSE}
 model_all_interactions <- glm.nb(
@@ -191,7 +190,10 @@ filter_model = glm.nb(bite_count ~ year + month + gender + spay_neuter +
 summary(filter_model)
 ```
 
-### Model 
+### Model evaluation
+
+使用最终模型进行交叉验证。图中红色虚线表示理想状态下的预测情况（即预测值等于实际值）。若点落在这条线附近，说明模型预测效果较好。若点的位置高于对角线，则模型低估了实际值；反之若点的位置低于对角线，则模型高估了实际值。
+
 ```{r}
 # Predicted vs Actual Bite Count
 inter_predict = bites_by_group |> 
@@ -206,6 +208,19 @@ ggplot(inter_predict, aes(x = predicted, y = bite_count)) +
   theme_minimal()
 ```
 
+此外，还可以通过残差模拟和诊断来评估拟合模型的质量。
+
+1. Residuals vs Fitted (残差与拟合值图)
+用于检查拟合值和残差之间是否存在系统性关系。理想情况下，残差应随机分布在横轴（拟合值）附近，无明显模式，即红色虚线（平滑曲线）应接近水平直线。如果有明显模式（如曲线形分布），可能表示模型拟合不足。
+
+2. Q-Q Residuals (残差的 Q-Q 图)
+检查残差是否符合模型假设的分布。残差分布的尾部偏离正态分布。
+
+3. Scale-Location (缩放位置图)
+检查残差的方差是否均匀（同方差性）。点的分布呈现条带状，且红色平滑线显示出非水平趋势。这表明残差方差可能随拟合值变化，存在异方差性。
+
+4. Residuals vs Leverage (残差与杠杆值图)
+检查是否存在高杠杆值的观测点（对模型拟合影响较大的点）。理想情况:大多数点应集中在低杠杆值区域。没有点超出 Cook’s 距离（虚线表示）。
 
 ```{r}
 library(DHARMa)
@@ -213,13 +228,90 @@ residuals_sim = simulateResiduals(model_stepwise)
 plot(model_stepwise)
 ```
 
+主要问题:
+非正态分布:
+
+Q-Q 图和残差分布图表明残差的分布偏离正态分布，可能需要对响应变量（如 bite_count）进行变换（如对数变换）。
+异方差性:
+
+Scale-Location 图显示残差的方差随拟合值变化，可能需要引入更灵活的分布（如负二项分布或零膨胀模型）。
+高杠杆点和异常点:
+
+Residuals vs Leverage 图显示存在高杠杆点（如 832 和 637）。需要检查这些点是否数据录入错误，或者是否应在模型中单独处理。
+改进模型建议:
+检查分布假设:
+
+如果模型使用的是泊松回归（GLM），可能需要切换到负二项分布（如 glm.nb()）。
+使用残差模拟工具（如 DHARMa）进一步诊断残差分布。
+调整异方差问题:
+
+引入加权最小二乘回归或重新指定响应变量的分布。
+处理异常点:
+
+逐一检查高杠杆点和残差异常点，考虑是否需要移除或调整。
+
+# Regularized Model (Lasso)
+
+```{r, warning=FALSE}
+# lasso
+library(glmnet)
+
+# 将数据转换为矩阵
+x = model.matrix(bite_count ~ year + month + gender + spay_neuter + borough, data = bites_by_group)
+y = bites_by_group |> pull(bite_count)
+
+# Lasso 回归
+cv_model = cv.glmnet(x, y, family = "poisson", alpha = 1)  # Lasso：alpha = 1
+summary(cv_model)
+
+cv_results <- data.frame(
+  log_lambda = log(cv_model$lambda),
+  mean_mse = cv_model$cvm,
+  lower_mse = cv_model$cvlo,
+  upper_mse = cv_model$cvup
+)
+
+best_lambda <- cv_model$lambda.min
+log_best_lambda <- log(best_lambda)
+
+ggplot(cv_results, aes(x = log_lambda, y = mean_mse)) +
+  geom_line(color = "blue", size = 1) +
+  geom_ribbon(aes(ymin = lower_mse, ymax = upper_mse), alpha = 0.2, fill = "blue") +
+  geom_vline(xintercept = log_best_lambda, linetype = "dashed", color = "red") +
+  labs(
+    title = "Cross-Validation for Lasso Regression",
+    x = "Log(Lambda)",
+    y = "Mean Cross-Validated Error"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# 获取模型在最佳 lambda 下的系数
+lasso_coefficients <- coef(cv_model, s = "lambda.min")
+
+# 将系数转换为数据框以便查看
+lasso_coefficients_df <- as.data.frame(as.matrix(lasso_coefficients)) %>%
+  rownames_to_column("Variable") %>%
+  rename(Coefficient = 1) %>%
+  filter(Coefficient != 0)  # 筛选非零系数的变量
+
+print(lasso_coefficients_df)
+
+```
+
+* 使用Lasso回归的结果进行预测
+```{r}
+final_model <- glmnet(x, y, family = "poisson", alpha = 1, lambda = best_lambda)
+final_model
+#predictions_lasso <- bites_by_group |> mutate(predicted = predict(final_model, type = "response"))
+```
+
 # Generalized Linear Mixed Model (GLMM)
 
-另一方面，本文进一步使用Generalized Linear Mixed Model (GLMM)验证所得的回归结果。
+为了解决上述模型拟合问题，本文进一步使用Generalized Linear Mixed Model (GLMM)对拟合模型进行优化。
 
 The Generalized Linear Mixed Model (GLMM) is an extension of the Generalized Linear Model (GLM) and the Linear Mixed Model (LMM). GLMM consists of three main components: random effects, fixed effects, and a link function. Fixed effects represent the overall level parameters consistent across all observations, while random effects account for individual variability or group-level differences that may influence the response variable. The link function connects the linear predictor to the mean of the response variable distribution, allowing the dependent variable to deviate from a normal distribution and enabling modeling of various types of data, including binary, count, and continuous outcomes.
 
-<<<<<<< HEAD
 Let the response variable $y$ belongs to the exponential family, its conditional distribution can be expressed as follows:
 
 $$f(y|b) = \prod\limits_{i = 1}^n {f({y_i}|{\eta _i})}$$
@@ -232,10 +324,7 @@ $$g(\vec {\rm E}(y)) = {\rm X}\vec \beta  + {\rm Z}\vec b + \varepsilon$$
 
 In the model, $g( \cdot )$ represents the link function, which connects the expected value of the response variable to the linear predictor. Here, the logarithm function $g(\mu ) = \ln (\mu )$ is used, which is appropriate for the Poisson distribution. $\vec{\mathrm{E}}(y)$ denotes the vector of expected values for the response variable, and $\varepsilon$ represents the error term, capturing random noise or the unexplained variance. ${\rm X}\vec \beta  + {\rm Z}\vec b$ represents the linear combination of fixed and random effects, ${\rm X}\vec \beta$ is used to explain global trends, and ${\rm Z}\vec b$ is utilized to capture differences among observations. In this context, ${\rm X}$ is the design matrix for fixed effects, which is of order $n \times p$, where $n$ is the number of observations and $p$ is the number of fixed effect variables; $\vec \beta$ is the vector of coefficients for fixed effects, with each element representing the regression coefficient of a fixed effect variable. Similarly, ${\rm Z}$ also serves as the design matrix for random effects, of order $n \times q$, where $q$ is the number of random effect variables. $\vec b$ is the vector of coefficients for random effects, representing inter-group deviations used to explain random differences between groups. The model assumes $b \sim {\rm N}(0,\Sigma )$, thereby the random effects are normally distributed with a mean of $0$ and a covariance matrix $\Sigma$.
 
-对于狗咬伤事件数据集，响应变量$y$为每月每zipcode的事件的发生，固定效应包括温度和湿度。随机效应为不同实验员（10 个实验员）。因此，对于所有响应变量，${\rm X}$是包含年份，月份，地区，性别，绝育状态的矩阵；$\vec \beta$为固定效应系数；${\rm X}$表示每个响应变量所属品种的矩阵；$\vec b$为每个品种的偏差值（随机效应）。
-
-=======
-
+For the dog bite incidents dataset, the response variable $y$ represents the number of dog bite incidents per zipcode per month. Fixed effects in the model include year, month, gender, and sterilization status. Random effects are attributed to different boroughs (5 boroughs in total). Thus, for all response variables, ${\rm X}$ is a matrix containing year, month, gender, and sterilization status; $\vec \beta$ represents the coefficients for the fixed effects; ${\rm X}$ indicates the matrix for the borough each response variable belongs to; and $\vec b$ denotes the deviation for each borough (random effects). This setup allows the model to adjust for the influence of both environmental conditions and borough-specific variations in the occurrence of dog bites.
 
 ```{r, warning=FALSE, message=FALSE}
 library(lme4)
@@ -246,8 +335,6 @@ glmm_model = glmer.nb(
 summary(glmm_model)
 ```
 
-
 # Model 
->>>>>>> 6e0a48bc06a0411fc9c5ffd605c67fd4cbef063b
 
 # Conclusion

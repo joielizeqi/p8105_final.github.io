@@ -24,6 +24,7 @@ library(leaflet.extras)
 #install.packages("tidygeocoder")
 library(tidygeocoder)
 library(dplyr)
+library(lubridate)
 
 #install.packages("rsconnect")
 library(rsconnect)
@@ -87,14 +88,12 @@ selectInput(
   choices = gender_vec,
   selected = "All"
 )
-
-
 ```
 
 
-Column {data-width=650}
+Column {data-width=340}
 -----------------------------------------------------------------------
-### A
+### Interactive Dog Bites Heatmap
 
 ```{r}
 bite <- bite |> 
@@ -162,9 +161,103 @@ renderLeaflet({
 
 leafletOutput("heatmap", height = "600px")
 
-
 ```
 
-Column {data-width=350}
+Column {data-width=300}
 -----------------------------------------------------------------------
+### Number of Dog Bites by month
+
+```{r}
+bite_factor = bite %>% 
+    mutate(
+  year = as.factor(year(date_of_bite)), 
+  month = sprintf("%02d", month(date_of_bite)) 
+)
+
+bite_summary <- bite_factor %>%
+  mutate(month = format(as.Date(date_of_bite), "%m"),
+         year = format(as.Date(date_of_bite), "%Y")) %>%
+  count(year, month) %>%
+  mutate(year = as.factor(year))
+
+plot_ly(
+  data = bite_summary,
+  x = ~month,
+  y = ~n,
+  color = ~year,
+  type = 'bar',
+  colors = "Blues"
+) %>%
+layout(
+  title = "Dog Bites by Month",
+  xaxis = list(title = "Month"),
+  yaxis = list(title = "Count of Dog Bites"),
+  barmode = "stack",
+  height = 400
+)
+```
+
+
+### Top 15 Dog Bite Breeds by Year
+
+```{r}
+ui <- fluidPage(
+  tags$style(HTML("
+    .radio-inline {
+      margin-right: 5px;
+      padding: 2px 20px; 
+      font-size: 12px; 
+    }
+    .well { 
+      padding: 1px; 
+    }
+    label { 
+      margin-bottom: 0px; 
+    }
+  ")), 
+
+  sidebarLayout(
+    sidebarPanel(
+      radioButtons(
+        inputId = "year_choice",
+        label = "Select Year:",
+        choices = unique(bite$year),
+        selected = max(bite$year),  # Default to most recent year
+        inline = TRUE  # Display radio buttons in one line
+      )
+    ),
+    mainPanel(
+      plotlyOutput("treemap_plot", width = "640", height = "400px")
+    )
+  )
+)
+
+# Server
+server <- function(input, output, session) {
+  output$treemap_plot <- renderPlotly({
+    # Filter data based on selected year
+    filtered_data <- bite %>%
+      filter(year == input$year_choice, !is.na(breed)) %>%
+      group_by(breed) %>%
+      summarise(count = n()) %>%
+      arrange(desc(count)) %>%
+      slice_max(order_by = count, n = 15)  # Top 15 breeds
+
+    # Plotly Treemap
+    plot_ly(
+      data = filtered_data,
+      type = "treemap",
+      labels = ~breed,
+      parents = "",
+      values = ~count,
+      textinfo = "label+value",
+      marker = list(colors = "Purples")
+    ) 
+  })
+}
+
+# Run the app
+shinyApp(ui, server)
+
+```
 
