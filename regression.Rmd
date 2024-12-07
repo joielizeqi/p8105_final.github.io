@@ -190,7 +190,7 @@ filter_model = glm.nb(bite_count ~ year + month + gender + spay_neuter +
 summary(filter_model)
 ```
 
-### Model 
+### Model evaluation
 
 使用最终模型进行交叉验证。图中红色虚线表示理想状态下的预测情况（即预测值等于实际值）。若点落在这条线附近，说明模型预测效果较好。若点的位置高于对角线，则模型低估了实际值；反之若点的位置低于对角线，则模型高估了实际值。
 
@@ -250,6 +250,62 @@ Residuals vs Leverage 图显示存在高杠杆点（如 832 和 637）。需要�
 
 逐一检查高杠杆点和残差异常点，考虑是否需要移除或调整。
 
+# Regularized Model (Lasso)
+
+```{r, warning=FALSE}
+# lasso
+library(glmnet)
+
+# 将数据转换为矩阵
+x = model.matrix(bite_count ~ year + month + gender + spay_neuter + borough, data = bites_by_group)
+y = bites_by_group |> pull(bite_count)
+
+# Lasso 回归
+cv_model = cv.glmnet(x, y, family = "poisson", alpha = 1)  # Lasso：alpha = 1
+summary(cv_model)
+
+cv_results <- data.frame(
+  log_lambda = log(cv_model$lambda),
+  mean_mse = cv_model$cvm,
+  lower_mse = cv_model$cvlo,
+  upper_mse = cv_model$cvup
+)
+
+best_lambda <- cv_model$lambda.min
+log_best_lambda <- log(best_lambda)
+
+ggplot(cv_results, aes(x = log_lambda, y = mean_mse)) +
+  geom_line(color = "blue", size = 1) +
+  geom_ribbon(aes(ymin = lower_mse, ymax = upper_mse), alpha = 0.2, fill = "blue") +
+  geom_vline(xintercept = log_best_lambda, linetype = "dashed", color = "red") +
+  labs(
+    title = "Cross-Validation for Lasso Regression",
+    x = "Log(Lambda)",
+    y = "Mean Cross-Validated Error"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# 获取模型在最佳 lambda 下的系数
+lasso_coefficients <- coef(cv_model, s = "lambda.min")
+
+# 将系数转换为数据框以便查看
+lasso_coefficients_df <- as.data.frame(as.matrix(lasso_coefficients)) %>%
+  rownames_to_column("Variable") %>%
+  rename(Coefficient = 1) %>%
+  filter(Coefficient != 0)  # 筛选非零系数的变量
+
+print(lasso_coefficients_df)
+
+```
+
+* 使用Lasso回归的结果进行预测
+```{r}
+final_model <- glmnet(x, y, family = "poisson", alpha = 1, lambda = best_lambda)
+final_model
+#predictions_lasso <- bites_by_group |> mutate(predicted = predict(final_model, type = "response"))
+```
+
 # Generalized Linear Mixed Model (GLMM)
 
 为了解决上述模型拟合问题，本文进一步使用Generalized Linear Mixed Model (GLMM)对拟合模型进行优化。
@@ -279,8 +335,6 @@ glmm_model = glmer.nb(
 summary(glmm_model)
 ```
 
-
 # Model 
->>>>>>> 6e0a48bc06a0411fc9c5ffd605c67fd4cbef063b
 
 # Conclusion
