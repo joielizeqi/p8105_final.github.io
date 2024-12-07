@@ -118,7 +118,6 @@ dog_licensing_df = read_csv("data/NYC_Dog_Licensing_Dataset.csv", na = c("NA", "
 # Variable features
 回归使用zipcode中累积的dogbite数量为因变量。
 
-
 # Negative Binomial Regression Analysis
 
 To measure the combined effects of year, dog background characteristics (i.e., gender and whether neutered) and the Borough they belong to on the incidence of dog bites, we first conduct a negative binomial regression analysis using records of dog bite incidents in New York.
