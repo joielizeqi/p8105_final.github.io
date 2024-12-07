@@ -7,6 +7,25 @@ output:
 ---
 # Variable features
 
-# Regression
+# Negative Binomial Regression Analysis
+
+To measure the combined effects of year, dog background characteristics (i.e., breed, gender, age, and whether neutered) and the Borough they belong to on the incidence of dog bites, we first conduct a negative binomial regression analysis using records of dog bite incidents in New York.
+
+The negative binomial regression model is a type of count model designed for dependent variables that can only take non-negative integer values. From the Spatial Correlations section, the study area meets the three prerequisites for negative binomial regression: the dog bite incidents are not independent, exhibiting spatial clustering; the dependent variable shows overdispersion; and the frequency of dog bite incidents is sufficiently low.
+
+本文假设的因变量是各zipcode的狗咬伤事件发生数量，which呈现负二项分布。Predictor variables包括事件发生的年份和月份，狗的背景特征和事件发生区域。其中，年份被测量为一个区间级变量，值从1（对应于2015年）到7（对应于2021年）。事件发生的地区将被划分为值从1-6的变量，分别代表纽约市的5个区还有others。狗的gender是一个二分变量，值为0表示未知，1表示male，2表示female。类似的，狗的绝育状态也是一个二分变量，值为0表示未绝育，1表示已绝育。模型方程如下：
+
+$$\ln ({\hat y_i}) = {\beta _0} + {\beta _1}{X_{i1}} + {\beta _2}{X_{i2}} +  \cdots {\beta _m}{X_{im}} + \xi$$
+Here, ${y_i}$ represents the frequency of dog bite incidents within a year, ${\beta _m}$ is the coefficient, $X_m$ are the explanatory variables, and $\xi$ represents the heterogeneity across observations.
+
+In negative binomial regression, where the conditional expectation $E(Y|X) = {e^{{\beta _0} + {\beta _1}{X_{i1}} + {\beta _2}{X_{i2}} +  \cdots {\beta _m}{X_{im}}}}$, the interpretation of the model's coefficients is as follows: when the explanatory variable ${X_k}$ increases by one unit, the average occurrence rate of dog bite incidents becomes ${e^{{\beta _k}}}$ times what it was originally.
+
+$$\frac{{E(Y|{X^*})}}{{E(Y|X)}} = \frac{{{e^{{\beta _0} + {\beta _1}{X_{i1}} +  \cdots  + {\beta _k}({X_{ik}} + 1) +  \cdots  + {\beta _m}{X_{im}}}}}}{{{e^{{\beta _0} + {\beta _1}{X_{i1}} +  \cdots  + {\beta _k}{X_{ik}} +  \cdots  + {\beta _m}{X_{im}}}}}} = {e^{{\beta _k}}}$$
+
+# Generalized Linear Mixed Model (GLMM)
+
+另一方面，本文进一步使用Generalized Linear Mixed Model (GLMM)验证所得的回归结果。
+
+The Generalized Linear Mixed Model (GLMM) is an extension of the Generalized Linear Model (GLM) and the Linear Mixed Model (LMM). GLMM consists of three main components: random effects, fixed effects, and a link function. Fixed effects represent the overall level parameters consistent across all observations, while random effects account for individual variability or group-level differences that may influence the response variable. The link function connects the linear predictor to the mean of the response variable distribution, allowing the dependent variable to deviate from a normal distribution and enabling modeling of various types of data, including binary, count, and continuous outcomes.
 
 # Conclusion
