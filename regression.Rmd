@@ -211,8 +211,43 @@ print(filter_model_summary)
 
 2. 交互效应可视化：
 
-使用最终模型进行交叉验证。图中红色虚线表示理想状态下的预测情况（即预测值等于实际值）。若点落在这条线附近，说明模型预测效果较好。若点的位置高于对角线，则模型低估了实际值；反之若点的位置低于对角线，则模型高估了实际值。
+2.1 交互效应图
 
+```{r}
+library(effects)
+
+interaction_effect_y_bo <- effect("year:borough", filter_model)
+plot(interaction_effect_y_bo,
+     main = "Interaction Effect of Year and Borough on Bite Count",
+     xlab = "Year",
+     ylab = "Predicted Bite Count")
+
+
+```
+```{r}
+library(ggeffects)
+
+# 提取交互效应预测
+interaction_preds <- ggpredict(filter_model, terms = c("year", "borough"))
+
+# 可视化交互效应
+ggplot(interaction_preds, aes(x = x, y = predicted, color = group)) +
+  geom_line() +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = 0.2) +
+  labs(
+    title = "Predicted Bite Counts by Year and Borough",
+    x = "Year",
+    y = "Predicted Bite Count",
+    color = "Borough"
+  ) +
+  theme_minimal()
+
+```
+
+
+3. 模型预测
+
+图中红色虚线表示理想状态下的预测情况（即预测值等于实际值）。若点落在这条线附近，说明模型预测效果较好。若点的位置高于对角线，则模型低估了实际值；反之若点的位置低于对角线，则模型高估了实际值。
 ```{r}
 # Predicted vs Actual Bite Count
 inter_predict = bites_by_group |> 
