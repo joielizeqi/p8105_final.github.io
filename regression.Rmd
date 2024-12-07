@@ -121,11 +121,11 @@ dog_licensing_df = read_csv("data/NYC_Dog_Licensing_Dataset.csv", na = c("NA", "
 
 # Negative Binomial Regression Analysis
 
-To measure the combined effects of year, dog background characteristics (i.e., breed, gender, age, and whether neutered) and the Borough they belong to on the incidence of dog bites, we first conduct a negative binomial regression analysis using records of dog bite incidents in New York.
+To measure the combined effects of year, dog background characteristics (i.e., gender and whether neutered) and the Borough they belong to on the incidence of dog bites, we first conduct a negative binomial regression analysis using records of dog bite incidents in New York.
 
 The negative binomial regression model is a type of count model designed for dependent variables that can only take non-negative integer values. From the Spatial Correlations section, the study area meets the three prerequisites for negative binomial regression: the dog bite incidents are not independent, exhibiting spatial clustering; the dependent variable shows overdispersion; and the frequency of dog bite incidents is sufficiently low.
 
-本文假设的因变量是各zipcode的狗咬伤事件发生数量，which呈现负二项分布。Predictor variables包括事件发生的年份和月份，狗的背景特征和事件发生区域。其中，年份被测量为一个区间级变量，值从1（对应于2015年）到7（对应于2021年）。事件发生的地区将被划分为值从1-6的变量，分别代表纽约市的5个区还有others。狗的gender是一个二分变量，值为0表示未知，1表示male，2表示female。类似的，狗的绝育状态也是一个二分变量，值为0表示未绝育，1表示已绝育。模型方程如下：
+The dependent variable hypothesized in the article is the number of dog bite incidents per zipcode, which follows a negative binomial distribution. The predictor variables include the year and month of the incident, characteristics of the dog, and the area where the incident occurred. The year is measured as an interval-level variable, with values from 1 (corresponding to 2015) to 7 (corresponding to 2021). The area of the incident is divided into variables ranging from 1 to 5, representing the five boroughs of New York City. The gender of the dog is a binary variable, with 1 indicating female and 2 indicating male. Similarly, the sterilization status of the dog is also a binary variable, with 0 indicating unsterilized and 1 indicating sterilized. The model equation is as follows:
 
 $$\ln ({\hat y_i}) = {\beta _0} + {\beta _1}{X_{i1}} + {\beta _2}{X_{i2}} +  \cdots {\beta _m}{X_{im}} + \xi$$
 Here, ${y_i}$ represents the frequency of dog bite incidents within a year, ${\beta _m}$ is the coefficient, $X_m$ are the explanatory variables, and $\xi$ represents the heterogeneity across observations.
@@ -247,4 +247,5 @@ summary(glmm_model)
 
 # Model 
 >>>>>>> 6e0a48bc06a0411fc9c5ffd605c67fd4cbef063b
+
 # Conclusion
