@@ -116,17 +116,34 @@ dog_licensing_df = read_csv("data/NYC_Dog_Licensing_Dataset.csv", na = c("NA", "
 ```
 
 # Variable features
-回归使用zipcode中累积的dogbite数量为因变量。
+
+The dependent variable hypothesized in the article is the number of dog bite incidents per zipcode. The predictor variables include the year and month of the incident, characteristics of the dog, and the area where the incident occurred. The year is measured as an interval-level variable, with values from 1 (corresponding to 2015) to 7 (corresponding to 2021). The area of the incident is divided into variables ranging from 1 to 5, representing the five boroughs of New York City. The gender of the dog is a binary variable, with 1 indicating female and 2 indicating male. Similarly, the sterilization status of the dog is also a binary variable, with 0 indicating unsterilized and 1 indicating sterilized.
+
+```{r Variable, message=FALSE, warning=FALSE}
+data <- data.frame(
+  `Variable` = c("dog_bite_incidents", "year", "month", "gender", "spay_neuter", "borough"),
+  `Range` = c(
+    "$\\mathbb{N}$",
+    "$\\{1, 2, 3, 4, 5, 6, 7\\}$",
+    "$\\{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12\\}$",
+    "$\\{1, 2\\}$",
+    "$\\{0, 1\\}$",
+    "$\\{1, 2, 3, 4, 5\\}$"
+  )
+)
+
+knitr::kable(data, format = "pipe", align = "l", caption = "Variable Implications")
+
+```
 
 # Negative Binomial Regression Analysis
 
 To measure the combined effects of year, dog background characteristics (i.e., gender and whether neutered) and the Borough they belong to on the incidence of dog bites, we first conduct a negative binomial regression analysis using records of dog bite incidents in New York.
 
-The negative binomial regression model is a type of count model designed for dependent variables that can only take non-negative integer values. From the Spatial Correlations section, the study area meets the three prerequisites for negative binomial regression: the dog bite incidents are not independent, exhibiting spatial clustering; the dependent variable shows overdispersion; and the frequency of dog bite incidents is sufficiently low.
-
-The dependent variable hypothesized in the article is the number of dog bite incidents per zipcode, which follows a negative binomial distribution. The predictor variables include the year and month of the incident, characteristics of the dog, and the area where the incident occurred. The year is measured as an interval-level variable, with values from 1 (corresponding to 2015) to 7 (corresponding to 2021). The area of the incident is divided into variables ranging from 1 to 5, representing the five boroughs of New York City. The gender of the dog is a binary variable, with 1 indicating female and 2 indicating male. Similarly, the sterilization status of the dog is also a binary variable, with 0 indicating unsterilized and 1 indicating sterilized. The model equation is as follows:
+The negative binomial regression model is a type of count model designed for dependent variables that can only take non-negative integer values. From the Spatial Correlations section, the study area meets the three prerequisites for negative binomial regression: the dog bite incidents are not independent, exhibiting spatial clustering; the dependent variable shows overdispersion; and the frequency of dog bite incidents is sufficiently low. Let the dependent variable follows a negative binomial distribution. The model equation is as follows:
 
 $$\ln ({\hat y_i}) = {\beta _0} + {\beta _1}{X_{i1}} + {\beta _2}{X_{i2}} +  \cdots {\beta _m}{X_{im}} + \xi$$
+
 Here, ${y_i}$ represents the frequency of dog bite incidents within a year, ${\beta _m}$ is the coefficient, $X_m$ are the explanatory variables, and $\xi$ represents the heterogeneity across observations.
 
 In negative binomial regression, where the conditional expectation $E(Y|X) = {e^{{\beta _0} + {\beta _1}{X_{i1}} + {\beta _2}{X_{i2}} +  \cdots {\beta _m}{X_{im}}}}$, the interpretation of the model's coefficients is as follows: when the explanatory variable ${X_k}$ increases by one unit, the average occurrence rate of dog bite incidents becomes ${e^{{\beta _k}}}$ times what it was originally.
@@ -192,7 +209,9 @@ summary(filter_model)
 
 ### Model evaluation
 
-使用最终模型进行交叉验证。图中红色虚线表示理想状态下的预测情况（即预测值等于实际值）。若点落在这条线附近，说明模型预测效果较好。若点的位置高于对角线，则模型低估了实际值；反之若点的位置低于对角线，则模型高估了实际值。
+Cross-validation of the final model is depicted in the following illustration, where the red dashed line represents the ideal prediction scenario (i.e., predicted values equal actual values). If points fall near this line, it indicates that the model predicts well. Points located above the diagonal line suggest that the model underestimates the actual values; conversely, if points are below the diagonal line, the model overestimates the actual values. 
+
+Overall, while the scatter plot shows a slight systematic deviation, the final negative binomial regression model still accurately predicts low and medium value areas. However, the error is larger in high-value areas, where actual values tend to fall below the predicted values. This may indicate a tendency of the model to overfit in regions with high incident counts.
 
 ```{r}
 # Predicted vs Actual Bite Count
@@ -208,19 +227,27 @@ ggplot(inter_predict, aes(x = predicted, y = bite_count)) +
   theme_minimal()
 ```
 
-此外，还可以通过残差模拟和诊断来评估拟合模型的质量。
+Additionally, the quality of the fitted model can be assessed through residual analysis and diagnostics, as illustrated in the following four plots.
 
-1. Residuals vs Fitted (残差与拟合值图)
-用于检查拟合值和残差之间是否存在系统性关系。理想情况下，残差应随机分布在横轴（拟合值）附近，无明显模式，即红色虚线（平滑曲线）应接近水平直线。如果有明显模式（如曲线形分布），可能表示模型拟合不足。
+*  Residual vs. Fitted Plot: 
 
-2. Q-Q Residuals (残差的 Q-Q 图)
-检查残差是否符合模型假设的分布。残差分布的尾部偏离正态分布。
+This graph helps to detect non-linearity, unequal error variances, and outliers. Ideally, the residuals should be randomly dispersed around the horizontal axis, meaning the red dashed line (a smooth curve) should be close to a horizontal straight line.
 
-3. Scale-Location (缩放位置图)
-检查残差的方差是否均匀（同方差性）。点的分布呈现条带状，且红色平滑线显示出非水平趋势。这表明残差方差可能随拟合值变化，存在异方差性。
+*   Q-Q Plot: 
 
-4. Residuals vs Leverage (残差与杠杆值图)
-检查是否存在高杠杆值的观测点（对模型拟合影响较大的点）。理想情况:大多数点应集中在低杠杆值区域。没有点超出 Cook’s 距离（虚线表示）。
+This plot is used to check whether the residuals conform to the distribution assumed by the model.
+
+残差分布的尾部偏离正态分布。
+
+*   Scale-Location Plot: 
+
+This plot shows the spread of residuals versus fitted values and helps to check for homoscedasticity (constant spread of residuals). A model that meets this assumption will show a horizontal line with randomly spread points.
+
+点的分布呈现条带状，且红色平滑线显示出非水平趋势。这表明残差方差可能随拟合值变化，存在异方差性。
+
+*   Residuals vs. Leverage Plot:
+
+This plot is critical for identifying observations with high leverage values—points that have a significant impact on the model's fit.  Ideally, no points should exceed the threshold set by Cook’s distance, indicated by the dashed lines.
 
 ```{r}
 library(DHARMa)
