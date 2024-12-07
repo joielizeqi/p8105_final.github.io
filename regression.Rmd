@@ -177,7 +177,23 @@ summary(model)
 
 ## With Interaction
 
-To further increase the precision of the model fit, interaction terms between variables were added. After using stepwise reduction to simplify the model complexity, the final negative binomial regression model is as follows.
+To further increase the precision of the model fit, interaction terms between variables were added. After using stepwise reduction to simplify the model complexity, the final negative binomial regression model is as follows:
+
+```{r final_NBR, message=FALSE, warning=FALSE}
+data <- data.frame(
+  `Main Effect` = c("year", "month", "gender", "spay_neuter", "borough", " "),
+  `Double Interaction Effect` = c(
+    "year * spay_neuter",
+    "year * borough",
+    "month * spay_neuter",
+    "gender * spay_neuter",
+    "gender * borough",
+    "spay_neuter * borough"
+  )
+)
+
+knitr::kable(data, format = "pipe", align = "l", caption = "Final Negative Binomial Regression Model", escape = FALSE)
+```
 
 ```{r, warning=FALSE, message=FALSE, include=FALSE}
 model_all_interactions <- glm.nb(
@@ -207,21 +223,12 @@ filter_model = glm.nb(bite_count ~ year + month + gender + spay_neuter +
 
 summary(filter_model)
 ```
-最终筛选得到的模型，主效应包括：`year` `month` `gender` `spay_neuter` `borough`。
-* 双重交互效应包括：year:spay_neuter：年份与绝育状态的交互。
-`year:borough`：年份与地区的交互。
-`month:spay_neuter`：月份与绝育状态的交互。
-`gender:spay_neuter`：性别与绝育状态的交互。
-`gender:borough`：性别与地区的交互。
-`spay_neuter:borough`：绝育状态与地区的交互。
-总结：最终得到的model包含了
 
 ## Model evaluation
 
 Cross-validation of the final model is depicted in the following illustration, where the red dashed line represents the ideal prediction scenario (i.e., predicted values equal actual values). If points fall near this line, it indicates that the model predicts well. Points located above the diagonal line suggest that the model underestimates the actual values; conversely, if points are below the diagonal line, the model overestimates the actual values. 
 
 Overall, while the scatter plot shows a slight systematic deviation, the final negative binomial regression model still accurately predicts low and medium value areas. However, the error is larger in high-value areas, where actual values tend to fall below the predicted values. This may indicate a tendency of the model to overfit in regions with high incident counts.
-
 
 ### Significance evaluation
 
@@ -242,9 +249,8 @@ plot(interaction_effect_y_bo,
      main = "Interaction Effect of Year and Borough on Bite Count",
      xlab = "Year",
      ylab = "Predicted Bite Count")
-
-
 ```
+
 ```{r}
 library(ggeffects)
 
@@ -262,7 +268,6 @@ ggplot(interaction_preds, aes(x = x, y = predicted, color = group)) +
     color = "Borough"
   ) +
   theme_minimal()
-
 ```
 
 ### Prediction
@@ -307,27 +312,7 @@ residuals_sim = simulateResiduals(model_stepwise)
 plot(model_stepwise)
 ```
 
-主要问题:
-非正态分布:
-
-Q-Q 图和残差分布图表明残差的分布偏离正态分布，可能需要对响应变量（如 bite_count）进行变换（如对数变换）。残差分布的尾部偏离正态分布。
-异方差性:
-
-Scale-Location 图显示残差的方差随拟合值变化，可能需要引入更灵活的分布（如负二项分布或零膨胀模型）。点的分布呈现条带状，且红色平滑线显示出非水平趋势。这表明残差方差可能随拟合值变化，存在异方差性。
-高杠杆点和异常点:
-
-Residuals vs Leverage 图显示存在高杠杆点（如 832 和 637）。需要检查这些点是否数据录入错误，或者是否应在模型中单独处理。
-改进模型建议:
-检查分布假设:
-
-如果模型使用的是泊松回归（GLM），可能需要切换到负二项分布（如 glm.nb()）。
-使用残差模拟工具（如 DHARMa）进一步诊断残差分布。
-调整异方差问题:
-
-引入加权最小二乘回归或重新指定响应变量的分布。
-处理异常点:
-
-逐一检查高杠杆点和残差异常点，考虑是否需要移除或调整。
+From the analysis of the four diagnostic plots, the fitted model exhibits several shortcomings. Firstly, the tails of the residual distribution slightly deviate from the assumed negative binomial distribution. This deviation suggests that the residuals might not be perfectly modeled, indicating potential issues with the model fit or the distributional assumptions. Secondly, the distribution of points in the Scale-Location plot appears striated, and the red smooth line shows a non-horizontal trend. This pattern indicates that the variance of the residuals may change with fitted values, suggesting the presence of heteroscedasticity. This non-constant variance can affect the reliability of the model's standard errors and confidence intervals.Lastly, the Residuals vs Leverage Plot reveals the presence of points with high leverage, which could be overly influencing the model's predictions. These high leverage points warrant further investigation to determine whether they should be removed or adjusted to improve model accuracy and robustness.
 
 # Regularized Model (Lasso)
 
@@ -378,7 +363,8 @@ print(lasso_coefficients_df)
 
 ```
 
-* 使用Lasso回归的结果进行预测
+Using the results of Lasso regression for prediction, the results are as follows:
+
 ```{r}
 final_model <- glmnet(x, y, family = "poisson", alpha = 1, lambda = best_lambda)
 final_model
