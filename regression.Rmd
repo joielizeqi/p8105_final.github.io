@@ -28,4 +28,18 @@ $$\frac{{E(Y|{X^*})}}{{E(Y|X)}} = \frac{{{e^{{\beta _0} + {\beta _1}{X_{i1}} +  
 
 The Generalized Linear Mixed Model (GLMM) is an extension of the Generalized Linear Model (GLM) and the Linear Mixed Model (LMM). GLMM consists of three main components: random effects, fixed effects, and a link function. Fixed effects represent the overall level parameters consistent across all observations, while random effects account for individual variability or group-level differences that may influence the response variable. The link function connects the linear predictor to the mean of the response variable distribution, allowing the dependent variable to deviate from a normal distribution and enabling modeling of various types of data, including binary, count, and continuous outcomes.
 
+Let the response variable $y$ belongs to the exponential family, its conditional distribution can be expressed as follows:
+
+$$f(y|b) = \prod\limits_{i = 1}^n {f({y_i}|{\eta _i})}$$
+
+Where ${\eta _i} = {x_i}^ \top \beta  + {z_i}^ \top b$. Additionally, the random effect $b$ is assumed to be distributed according to $b \sim {\rm N}(0,\Sigma )$.
+
+Therefore the GLMM is structured as follows:
+
+$$g(\vec {\rm E}(y)) = {\rm X}\vec \beta  + {\rm Z}\vec b + \varepsilon$$
+
+In the model, $g( \cdot )$ represents the link function, which connects the expected value of the response variable to the linear predictor. Here, the logarithm function $g(\mu ) = \ln (\mu )$ is used, which is appropriate for the Poisson distribution. $\vec{\mathrm{E}}(y)$ denotes the vector of expected values for the response variable, and $\varepsilon$ represents the error term, capturing random noise or the unexplained variance. ${\rm X}\vec \beta  + {\rm Z}\vec b$ represents the linear combination of fixed and random effects, ${\rm X}\vec \beta$ is used to explain global trends, and ${\rm Z}\vec b$ is utilized to capture differences among observations. In this context, ${\rm X}$ is the design matrix for fixed effects, which is of order $n \times p$, where $n$ is the number of observations and $p$ is the number of fixed effect variables; $\vec \beta$ is the vector of coefficients for fixed effects, with each element representing the regression coefficient of a fixed effect variable. Similarly, ${\rm Z}$ also serves as the design matrix for random effects, of order $n \times q$, where $q$ is the number of random effect variables. $\vec b$ is the vector of coefficients for random effects, representing inter-group deviations used to explain random differences between groups. The model assumes $b \sim {\rm N}(0,\Sigma )$, thereby the random effects are normally distributed with a mean of $0$ and a covariance matrix $\Sigma$.
+
+对于狗咬伤事件数据集，响应变量$y$为每月每zipcode的事件的发生，固定效应包括温度和湿度。随机效应为不同实验员（10 个实验员）。因此，对于所有响应变量，${\rm X}$是包含年份，月份，地区，性别，绝育状态的矩阵；$\vec \beta$为固定效应系数；${\rm X}$表示每个响应变量所属品种的矩阵；$\vec b$为每个品种的偏差值（随机效应）。
+
 # Conclusion

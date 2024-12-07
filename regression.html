@@ -447,6 +447,59 @@ the mean of the response variable distribution, allowing the dependent
 variable to deviate from a normal distribution and enabling modeling of
 various types of data, including binary, count, and continuous
 outcomes.</p>
+<p>Let the response variable <span class="math inline">\(y\)</span>
+belongs to the exponential family, its conditional distribution can be
+expressed as follows:</p>
+<p><span class="math display">\[f(y|b) = \prod\limits_{i = 1}^n
+{f({y_i}|{\eta _i})}\]</span></p>
+<p>Where <span class="math inline">\({\eta _i} = {x_i}^ \top \beta  +
+{z_i}^ \top b\)</span>. Additionally, the random effect <span
+class="math inline">\(b\)</span> is assumed to be distributed according
+to <span class="math inline">\(b \sim {\rm N}(0,\Sigma )\)</span>.</p>
+<p>Therefore the GLMM is structured as follows:</p>
+<p><span class="math display">\[g(\vec {\rm E}(y)) = {\rm X}\vec
+\beta  + {\rm Z}\vec b + \varepsilon\]</span></p>
+<p>In the model, <span class="math inline">\(g( \cdot )\)</span>
+represents the link function, which connects the expected value of the
+response variable to the linear predictor. Here, the logarithm function
+<span class="math inline">\(g(\mu ) = \ln (\mu )\)</span> is used, which
+is appropriate for the Poisson distribution. <span
+class="math inline">\(\vec{\mathrm{E}}(y)\)</span> denotes the vector of
+expected values for the response variable, and <span
+class="math inline">\(\varepsilon\)</span> represents the error term,
+capturing random noise or the unexplained variance. <span
+class="math inline">\({\rm X}\vec \beta  + {\rm Z}\vec b\)</span>
+represents the linear combination of fixed and random effects, <span
+class="math inline">\({\rm X}\vec \beta\)</span> is used to explain
+global trends, and <span class="math inline">\({\rm Z}\vec b\)</span> is
+utilized to capture differences among observations. In this context,
+<span class="math inline">\({\rm X}\)</span> is the design matrix for
+fixed effects, which is of order <span class="math inline">\(n \times
+p\)</span>, where <span class="math inline">\(n\)</span> is the number
+of observations and <span class="math inline">\(p\)</span> is the number
+of fixed effect variables; <span class="math inline">\(\vec
+\beta\)</span> is the vector of coefficients for fixed effects, with
+each element representing the regression coefficient of a fixed effect
+variable. Similarly, <span class="math inline">\({\rm Z}\)</span> also
+serves as the design matrix for random effects, of order <span
+class="math inline">\(n \times q\)</span>, where <span
+class="math inline">\(q\)</span> is the number of random effect
+variables. <span class="math inline">\(\vec b\)</span> is the vector of
+coefficients for random effects, representing inter-group deviations
+used to explain random differences between groups. The model assumes
+<span class="math inline">\(b \sim {\rm N}(0,\Sigma )\)</span>, thereby
+the random effects are normally distributed with a mean of <span
+class="math inline">\(0\)</span> and a covariance matrix <span
+class="math inline">\(\Sigma\)</span>.</p>
+<p>对于狗咬伤事件数据集，响应变量<span
+class="math inline">\(y\)</span>为每月每zipcode的事件的发生，固定效应包括温度和湿度。随机效应为不同实验员（10
+个实验员）。因此，对于所有响应变量，<span class="math inline">\({\rm
+X}\)</span>是包含年份，月份，地区，性别，绝育状态的矩阵；<span
+class="math inline">\(\vec \beta\)</span>为固定效应系数；<span
+class="math inline">\({\rm
+X}\)</span>表示每个响应变量所属品种的矩阵；<span
+class="math inline">\(\vec
+b\)</span>为每个品种的偏差值（随机效应）。</p>
 </div>
 <div id="conclusion" class="section level1">
 <h1>Conclusion</h1>
