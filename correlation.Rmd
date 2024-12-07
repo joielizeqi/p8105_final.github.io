@@ -1,5 +1,5 @@
 ---
-title: "Correlation between dog bite incidents and the geographical distribution of dogs"
+title: "Spatial heterogeneity of dog bite incidents and dog license"
 output:
   html_document:
     code_folding: hide
@@ -7,9 +7,6 @@ output:
     toc: true
     toc_float: true
 ---
-# Spatial distribution of dog bite incidents
-
-# Spatial heterogeneity of dog bite incidents and dog license
 
 ```{r setup, include=FALSE}
 library(tidyverse)
