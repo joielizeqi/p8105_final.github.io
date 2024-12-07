@@ -18,8 +18,12 @@ navbar:
       menu: 
         - text: "Dog bite incidence trends"
           href: trends.html
-        - text: "Spatial correlations"
-          href: correlation.html
+        - text: "Bite-to-license spatial correlation"
+          menu: 
+          - text: "spatial distribution on NYC map"
+            href: distribution.html
+          - text: "spatial correlation using Moran's I"
+            href: correlation.html
         - text: "Modeling dog bite incidences"
           href: regression.html
     - text: "Shiny App"

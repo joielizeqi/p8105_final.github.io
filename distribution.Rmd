@@ -1,0 +1,95 @@
+---
+title: "Spatial distribution of dog bite incidents and dog licenses"
+output:
+  html_document:
+    code_folding: hide
+    always_allow_html: true
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(knitr)
+library(rvest)
+library(broom)
+library(dplyr)
+library(purrr)
+library(readxl)
+library(plotly)
+library(reshape2)
+```
+
+```{r data, include=FALSE, message=FALSE}
+url = "https://p8105.com/data/zip_codes.html"
+ny_zip_codes = read_html(url) |>
+  html_table() |> 
+  data.frame() |> 
+  janitor::clean_names() |> 
+  mutate(
+    borough = factor(
+      county,
+      levels=c("Bronx","Kings","New York", "Queens","Richmond"),
+      labels=c("Bronx","Brooklyn","Manhattan","Queens",
+ "Staten Island"))) 
+
+dog_bites_df = read_csv("data/Dog_Bites_Data.csv", na = c("NA", "", ".")) |> 
+  janitor::clean_names() |> 
+  rename_with(~ gsub("^x", "", .))
+
+# glimpse(dog_bites_df)
+# summary(dog_bites_df)
+unique_breeds <- dog_bites_df %>%
+  pull(breed) %>%
+  unique() %>%
+  paste(collapse = ", ")
+
+dog_bites_clean = dog_bites_df |> 
+  mutate(date_of_bite = as.Date(date_of_bite, format = "%B %d %Y")) |> 
+  mutate(year = format(date_of_bite, "%Y"),
+         month = format(date_of_bite, "%m"),
+         day = format(date_of_bite, "%d")) |> 
+  mutate(year = as.factor(as.numeric(year)),
+         month = factor(as.numeric(month), levels = 1:12),
+         day = as.factor(as.numeric(day))
+         ) |> 
+  mutate(breed = str_to_lower(breed))
+
+dog_licensing_df = read_csv("data/NYC_Dog_Licensing_Dataset.csv", na = c("NA", "", ".")) |> 
+  janitor::clean_names() |> 
+  rename_with(~ gsub("^x", "", .))
+```
+
+
+
+# Relationship between dog licenses and dog bites
+
+```{r message=FALSE, warning=FALSE}
+valid_zipcodes = pull(ny_zip_codes, zip_code)
+bites_by_zip = dog_bites_clean |>
+  group_by(zip_code) |>
+  summarise(Bite_Count = n())
+
+licenses_by_zip = dog_licensing_df |>
+  group_by(zip_code) |>
+  summarise(License_Count = n())
+zip_data = merge(bites_by_zip, licenses_by_zip, by = "zip_code", all = TRUE) |> 
+  mutate(
+    zip_code = as.factor(zip_code)
+  ) |> 
+  filter(zip_code %in% valid_zipcodes) |> 
+  filter(!is.na(License_Count), !is.na(Bite_Count))
+
+scatter_plot_interactive = ggplotly(
+  ggplot(data = zip_data, aes(x = License_Count, y = Bite_Count)) +
+    geom_point(color = "blue", alpha = 0.6) +
+    geom_smooth(method = "lm", color = "red") +
+    labs(title = "Relationship", x = "licenses", y = "Bite") +
+    theme_minimal()
+)
+
+scatter_plot_interactive
+```
+
+
+
