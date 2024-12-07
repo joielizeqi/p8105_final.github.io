@@ -191,7 +191,7 @@ log_best_lambda <- log(best_lambda)
 
 $\lambda$ is the regularization parameter in Lasso regression, controlling variable selection and the sparsity of the model. Finding the optimal $\lambda$ value is crucial as it balances model complexity and predictive performance. The ideal $\lambda$ value, derived from cross-validation, minimizes model error. For this study, the optimal $\lambda$ has been determined to be 0.005529689. 
 
-```{r cv_results, message=FALSE}
+```{r cv_results, warning=FALSE, message=FALSE}
 ggplot(cv_results, aes(x = log_lambda, y = mean_mse)) +
   geom_line(color = "blue", size = 1) +
   geom_ribbon(aes(ymin = lower_mse, ymax = upper_mse), alpha = 0.2, fill = "blue") +
@@ -243,7 +243,6 @@ library(MASS)
 
 model = glm.nb(bite_count ~ year + month + gender + spay_neuter + borough, data = bites_by_group)
 
-summary(model)
 model_summary <- tidy(model) %>%
   mutate(
     significance = case_when(
@@ -267,9 +266,9 @@ kable(
 
 模型还需要进一步evaluate。
 
-### evaluation
+### Evaluation
 
-**Multicollinearity Check**
+After obtaining the fitted results, it is crucial to perform a multicollinearity test on the model to ensure the reliability of the regression coefficients. Multicollinearity can severely affect the interpretability of the model and can lead to overinflated standard errors, making it difficult to discern the true effect of each predictor.
 
 ```{r vif, warning=FALSE, message=FALSE}
 library(car)
@@ -290,17 +289,15 @@ kable(
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = TRUE)
 ```
 
-GVIF:
+Generalized Variance Inflation Factor (GVIF) measures the multicollinearity in the regression model. A GVIF value greater than 10 generally indicates a high multicollinearity issue. All GVIF values are close to 1, suggesting no significant multicollinearity.
 
-Measures the multicollinearity in the regression model. A GVIF value greater than 10 generally indicates a high multicollinearity issue. All GVIF values are close to 1, suggesting no significant multicollinearity.
+Scaled GVIF adjusts GVIF based on the degrees of freedom to make it comparable across variables. It is defined as $GVIF^{(1/(2*Df))}$
 
-GVIF^(1/(2*Df)):
+As shown in the table above, the GVIF and scaled GVIF are all close to 1, indicating that there is no significant multicollinearity in the final model.
 
-A scaled version of GVIF for categorical variables. This value adjusts GVIF based on the degrees of freedom to make it comparable across variables. In the results, all values are very close to 1, further confirming no multicollinearity.
+As shown in the table above, results does not exhibit multicollinearity among the predictors, as all GVIF values and their scaled counterparts are well below the threshold of concern (commonly 10 or higher). This indicates that all predictors can be reliably used in regression model without the risk of biased coefficients caused by multicollinearity.
 
-Therefore, `model` does not exhibit multicollinearity among the predictors, as all GVIF values and their scaled counterparts are well below the threshold of concern (commonly 10 or higher). This indicates that all predictors can be reliably used in regression model without the risk of biased coefficients caused by multicollinearity.
-
-**Residual Analysis**
+#### Residual Analysis
 
 ```{r residuals_sim, warning=FALSE, message=FALSE}
 library(DHARMa)
@@ -354,22 +351,12 @@ knitr::kable(data, format = "pipe", align = "l", caption = "Final Negative Binom
 
 The final model with interaction is as follows:
 
-```{r, warning=FALSE}
+```{r final_interaction}
 filter_model = glm.nb(bite_count ~ year + month + gender + spay_neuter + 
     borough + year:spay_neuter + year:borough + month:spay_neuter + 
     gender:spay_neuter + gender:borough + spay_neuter:borough, 
     data = bites_by_group)
-```
 
-### Model evaluation
-
-Cross-validation of the final model is depicted in the following illustration, where the red dashed line represents the ideal prediction scenario (i.e., predicted values equal actual values). If points fall near this line, it indicates that the model predicts well. Points located above the diagonal line suggest that the model underestimates the actual values; conversely, if points are below the diagonal line, the model overestimates the actual values. 
-
-Overall, while the scatter plot shows a slight systematic deviation, the final negative binomial regression model still accurately predicts low and medium value areas. However, the error is larger in high-value areas, where actual values tend to fall below the predicted values. This may indicate a tendency of the model to overfit in regions with high incident counts.
-
-#### Significance evaluation
-
-```{r}
 filter_model_summary <- tidy(filter_model, exponentiate = TRUE, conf.int = TRUE)
 
 kable(
@@ -379,6 +366,12 @@ kable(
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = TRUE) %>%
   scroll_box(height = "400px")
 ```
+
+### Evaluation
+
+Cross-validation of the final model is depicted in the following illustration, where the red dashed line represents the ideal prediction scenario (i.e., predicted values equal actual values). If points fall near this line, it indicates that the model predicts well. Points located above the diagonal line suggest that the model underestimates the actual values; conversely, if points are below the diagonal line, the model overestimates the actual values. 
+
+Overall, while the scatter plot shows a slight systematic deviation, the final negative binomial regression model still accurately predicts low and medium value areas. However, the error is larger in high-value areas, where actual values tend to fall below the predicted values. This may indicate a tendency of the model to overfit in regions with high incident counts.
 
 #### Interaction effect visualization
 
@@ -409,7 +402,26 @@ ggplot(interaction_preds, aes(x = x, y = predicted, color = group)) +
   theme_minimal()
 ```
 
-#### 残差分析
+#### Residual analysis
+
+Additionally, the quality of the fitted model can be assessed through residual analysis and diagnostics, as illustrated in the following four plots.
+
+*  Residual vs. Fitted Plot: 
+
+This graph helps to detect non-linearity, unequal error variances, and outliers. Ideally, the residuals should be randomly dispersed around the horizontal axis, meaning the red dashed line (a smooth curve) should be close to a horizontal straight line.
+
+*   Q-Q Plot: 
+
+This plot is used to check whether the residuals conform to the distribution assumed by the model.
+
+*   Scale-Location Plot: 
+
+This plot shows the spread of residuals versus fitted values and helps to check for homoscedasticity (constant spread of residuals). A model that meets this assumption will show a horizontal line with randomly spread points.
+
+*   Residuals vs. Leverage Plot:
+
+This plot is critical for identifying observations with high leverage values—points that have a significant impact on the model's fit. Ideally, no points should exceed the threshold set by Cook’s distance, indicated by the dashed lines.
+
 ```{r, warning=FALSE, message=FALSE}
 library(DHARMa)
 residuals_sim = simulateResiduals(model_stepwise)
@@ -435,26 +447,6 @@ ggplot(inter_predict, aes(x = predicted, y = bite_count)) +
        y = "Actual Bite Count") +
   theme_minimal()
 ```
-
-Additionally, the quality of the fitted model can be assessed through residual analysis and diagnostics, as illustrated in the following four plots.
-
-*  Residual vs. Fitted Plot: 
-
-This graph helps to detect non-linearity, unequal error variances, and outliers. Ideally, the residuals should be randomly dispersed around the horizontal axis, meaning the red dashed line (a smooth curve) should be close to a horizontal straight line.
-
-*   Q-Q Plot: 
-
-This plot is used to check whether the residuals conform to the distribution assumed by the model.
-
-*   Scale-Location Plot: 
-
-This plot shows the spread of residuals versus fitted values and helps to check for homoscedasticity (constant spread of residuals). A model that meets this assumption will show a horizontal line with randomly spread points.
-
-*   Residuals vs. Leverage Plot:
-
-This plot is critical for identifying observations with high leverage values—points that have a significant impact on the model's fit. Ideally, no points should exceed the threshold set by Cook’s distance, indicated by the dashed lines.
-
-
 
 # Generalized Linear Mixed Model (GLMM)
 
