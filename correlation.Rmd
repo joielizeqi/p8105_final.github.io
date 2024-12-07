@@ -12,6 +12,7 @@ output:
 library(tidyverse)
 library(ggplot2)
 library(knitr)
+library(kableExtra)
 
 library(sf)
 library(spdep)
@@ -257,7 +258,9 @@ colnames(data) <- c(
   "$Implication$"
 )
 
-kable(data, format = "pipe", align = "c", caption = "Implications of Local Moran's I")
+kable(data, format = "html", escape = FALSE, caption = "Implications of Local Moran's I") |>
+  kable_styling(full_width = FALSE) |>
+  column_spec(3, width = "4cm") 
 ```
 
 The local Moran's I for both dog bite incidents and dog licenses in each zip code are displayed in the map below. Zip code areas highlighted in red exhibit significant high-high spatial clustering for dog bite incidents, while those outlined in yellow show significant high-high clustering for dog licenses. This aligns with the characteristics of the study area. It is generally believed that dog owners tend to walk their dogs near their homes. Therefore, dogs with a higher likelihood of causing harm are more likely to impact nearby zip codes, leading to clusters of high incidence areas for dog bites. Given this behavior, it is reasonable that there are no significant high-low or low-high clustering patterns for dog bite incidents in the study area. Moreover, if an area with dog bite incidents shows a significant low-low clustering, it simply indicates that this neighboring region has fewer dogs compared to others. As there is no significant low-low clustering of dog licenses in New York City, the absence of significant low-low clustering of dog bite incidents is also justified.
