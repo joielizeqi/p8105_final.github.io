@@ -1,0 +1,124 @@
+---
+title: "Map_for_home"
+author: "Weiqi Liang"
+date: '`r Sys.Date()`'
+output: html_document
+---
+
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(knitr)
+
+library(sf)
+library(spdep)
+library(grid)
+library(gridExtra)
+library(ape)
+library(tmap)
+library(tmaptools)
+library(htmltools)
+```
+
+```{r load_shp&bites, message=FALSE, warning=FALSE}
+# read shp file
+shp_NY = st_read("./data/NYC_zipcode/ZIP_CODE_040114.shp") |>
+  select(-BLDGZIP, -PO_NAME, -POPULATION, -STATE, -URL)
+
+# read Dog_Bites_Data
+bite = read.csv("./data/Dog_Bites_Data.csv", 
+           na = c("NA", ".", "")) |>
+  janitor::clean_names() |>
+ mutate(
+    date_of_bite = mdy(date_of_bite), 
+    year = year(date_of_bite)
+  ) |>
+  filter(grepl("^\\d{5}$", zip_code)) |>
+  filter(zip_code %in% shp_NY$ZIPCODE)
+```
+
+```{r load_license, message = FALSE}
+# read License Data
+license = read.csv("./data/NYC_Dog_Licensing_Dataset.csv", 
+           na = c("NA", ".", "")) |>
+  janitor::clean_names() |>
+  mutate(license_expired_date = as.Date(license_expired_date, format = "%m/%d/%Y")) |>
+   mutate(zip_code = as.character(zip_code)) |>
+  filter(grepl("^\\d{5}$", zip_code))
+
+license_2019 = license |>
+  filter(license_expired_date >= as.Date("2020-01-01")) |> # 筛选日期
+  mutate(extract_year = 2019)  # 修改 Extract Year
+
+license_2020 = license |>
+  filter(license_expired_date >= as.Date("2021-01-01")) |> # 筛选日期
+  mutate(extract_year = 2020) 
+
+license_2021 = license |>
+  filter(license_expired_date >= as.Date("2022-01-01")) |> # 筛选日期
+  mutate(extract_year = 2021)  
+
+license = license_2019 |>
+  bind_rows(license_2020) |>
+  bind_rows(license_2021) |>
+  bind_rows(license)
+
+rm(license_2019)
+rm(license_2020)
+rm(license_2021)
+
+license_counts = license |>
+  group_by(zip_code) |>  
+  summarise(license_count = n())  
+```
+
+```{r clean_for_map}
+bite_counts = bite |>
+  group_by(zip_code) |>  
+  summarise(bite_count = n()) 
+```
+
+
+```{r prepare_map, message = FALSE}
+shp_NY_home = shp_NY |>
+  left_join(bite_counts, 
+            by = c("ZIPCODE" = "zip_code")
+            ) |>  
+  mutate(bite_count = ifelse(is.na(bite_count), 0, bite_count)) |>
+  left_join(license_counts, 
+            by = c("ZIPCODE" = "zip_code")
+            ) |>  
+   mutate(license_count = ifelse(is.na(license_count), 0, license_count))
+```
+
+```{r map, message = FALSE}
+map_home = tm_shape(shp_NY_home, name = "License Count") +
+  tm_polygons("license_count", palette = "Greens", title = "License Count") +
+  tm_shape(shp_NY_home |> filter(bite_count > 0), name = "Bite Count") +  
+  tm_bubbles(
+    "bite_count", 
+    col = "pink",
+    border.col = NA, 
+    alpha = 0.7,  
+    scale = 2,  
+    title.size = "Bite Count (Custom Gradient)",
+  ) +
+  tm_layout(title = "Spatial Distribution of Dog Bite Count and License Count")
+
+tmap_save(map_home, "map_home.html")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
