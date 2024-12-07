@@ -7,7 +7,7 @@ output:
     toc: true
     toc_float: true
 ---
-```{r, message = FALSE, warning = FALSE}
+```{r, message = FALSE, warning = FALSE, include = FALSE}
 library(tidyverse)
 library(knitr)
 library(rvest)
@@ -161,7 +161,7 @@ summary(model)
 
 To further increase the precision of the model fit, interaction terms between variables were added. After using stepwise reduction to simplify the model complexity, the final negative binomial regression model is as follows.
 
-```{r, warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE, include=FALSE}
 model_all_interactions <- glm.nb(
   formula = bite_count ~ 
     year + month + gender + spay_neuter + borough +
@@ -189,8 +189,27 @@ filter_model = glm.nb(bite_count ~ year + month + gender + spay_neuter +
 
 summary(filter_model)
 ```
+最终筛选得到的模型，主效应包括：`year` `month` `gender` `spay_neuter` `borough`。
+* 双重交互效应包括：year:spay_neuter：年份与绝育状态的交互。
+`year:borough`：年份与地区的交互。
+`month:spay_neuter`：月份与绝育状态的交互。
+`gender:spay_neuter`：性别与绝育状态的交互。
+`gender:borough`：性别与地区的交互。
+`spay_neuter:borough`：绝育状态与地区的交互。
+总结：最终得到的model包含了
 
 ### Model evaluation
+
+1. 首先进行显著性评估
+
+```{r}
+
+filter_model_summary <- tidy(filter_model, exponentiate = TRUE, conf.int = TRUE)
+print(filter_model_summary)
+
+```
+
+2. 交互效应可视化：
 
 使用最终模型进行交叉验证。图中红色虚线表示理想状态下的预测情况（即预测值等于实际值）。若点落在这条线附近，说明模型预测效果较好。若点的位置高于对角线，则模型低估了实际值；反之若点的位置低于对角线，则模型高估了实际值。
 
