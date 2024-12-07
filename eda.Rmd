@@ -150,10 +150,9 @@ top_breed_inter
 
 ```
 
-The top 10 dog breeds that contributed to the most dog bite incidences are shown in the pie chart above. Pit bulls are involved in the most dog bite incidences, with a leading proportion of 45.3%, which is almost half of the incidences recorded in New York City. Shih Tzu is the second most frequent breed in these incidences (8.27%), followed by Chihuahua (7.31%) and other breeds.
+The top 10 dog breeds that contributed to the most dog bite incidences are shown in the pie chart above. Besides the mixed and the unknown categories, the breed that contributed to the most dog bite incidences are bulls (29.2%), followed by shepards (5.06%) and shih tzus (4.51%). 
 
-In the pie chart, we notice that 5.88% of incidences were attributed to the American pit bull mix and 5.77% were attributed to the American pit bull terriers. Since the specific ancestry information for these dogs were not documented, it is unclear whether they are more related to the pit bull breed or the mixed breed. If they were to be classified as pit bulls, the pit bull category would make up an even bigger proportion of total dog bite incidences than it does now.
-
+Despite delibrate data cleaning, there are still many dogs in our dataset whose breed information were either unknown or too complicated to be grouped into a single breed. The mixed and unknown categories consist of almost half of the pie, which indicates that there might be errors in the data collection process in the first place that could likely affect the make up of this pie chart and our conclusion.
 
 
 ```{r, warning=FALSE, message=FALSE}
@@ -177,7 +176,7 @@ wordcloud(
    
 ```
 
-COMMENT
+The above word cloud consists of all breeds recorded in the dog bite incidence dataset. The most frequent breed names are "bulls," "shepards," "shih tzus," and "chihuahuas," which is consistent with results from the pie chart. 
 
 # Dog bites by gender and neuter status
 ```{r}
@@ -200,49 +199,7 @@ Across dog bite data with known genders, dog bite incidences appeared more than 
 
 It is worth noting that a significant portion of dog bite data had missing data for the dogs' gender, and that among the unknown gender group, most dogs appeared to be neutered. The amount of missing information in these two variables could be leading us to an incomplete analysis of how dog bites were associated with gender and neuter status.
 
-# Dog bites by borough
-```{r}
-ggplot(dog_bites_clean, aes(x = borough)) +
-  geom_bar(fill = "skyblue") +
-  theme_minimal() +
-  labs(title = "Distribution of Dog Bites by Borough",
-       x = "Borough",
-       y = "Count of Dog Bites")
-```
-
-COMMENT
-
-# Dog bites by time
-```{r, warning=FALSE, message=FALSE}
-bites_by_year_month = dog_bites_clean |>
-  count(year, month, name = "Bite_Count") |> 
-  mutate(hover_text = paste("Year:", year, "<br>Month:", month, "<br>Count:", Bite_Count))
-```
-
-```{r, warning=FALSE, message=FALSE}
-heatmap_interactive = plot_ly(
-  data = bites_by_year_month,
-  x = ~month,
-  y = ~year,
-  z = ~Bite_Count,
-  type = "heatmap",
-  colors = c("white", "red"),
-  text = ~hover_text,
-  hoverinfo = "text"
-) |>
-  layout(
-    title = "Dog Bites by Month & Year",
-    xaxis = list(title = "Month"),
-    yaxis = list(title = "Year"),
-    colorbar = list(title = "Count for Dog Bites")
-  )
-
-heatmap_interactive
-```
-
-COmment
-
-# Dog bites by licensing data
+# Dog bites by license counts
 ```{r, warning=FALSE, message=FALSE}
 breed_counts <- dog_licensing_df |>
   mutate(breed_name = tolower(breed_name)) |> 
@@ -260,8 +217,9 @@ wordcloud(words = breed_counts$breed_name,
           colors = brewer.pal(8, "Dark2"))
 ```
 
-COMMENT
+Dog licensing data can help us infer the dog populations living in each borough, since it is required for all dogs living in New York City to be licensed. The word cloud above illustrates all the breed names recorded in the dog licensing dataset. The most notable and frequent breed names are: shih tzu, chihuahua, labrador retriever, maltese, etc.
 
+# Dog bites by borough
 ```{r, warning=FALSE, message=FALSE}
 ny_zip_codes_filtered = ny_zip_codes |> 
   select(zip_code, borough)
@@ -286,9 +244,7 @@ borough_data_long = borough_data |>
   pivot_longer(cols = c("License_Count", "Bite_Count"),
                names_to = "Count_Type",
                values_to = "Count")
-```
 
-```{r, warning=FALSE, message=FALSE}
 borough_grouped_bar_plot = ggplot(borough_data_long, aes(x = borough, y = Count, fill = Count_Type)) +
   geom_bar(stat = "identity", position = position_dodge(width = 0.7), width = 0.6) +
   scale_fill_manual(name = "Count Type", values = c("License_Count" = "skyblue", "Bite_Count" = "orange"),
@@ -301,7 +257,7 @@ borough_interactive = ggplotly(borough_grouped_bar_plot)
 borough_interactive
 ```
 
-COMMENT
+Looking at license counts across boroughs, Manhattan has the most licensed dogs, followed by Brooklyn, Queens, Bronx, and Staten Island. Looking at dog bite incidences across these boroughs, however, Queens reported the most incidences, followed by Manhattan, Brooklyn, Bronx, and lastly Staten Island. The mismatch between these two sets of bar likely implies that Queens may be a hotspot for dog bite incidences. We will take a closer look at this by analyzing the bite-to-licnese ratio in the pie charts below.
 
 ```{r, warning=FALSE, message=FALSE}
 bite_borough_data = borough_data |>
@@ -352,9 +308,7 @@ ratio_pie_interactive = plot_ly(
   domain = list(x = c(0.7, 1)), 
   marker = list(colors = RColorBrewer::brewer.pal(n = length(rate_borough_data$borough), name = "Set3"))
 ) 
-```
 
-```{r, warning=FALSE, message=FALSE}
 combined_pies = subplot(
   bite_pie_interactive, 
   license_pie_interactive, 
@@ -364,4 +318,5 @@ combined_pies = subplot(
 
 combined_pies
 ```
-COMMENT
+
+The first and second pie charts display the proportions of dog bites and dog licenses by boroughs, and they are consistent with the bar plot above. The third pie chart displays the bite-to-license ratios by boroughs. Looking at this metric, Queens has a high ratio of 23.6% but is topped by Bronx, which has the highest bite-tolicence ratio of 30.6%. This means that Bronx is also a possible hotspot for dog bite incidences. Next, we will use the Moran's I value in our ![spatial correlation analysis](correlation.html) part to more accurately determine areas with high dog bite incidences.

@@ -13,7 +13,7 @@
 
 <title>Cumulative impact of various factors on dog bite incidents</title>
 
-<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -33,6 +33,7 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
@@ -221,6 +222,9 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
 
 
@@ -383,6 +387,14 @@ div.tocify {
 
 <div id="header">
 
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">Cumulative impact of various factors on dog
@@ -411,10 +423,10 @@ library(tm)</code></pre>
 <div id="negative-binomial-regression-analysis" class="section level1">
 <h1>Negative Binomial Regression Analysis</h1>
 <p>To measure the combined effects of year, dog background
-characteristics (i.e., breed, gender, age, and whether neutered) and the
-Borough they belong to on the incidence of dog bites, we first conduct a
-negative binomial regression analysis using records of dog bite
-incidents in New York.</p>
+characteristics (i.e., gender and whether neutered) and the Borough they
+belong to on the incidence of dog bites, we first conduct a negative
+binomial regression analysis using records of dog bite incidents in New
+York.</p>
 <p>The negative binomial regression model is a type of count model
 designed for dependent variables that can only take non-negative integer
 values. From the Spatial Correlations section, the study area meets the
@@ -422,8 +434,18 @@ three prerequisites for negative binomial regression: the dog bite
 incidents are not independent, exhibiting spatial clustering; the
 dependent variable shows overdispersion; and the frequency of dog bite
 incidents is sufficiently low.</p>
-<p>本文假设的因变量是各zipcode的狗咬伤事件发生数量，which呈现负二项分布。Predictor
-variables包括事件发生的年份和月份，狗的背景特征和事件发生区域。其中，年份被测量为一个区间级变量，值从1（对应于2015年）到7（对应于2021年）。事件发生的地区将被划分为值从1-6的变量，分别代表纽约市的5个区还有others。狗的gender是一个二分变量，值为0表示未知，1表示male，2表示female。类似的，狗的绝育状态也是一个二分变量，值为0表示未绝育，1表示已绝育。模型方程如下：</p>
+<p>The dependent variable hypothesized in the article is the number of
+dog bite incidents per zipcode, which follows a negative binomial
+distribution. The predictor variables include the year and month of the
+incident, characteristics of the dog, and the area where the incident
+occurred. The year is measured as an interval-level variable, with
+values from 1 (corresponding to 2015) to 7 (corresponding to 2021). The
+area of the incident is divided into variables ranging from 1 to 5,
+representing the five boroughs of New York City. The gender of the dog
+is a binary variable, with 1 indicating female and 2 indicating male.
+Similarly, the sterilization status of the dog is also a binary
+variable, with 0 indicating unsterilized and 1 indicating sterilized.
+The model equation is as follows:</p>
 <p><span class="math display">\[\ln ({\hat y_i}) = {\beta _0} + {\beta
 _1}{X_{i1}} + {\beta _2}{X_{i2}} +  \cdots {\beta _m}{X_{im}} +
 \xi\]</span> Here, <span class="math inline">\({y_i}\)</span> represents
@@ -525,6 +547,10 @@ summary(model)</code></pre>
 </div>
 <div id="with-interaction" class="section level3">
 <h3>With Interaction</h3>
+<p>To further increase the precision of the model fit, interaction terms
+between variables were added. After using stepwise reduction to simplify
+the model complexity, the final Negative Binomial Regression model is as
+follows:</p>
 <pre class="r"><code>model_all_interactions &lt;- glm.nb(
   formula = bite_count ~ 
     year + month + gender + spay_neuter + borough +
@@ -939,7 +965,7 @@ model_stepwise &lt;- stepAIC(model_all_interactions, direction = &quot;both&quot
 ## glm.nb(formula = bite_count ~ year + month + gender + spay_neuter + 
 ##     borough + year:spay_neuter + year:borough + month:spay_neuter + 
 ##     gender:spay_neuter + gender:borough + spay_neuter:borough, 
-##     data = bites_by_group, init.theta = 35483.63491, link = log)
+##     data = bites_by_group, init.theta = 35483.47117, link = log)
 ## 
 ## Coefficients:
 ##                                           Estimate Std. Error z value Pr(&gt;|z|)
@@ -1095,7 +1121,7 @@ model_stepwise &lt;- stepAIC(model_all_interactions, direction = &quot;both&quot
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## (Dispersion parameter for Negative Binomial(35483.63) family taken to be 1)
+## (Dispersion parameter for Negative Binomial(35483.47) family taken to be 1)
 ## 
 ##     Null deviance: 4944.9  on 1572  degrees of freedom
 ## Residual deviance: 1437.1  on 1499  degrees of freedom
@@ -1104,7 +1130,7 @@ model_stepwise &lt;- stepAIC(model_all_interactions, direction = &quot;both&quot
 ## Number of Fisher Scoring iterations: 1
 ## 
 ## 
-##               Theta:  35484 
+##               Theta:  35483 
 ##           Std. Err.:  232188 
 ## Warning while fitting theta: iteration limit reached 
 ## 
@@ -1146,10 +1172,9 @@ the mean of the response variable distribution, allowing the dependent
 variable to deviate from a normal distribution and enabling modeling of
 various types of data, including binary, count, and continuous
 outcomes.</p>
-<<<<<<< HEAD
-<p>Let the response variable <span class="math inline">\(y\)</span>
-belongs to the exponential family, its conditional distribution can be
-expressed as follows:</p>
+<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD Let the response variable <span
+class="math inline">\(y\)</span> belongs to the exponential family, its
+conditional distribution can be expressed as follows:</p>
 <p><span class="math display">\[f(y|b) = \prod\limits_{i = 1}^n
 {f({y_i}|{\eta _i})}\]</span></p>
 <p>Where <span class="math inline">\({\eta _i} = {x_i}^ \top \beta  +
@@ -1200,7 +1225,7 @@ class="math inline">\({\rm
 X}\)</span>表示每个响应变量所属品种的矩阵；<span
 class="math inline">\(\vec
 b\)</span>为每个品种的偏差值（随机效应）。</p>
-=======
+<p>=======</p>
 <pre class="r"><code>library(lme4)
 glmm_model = glmer.nb(
   bite_count ~ year + month + gender + spay_neuter + (1 | borough), 
@@ -1227,32 +1252,46 @@ summary(glmm_model)</code></pre>
 ## 
 ## Fixed effects:
 ##                      Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)          1.180466   0.169985   6.945 3.80e-12 ***
-## year2016             0.069807   0.041693   1.674 0.094071 .  
-## year2017             0.153530   0.040995   3.745 0.000180 ***
-## year2018             0.075276   0.041613   1.809 0.070459 .  
-## year2019             0.094146   0.041424   2.273 0.023043 *  
-## year2020            -0.278894   0.045542  -6.124 9.13e-10 ***
-## year2021            -0.286869   0.045945  -6.244 4.27e-10 ***
-## month2               0.002486   0.058859   0.042 0.966312    
-## month3               0.029950   0.058421   0.513 0.608193    
-## month4               0.127434   0.057260   2.226 0.026045 *  
-## month5               0.180648   0.056723   3.185 0.001449 ** 
-## month6               0.244653   0.056072   4.363 1.28e-05 ***
-## month7               0.201824   0.056634   3.564 0.000366 ***
-## month8               0.227600   0.056477   4.030 5.58e-05 ***
-## month9               0.142905   0.057233   2.497 0.012529 *  
-## month10              0.091131   0.057893   1.574 0.115462    
-## month11              0.088930   0.057918   1.535 0.124671    
-## month12              0.018499   0.059010   0.313 0.753909    
-## genderM              0.884882   0.024565  36.023  &lt; 2e-16 ***
+## (Intercept)          1.180470   0.169990   6.944 3.80e-12 ***
+## year2016             0.069806   0.041693   1.674 0.094078 .  
+## year2017             0.153529   0.040996   3.745 0.000180 ***
+## year2018             0.075276   0.041613   1.809 0.070461 .  
+## year2019             0.094144   0.041424   2.273 0.023046 *  
+## year2020            -0.278896   0.045542  -6.124 9.13e-10 ***
+## year2021            -0.286872   0.045946  -6.244 4.27e-10 ***
+## month2               0.002486   0.058860   0.042 0.966308    
+## month3               0.029951   0.058422   0.513 0.608178    
+## month4               0.127436   0.057261   2.226 0.026045 *  
+## month5               0.180650   0.056724   3.185 0.001449 ** 
+## month6               0.244655   0.056073   4.363 1.28e-05 ***
+## month7               0.201825   0.056635   3.564 0.000366 ***
+## month8               0.227603   0.056478   4.030 5.58e-05 ***
+## month9               0.142908   0.057234   2.497 0.012529 *  
+## month10              0.091132   0.057894   1.574 0.115463    
+## month11              0.088932   0.057919   1.535 0.124670    
+## month12              0.018502   0.059011   0.314 0.753869    
+## genderM              0.884881   0.024565  36.022  &lt; 2e-16 ***
 ## spay_neuterNeutered -0.112301   0.022910  -4.902 9.50e-07 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </div>
 <div id="model-1" class="section level1">
 <h1>Model</h1>
->>>>>>> 6e0a48bc06a0411fc9c5ffd605c67fd4cbef063b
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>6e0a48bc06a0411fc9c5ffd605c67fd4cbef063b</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
 </div>
 <div id="conclusion" class="section level1">
 <h1>Conclusion</h1>
@@ -1293,6 +1332,11 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 <script>
 $(document).ready(function ()  {
