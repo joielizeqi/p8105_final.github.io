@@ -57,7 +57,60 @@ dog_bites_clean = dog_bites_df |>
          month = factor(as.numeric(month), levels = 1:12),
          day = as.factor(as.numeric(day))
          ) |> 
-  mutate(breed = str_to_lower(breed))
+  mutate(breed = str_to_lower(breed)) |> 
+  mutate(breed = ifelse(grepl("mix|mxied|cross|\\s[xX]|-X|/|&|COLLILE,|yorkie poo|yorkie chon|yorkie-poo|yorkipoo|boxer beagle|shi-po|Doberman And Labrador", breed, ignore.case = TRUE), "Mixed", breed)) |> 
+  mutate(breed = ifelse(grepl("bull", breed, ignore.case = TRUE), "Bull", breed)) |> 
+  mutate(breed = ifelse(grepl("know|KOW|unsure|not given|certain|not sure|unc", breed, ignore.case = TRUE), "Unknown", breed)) |> 
+  mutate(breed = ifelse(grepl("poo", breed, ignore.case = TRUE), "Poodle", breed)) |> 
+  mutate(breed = ifelse(grepl("vizsla", breed, ignore.case = TRUE), "Vizsla", breed)) |> 
+  mutate(breed = ifelse(grepl("shepher|sheherd|shepard|sheep|shpherd|sheperd", breed, ignore.case = TRUE), "Shepherd", breed)) |> 
+  mutate(breed = ifelse(grepl("husky", breed, ignore.case = TRUE), "Husky", breed)) |> 
+  mutate(breed = ifelse(grepl("chihuahua|chi hua", breed, ignore.case = TRUE), "Chihuahua", breed)) |>
+  mutate(breed = ifelse(grepl("collie", breed, ignore.case = TRUE), "Collie", breed)) |> 
+  mutate(breed = ifelse(grepl("cattle", breed, ignore.case = TRUE), "Cattle dog", breed)) |> 
+  mutate(breed = ifelse(grepl("yorkie|yorkshire", breed, ignore.case = TRUE), "Yorkshire", breed)) |> 
+  mutate(breed = ifelse(grepl("schnauzer", breed, ignore.case = TRUE), "Schnauzer", breed)) |> 
+  mutate(breed = ifelse(grepl("coonhound", breed, ignore.case = TRUE), "Coonhound", breed)) |> 
+  mutate(breed = ifelse(grepl("corgi", breed, ignore.case = TRUE), "Corgie", breed)) |> 
+  mutate(breed = ifelse(grepl("dachshund", breed, ignore.case = TRUE), "Dachshund", breed)) |> 
+  mutate(breed = ifelse(grepl("beagle", breed, ignore.case = TRUE), "Beagle", breed)) |> 
+  mutate(breed = ifelse(grepl("west", breed, ignore.case = TRUE), "Westie", breed)) |> 
+  mutate(breed = ifelse(grepl("mastiff", breed, ignore.case = TRUE), "Mastiff", breed)) |> 
+  mutate(breed = ifelse(grepl("malti tzu|maltese", breed, ignore.case = TRUE), "Maltese", breed)) |> 
+  mutate(breed = ifelse(grepl("shih tzu|Shichon|Shichi", breed, ignore.case = TRUE), "Shih tzu", breed)) |> 
+  mutate(breed = ifelse(grepl("parson", breed, ignore.case = TRUE), "Parson", breed)) |> 
+  mutate(breed = ifelse(grepl("nova", breed, ignore.case = TRUE), "Nova Scotia Duck Tolling Retriever", breed)) |> 
+  mutate(breed = ifelse(grepl("Staffordshire", breed, ignore.case = TRUE), "Staffordshire", breed)) |> 
+  mutate(breed = ifelse(grepl("skan mal", breed, ignore.case = TRUE), "alaskan malamute", breed)) |> 
+  mutate(breed = ifelse(grepl("russell terr", breed, ignore.case = TRUE), "russell terrier", breed)) |> 
+  mutate(breed = ifelse(grepl("shiba", breed, ignore.case = TRUE), "Shiba", breed)) |> 
+  mutate(breed = ifelse(grepl("American Terrier", breed, ignore.case = TRUE), "American Terrier", breed)) |> 
+  mutate(breed = ifelse(grepl("Golden", breed, ignore.case = TRUE), "Golden Doodle", breed)) |>
+  mutate(breed = ifelse(grepl("Springer", breed, ignore.case = TRUE), "Springer", breed)) |> 
+  mutate(breed = ifelse(grepl("Catahoula", breed, ignore.case = TRUE), "Catahoula", breed)) |> 
+  mutate(breed = ifelse(grepl("Crested", breed, ignore.case = TRUE), "Crested", breed)) |> 
+  mutate(breed = ifelse(grepl("Spaniel", breed, ignore.case = TRUE), "Spaniel", breed)) |> 
+  mutate(breed = ifelse(grepl("Dandie Dinmont", breed, ignore.case = TRUE), "Dandie Dinmont", breed)) |> 
+  mutate(breed = ifelse(grepl("Pug", breed, ignore.case = TRUE), "Puggle", breed)) |> 
+  mutate(breed = ifelse(grepl("Potcake", breed, ignore.case = TRUE), "Potcake", breed)) |> 
+  mutate(breed = ifelse(grepl("Border Terrier", breed, ignore.case = TRUE), "Border Terrier", breed)) |> 
+  mutate(breed = ifelse(grepl("Blue He", breed, ignore.case = TRUE), "Blue Heeler", breed)) |> 
+  mutate(breed = ifelse(grepl("Bernedoodle", breed, ignore.case = TRUE), "Bernadoodle", breed)) |> 
+  mutate(breed = ifelse(grepl("ne Corso", breed, ignore.case = TRUE), "Caine Corso", breed)) |> 
+  mutate(breed = ifelse(grepl("ton De Tulear", breed, ignore.case = TRUE), "Cotton De Tulear", breed)) |> 
+  mutate(breed = ifelse(grepl("Daschound|Daschund|Dachshund", breed, ignore.case = TRUE), "Daschund", breed)) |> 
+  mutate(breed = ifelse(grepl("Pomsk", breed, ignore.case = TRUE), "Pomski", breed)) |> 
+  mutate(breed = ifelse(grepl("Miniature Labradoodle", breed, ignore.case = TRUE), "Mini Labordoodle", breed)) |> 
+  mutate(breed = ifelse(grepl("Miniature Pinscher", breed, ignore.case = TRUE), "Mini Pincher", breed)) |> 
+  mutate(breed = ifelse(grepl("Wheaten Terrier|wheaton", breed, ignore.case = TRUE), "Wheaton Terrier", breed)) |>
+  mutate(breed = ifelse(grepl("Retriever", breed, ignore.case = TRUE), "Retreiver", breed)) |>
+  mutate(breed = ifelse(grepl("Dogue De Bord", breed, ignore.case = TRUE), "Dogue De Bordeaux", breed)) |>
+  mutate(breed = ifelse(grepl("Medium", breed, ignore.case = TRUE), "Medium", breed)) |>
+  mutate(breed = ifelse(grepl("small", breed, ignore.case = TRUE), "small", breed)) |>
+  mutate(breed = ifelse(grepl("Wolfhound", breed, ignore.case = TRUE), "Wolfhound", breed)) |>
+  mutate(breed = ifelse(grepl("Terrier", breed, ignore.case = TRUE), "Terrier", breed)) |>
+  mutate(breed = ifelse(grepl("small", breed, ignore.case = TRUE), "small", breed)) |>
+  mutate(breed = str_to_title(breed))
 
 dog_licensing_df = read_csv("data/NYC_Dog_Licensing_Dataset.csv", na = c("NA", "", ".")) |> 
   janitor::clean_names() |> 
