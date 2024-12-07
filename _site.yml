@@ -20,9 +20,9 @@ navbar:
           href: trends.html
         - text: "Bite-to-license spatial correlation"
           menu: 
-          - text: "spatial distribution on NYC map"
+          - text: "Spatial distribution on NYC map"
             href: distribution.html
-          - text: "spatial correlation using Moran's I"
+          - text: "Spatial correlation using Moran's I"
             href: correlation.html
         - text: "Modeling dog bite incidences"
           href: regression.html

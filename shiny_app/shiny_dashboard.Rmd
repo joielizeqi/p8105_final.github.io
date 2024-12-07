@@ -30,7 +30,18 @@ library(lubridate)
 library(rsconnect)
 ```
 
+
 ```{r}
+# Here is how we generated Dog_Bites_w_Location_data.csv:
+#install.packages("tidygeocoder")
+#library(tidygeocoder)
+
+# Dog_Bites_w_Location_data <- read_csv("./data/Dog_Bites_Data.csv") %>%
+#  mutate(address = paste(zip_code, borough, "New York, USA")) %>%
+#  geocode(address = address, method = "osm")
+
+# -----------------------------------------------------------------------------
+
 bite = read_csv("./data/Dog_Bites_w_Location_data.csv", 
            na = c("NA", ".", "")) |>
   janitor::clean_names() %>% 

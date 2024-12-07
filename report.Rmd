@@ -10,6 +10,22 @@ knitr::opts_chunk$set(collapse = TRUE, message = FALSE)
 
 <br><br> 
 
+```{r, message = FALSE, warning = FALSE, include=FALSE}
+library(tidyverse)
+library(knitr)
+library(rvest)
+library(broom)
+library(dplyr)
+library(purrr)
+library(ggplot2)
+library(plotly)
+library(readxl)
+library(reshape2)
+library(akima)
+library(wordcloud)
+library(tm)
+```
+
 ## Motivation
 
 Dogs are often cherished as "man's best friend", but the rising number of dog bite incidents poses a growing public health concern. In 2022, dog bites were among the top 15 causes of nonfatal emergency department visits across all age groups. This project explores the factors contributing to dog bite incidents, including dog-specific traits like breed, age, gender, and spay/neuter status, as well as their geographical patterns and trends over time. By analyzing bite rates across different zip code areas, we aim to identify hotspots and better understand the relationship between dog characteristics and bite frequency. The findings will support efforts to develop data-driven strategies for preventing dog bites and improving public safety.
@@ -48,9 +64,111 @@ As our project evolved, we delved into more in-depth questions:
 
 ## Data
 
+```{r, message = FALSE, include=FALSE}
+# NYC zip code
+url = "https://p8105.com/data/zip_codes.html"
+ny_zip_codes = read_html(url) |>
+  html_table() |> 
+  data.frame() |> 
+  janitor::clean_names() |> 
+  mutate(
+    borough = factor(
+      county,
+      levels=c("Bronx","Kings","New York", "Queens","Richmond"),
+      labels=c("Bronx","Brooklyn","Manhattan","Queens",
+ "Staten Island"))) 
+
+valid_zipcodes = pull(ny_zip_codes, zip_code)
+
+# Dog bite 
+dog_bites_df = read_csv("data/Dog_Bites_Data.csv", na = c("NA", "", ".")) |> 
+  janitor::clean_names() |> 
+  rename_with(~ gsub("^x", "", .))
+
+
+dog_bites_clean = dog_bites_df |> 
+  mutate(date_of_bite = as.Date(date_of_bite, format = "%B %d %Y")) |> 
+  mutate(year = format(date_of_bite, "%Y"),
+         month = format(date_of_bite, "%m"),
+         day = format(date_of_bite, "%d")) |> 
+  mutate(year = as.factor(as.numeric(year)),
+         month = factor(as.numeric(month), levels = 1:12),
+         day = as.factor(as.numeric(day))
+         ) |> 
+  mutate(breed = str_to_lower(breed)) |> 
+  mutate(breed = ifelse(grepl("mix|mxied|cross|\\s[xX]|-X|/|&|COLLILE,|yorkie poo|yorkie chon|yorkie-poo|yorkipoo|boxer beagle|shi-po|Doberman And Labrador", breed, ignore.case = TRUE), "Mixed", breed)) |> 
+  mutate(breed = ifelse(grepl("bull", breed, ignore.case = TRUE), "Bull", breed)) |> 
+  mutate(breed = ifelse(grepl("know|KOW|unsure|not given|certain|not sure|unc", breed, ignore.case = TRUE), "Unknown", breed)) |> 
+  mutate(breed = ifelse(grepl("poo", breed, ignore.case = TRUE), "Poodle", breed)) |> 
+  mutate(breed = ifelse(grepl("vizsla", breed, ignore.case = TRUE), "Vizsla", breed)) |> 
+  mutate(breed = ifelse(grepl("shepher|sheherd|shepard|sheep|shpherd|sheperd", breed, ignore.case = TRUE), "Shepherd", breed)) |> 
+  mutate(breed = ifelse(grepl("husky", breed, ignore.case = TRUE), "Husky", breed)) |> 
+  mutate(breed = ifelse(grepl("chihuahua|chi hua", breed, ignore.case = TRUE), "Chihuahua", breed)) |>
+  mutate(breed = ifelse(grepl("collie", breed, ignore.case = TRUE), "Collie", breed)) |> 
+  mutate(breed = ifelse(grepl("cattle", breed, ignore.case = TRUE), "Cattle dog", breed)) |> 
+  mutate(breed = ifelse(grepl("yorkie|yorkshire", breed, ignore.case = TRUE), "Yorkshire", breed)) |> 
+  mutate(breed = ifelse(grepl("schnauzer", breed, ignore.case = TRUE), "Schnauzer", breed)) |> 
+  mutate(breed = ifelse(grepl("coonhound", breed, ignore.case = TRUE), "Coonhound", breed)) |> 
+  mutate(breed = ifelse(grepl("corgi", breed, ignore.case = TRUE), "Corgie", breed)) |> 
+  mutate(breed = ifelse(grepl("dachshund", breed, ignore.case = TRUE), "Dachshund", breed)) |> 
+  mutate(breed = ifelse(grepl("beagle", breed, ignore.case = TRUE), "Beagle", breed)) |> 
+  mutate(breed = ifelse(grepl("west", breed, ignore.case = TRUE), "Westie", breed)) |> 
+  mutate(breed = ifelse(grepl("mastiff", breed, ignore.case = TRUE), "Mastiff", breed)) |> 
+  mutate(breed = ifelse(grepl("malti tzu|maltese", breed, ignore.case = TRUE), "Maltese", breed)) |> 
+  mutate(breed = ifelse(grepl("shih tzu|Shichon|Shichi", breed, ignore.case = TRUE), "Shih tzu", breed)) |> 
+  mutate(breed = ifelse(grepl("parson", breed, ignore.case = TRUE), "Parson", breed)) |> 
+  mutate(breed = ifelse(grepl("nova", breed, ignore.case = TRUE), "Nova Scotia Duck Tolling Retriever", breed)) |> 
+  mutate(breed = ifelse(grepl("Staffordshire", breed, ignore.case = TRUE), "Staffordshire", breed)) |> 
+  mutate(breed = ifelse(grepl("skan mal", breed, ignore.case = TRUE), "alaskan malamute", breed)) |> 
+  mutate(breed = ifelse(grepl("russell terr", breed, ignore.case = TRUE), "russell terrier", breed)) |> 
+  mutate(breed = ifelse(grepl("shiba", breed, ignore.case = TRUE), "Shiba", breed)) |> 
+  mutate(breed = ifelse(grepl("American Terrier", breed, ignore.case = TRUE), "American Terrier", breed)) |> 
+  mutate(breed = ifelse(grepl("Golden", breed, ignore.case = TRUE), "Golden Doodle", breed)) |>
+  mutate(breed = ifelse(grepl("Springer", breed, ignore.case = TRUE), "Springer", breed)) |> 
+  mutate(breed = ifelse(grepl("Catahoula", breed, ignore.case = TRUE), "Catahoula", breed)) |> 
+  mutate(breed = ifelse(grepl("Crested", breed, ignore.case = TRUE), "Crested", breed)) |> 
+  mutate(breed = ifelse(grepl("Spaniel", breed, ignore.case = TRUE), "Spaniel", breed)) |> 
+  mutate(breed = ifelse(grepl("Dandie Dinmont", breed, ignore.case = TRUE), "Dandie Dinmont", breed)) |> 
+  mutate(breed = ifelse(grepl("Pug", breed, ignore.case = TRUE), "Puggle", breed)) |> 
+  mutate(breed = ifelse(grepl("Potcake", breed, ignore.case = TRUE), "Potcake", breed)) |> 
+  mutate(breed = ifelse(grepl("Border Terrier", breed, ignore.case = TRUE), "Border Terrier", breed)) |> 
+  mutate(breed = ifelse(grepl("Blue He", breed, ignore.case = TRUE), "Blue Heeler", breed)) |> 
+  mutate(breed = ifelse(grepl("Bernedoodle", breed, ignore.case = TRUE), "Bernadoodle", breed)) |> 
+  mutate(breed = ifelse(grepl("ne Corso", breed, ignore.case = TRUE), "Caine Corso", breed)) |> 
+  mutate(breed = ifelse(grepl("ton De Tulear", breed, ignore.case = TRUE), "Cotton De Tulear", breed)) |> 
+  mutate(breed = ifelse(grepl("Daschound|Daschund|Dachshund", breed, ignore.case = TRUE), "Daschund", breed)) |> 
+  mutate(breed = ifelse(grepl("Pomsk", breed, ignore.case = TRUE), "Pomski", breed)) |> 
+  mutate(breed = ifelse(grepl("Miniature Labradoodle", breed, ignore.case = TRUE), "Mini Labordoodle", breed)) |> 
+  mutate(breed = ifelse(grepl("Miniature Pinscher", breed, ignore.case = TRUE), "Mini Pincher", breed)) |> 
+  mutate(breed = ifelse(grepl("Wheaten Terrier|wheaton", breed, ignore.case = TRUE), "Wheaton Terrier", breed)) |>
+  mutate(breed = ifelse(grepl("Retriever", breed, ignore.case = TRUE), "Retreiver", breed)) |>
+  mutate(breed = ifelse(grepl("Dogue De Bord", breed, ignore.case = TRUE), "Dogue De Bordeaux", breed)) |>
+  mutate(breed = ifelse(grepl("Medium", breed, ignore.case = TRUE), "Medium", breed)) |>
+  mutate(breed = ifelse(grepl("small", breed, ignore.case = TRUE), "small", breed)) |>
+  mutate(breed = ifelse(grepl("Wolfhound", breed, ignore.case = TRUE), "Wolfhound", breed)) |>
+  mutate(breed = ifelse(grepl("Terrier", breed, ignore.case = TRUE), "Terrier", breed)) |>
+  mutate(breed = ifelse(grepl("small", breed, ignore.case = TRUE), "small", breed)) |>
+  mutate(breed = str_to_title(breed))
+
+# Dog license
+dog_licensing_df = read_csv("data/NYC_Dog_Licensing_Dataset.csv", na = c("NA", "", ".")) |> 
+  janitor::clean_names() |> 
+  rename_with(~ gsub("^x", "", .))
+```
+
 The dataset utilized for analyzing and visualizing dog bite cases in New York City includes information on various factors such as sex, breed, and age. The data, covering the period from 2015 to 2022, were sourced from [NYC OpenData](https://data.cityofnewyork.us/Health/DOHMH-Dog-Bite-Data/rsgh-akpg/about_data). Data is collected from reports received online, mail, fax or by phone to 311 or NYC DOHMH Animal Bite Unit. Each record represents a single dog bite incident.
 
 Another dataset used in this project documents active dog licenses in New York City for a given year. This data is derived from the DOHMH Dog Licensing System, which facilitates the application and renewal of dog licenses. The dataset is also sourced from [NYC OpenData](https://data.cityofnewyork.us/Health/NYC-Dog-Licensing-Dataset/nu7n-tubp/about_data). 
+
+The data was cleaned using RStudio/RMarkdown to meet the following criteria:
+
+- Every observation required a unique identifier (`unique_id`).
+
+- Every observation required non-missing data for `breed`, `age`, `gender`, `borough`, `zip_code`, `spay_neuter`, and `date_of_bite`.
+
+- All continuous variables were numeric and stored as such.
+
+- Dates must be saved in date format.
 
 The dog bite dataset we utilized includes the following variables:
 
@@ -79,7 +197,97 @@ The NYC dog licensing dataset we utilized includes the following variables:
 
 ## Exploratory Analysis
 
+Our exploratory analysis is segmented into three distinct areas of focus: Dog bites by breeds, gender & neuter status, and borough.
+
+# Dog Bites vs. Breed
+In the Breed section, we found that the top 10 dog breeds that contributed to the most dog bite incidences are shown in the pie chart above. Besides the mixed and the unknown categories, the breed that contributed to the most dog bite incidences are bulls (29.2%), followed by shepards (5.06%) and shih tzus (4.51%).
+
+```{r echo=FALSE, fig.align='center'}
+top_breeds = dog_bites_clean |> 
+  group_by(breed) |> 
+  summarise(count = n()) |> 
+  arrange(desc(count)) |> 
+  filter(!is.na(breed) & breed != "unknown") |> 
+  slice_head(n = 10)
+
+top_breed_inter = plot_ly(
+  data = top_breeds,
+  labels = ~breed,
+  values = ~count,
+  type = 'pie',
+  textinfo = 'label+percent',
+  hoverinfo = 'label+value+percent',
+  marker = list(line = list(color = '#FFFFFF', width = 2))
+) |>
+  layout(
+    title = "Top 10 Breeds Involved in Bite Count",
+    xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+    yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE)
+  )
+
+top_breed_inter
+
+```
+
+# Dog Bites vs. Gender & Spy/Neuter Status
+Across dog bite data with known genders, dog bite incidences appeared more than twice as frequent for male dogs compared to female dogs, for both neutered and un-neutered dogs. Comparing their neutered status, there is only a slight difference in dog bite incidences between the neutered and un-neutered groups. Neutered female dogs contributed to slightly more dog bite incidences than un-neitered female dogs, while un-neutered male dogs contributed to slightly more dog bite incidences. It is worth noting that a significant portion of dog bite data had missing data for the dogs’ gender, and that among the unknown gender group, most dogs appeared to be neutered.
+
+```{r echo=FALSE, fig.align='center'}
+gender_spay_plot = ggplot(dog_bites_clean, aes(x = gender, fill = spay_neuter)) +
+  geom_bar(position = "dodge") +
+  theme_minimal() +
+  labs(title = "Dog Bites by Gender and Spay/Neuter Status",
+       x = "Gender",
+       y = "Count of Dog Bites",
+       fill = "Spay/Neuter Status") +
+  scale_fill_brewer(palette = "Set1") +
+  theme(plot.title = element_text(hjust = 0.5, size = 15))
+
+# Display the static plot
+gender_spay_plot_inter = ggplotly(gender_spay_plot)
+gender_spay_plot_inter
+```
+
+# Dog Bites vs. Borough
+
+Looking at license counts across boroughs, Manhattan has the most licensed dogs, followed by Brooklyn, Queens, Bronx, and Staten Island. Looking at dog bite incidences across these boroughs, however, Queens reported the most incidences, followed by Manhattan, Brooklyn, Bronx, and lastly Staten Island. The mismatch between these two sets of bar likely implies that Queens may be a hotspot for dog bite incidences. We will take a closer look at this by analyzing the bite-to-licnese ratio in the pie charts below.
+
+```{r echo=FALSE}
+ny_zip_codes_filtered = ny_zip_codes |> 
+  dplyr::select(zip_code, borough)
+
+license_borough = dog_licensing_df |> 
+  filter(zip_code %in% valid_zipcodes) |> 
+  merge( ny_zip_codes_filtered, by = "zip_code", all.x = TRUE)
+
+bites_by_borough = dog_bites_clean |>
+  group_by(borough) |>
+  summarise(Bite_Count = n())
+
+licenses_by_borough = license_borough |>
+  group_by(borough) |>
+  summarise(License_Count = n())
+
+
+borough_data = merge(bites_by_borough, licenses_by_borough, by = "borough", all = TRUE) |> 
+  drop_na()
+
+rate_borough_data = borough_data |>
+  mutate(Bite_to_License_Ratio = Bite_Count / License_Count,
+         Ratio_Percentage = Bite_to_License_Ratio / sum(Bite_to_License_Ratio) * 100,
+         Ratio_Label = paste0(borough, " (", round(Ratio_Percentage, 1), "%)"))
+rate_borough_data |> 
+  dplyr::select(borough, Bite_Count, License_Count, Bite_to_License_Ratio) %>% # 选择前四列
+  mutate(Bite_to_License_Ratio = scales::percent(Bite_to_License_Ratio)) |>
+  kable(col.names = c("Borough", "Bite Count", "License Count", "Bite to License Ratio (%)"),
+        align = c("l", "c", "c", "c"),
+  caption = "Dog Bite to License Ratio by Borough")
+```
+
+<br><br> 
+
 ## Additional analysis
+
 
 ## Discussion
 

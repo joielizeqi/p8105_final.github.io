@@ -199,7 +199,7 @@ Across dog bite data with known genders, dog bite incidences appeared more than 
 
 It is worth noting that a significant portion of dog bite data had missing data for the dogs' gender, and that among the unknown gender group, most dogs appeared to be neutered. The amount of missing information in these two variables could be leading us to an incomplete analysis of how dog bites were associated with gender and neuter status.
 
-# Dog bites by license counts
+# NYC Dog Licensing Counts
 ```{r, warning=FALSE, message=FALSE}
 breed_counts <- dog_licensing_df |>
   mutate(breed_name = tolower(breed_name)) |> 
