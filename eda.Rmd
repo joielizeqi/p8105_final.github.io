@@ -222,7 +222,7 @@ Dog licensing data can help us infer the dog populations living in each borough,
 # Dog bites by borough
 ```{r, warning=FALSE, message=FALSE}
 ny_zip_codes_filtered = ny_zip_codes |> 
-  select(zip_code, borough)
+  dplyr::select(zip_code, borough)
 
 license_borough = dog_licensing_df |> 
   filter(zip_code %in% valid_zipcodes) |> 
@@ -296,6 +296,11 @@ rate_borough_data = borough_data |>
   mutate(Bite_to_License_Ratio = Bite_Count / License_Count,
          Ratio_Percentage = Bite_to_License_Ratio / sum(Bite_to_License_Ratio) * 100,
          Ratio_Label = paste0(borough, " (", round(Ratio_Percentage, 1), "%)"))
+rate_borough_data |> 
+  dplyr::select(borough, Bite_Count, License_Count, Bite_to_License_Ratio) %>% # 选择前四列
+  mutate(Bite_to_License_Ratio = scales::percent(Bite_to_License_Ratio)) |> 
+kable(col.names = c("Borough", "Bite Count", "License Count", "Bite to License Ratio (%)"),
+  caption = "Dog Bite to License Ratio by Borough")
 
 ratio_pie_interactive = plot_ly(
   data = rate_borough_data,
