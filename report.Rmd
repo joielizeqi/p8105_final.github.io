@@ -28,13 +28,13 @@ library(tm)
 
 ## Motivation
 
-Dogs are often cherished as "man's best friend", but the rising number of dog bite incidents poses a growing public health concern. In 2022, dog bites were among the top 15 causes of nonfatal emergency department visits across all age groups. This project explores the factors contributing to dog bite incidents, including dog-specific traits like breed, age, gender, and spay/neuter status, as well as their geographical patterns and trends over time. By analyzing bite rates across different zip code areas, we aim to identify hotspots and better understand the relationship between dog characteristics and bite frequency. The findings will support efforts to develop data-driven strategies for preventing dog bites and improving public safety.
+While dogs are a common part of many households, the increasing number of dog bite incidents has become a significant public health concern. In 2022, dog bites ranked among the top 15 causes of nonfatal emergency department visits across all age groups. This project investigates the factors contributing to dog bite incidents, focusing on dog-specific traits such as breed, age, gender, and spay/neuter status, along with their geographical distribution and trends over time. In this project, we aim to identify hotspots and examine the relationship between dog characteristics and bite frequency. The findings will help inform data-driven strategies to prevent dog bites and enhance public safety.
 
 <br><br> 
 
 ## Related Work
 
-We were inspired to perform this analysis after discovering dog bites data from the [NYC DOHMH](https://www.health.ny.gov/health_care/medicaid/redesign/ehr/registry/nycdohmh.htm). The New York State Department of Health (the Department) has been overseeing the health, safety, and well-being of New Yorkers since 1901 – from vaccinations to utilizing new developments in science as critical tools in the prevention and treatment of infectious diseases. The data could be found on [NYC OpenData](https://data.cityofnewyork.us/Health/DOHMH-Dog-Bite-Data/rsgh-akpg/about_data). Given that the dataset includes details such as the date of each dog bite, the borough, and various dog demographic variables, we saw this as an excellent opportunity to apply and explore the visualization and interactivity concepts covered in class.
+We were inspired to perform this analysis after discovering dog bites data from [NYC DOHMH](https://www.health.ny.gov/health_care/medicaid/redesign/ehr/registry/nycdohmh.htm). The New York State Department of Health (the Department) has been overseeing the health, safety, and well-being of New Yorkers since 1901 – from vaccinations to utilizing new developments in science as critical tools in the prevention and treatment of infectious diseases. The data could be found on [NYC OpenData](https://data.cityofnewyork.us/Health/DOHMH-Dog-Bite-Data/rsgh-akpg/about_data). Given that the dataset includes details such as the date of each dog bite, the borough, and various dog demographic variables, we saw this as an excellent opportunity to apply and explore the visualization and interactivity concepts covered in class.
 
 <br><br> 
 
@@ -200,7 +200,7 @@ The NYC dog licensing dataset we utilized includes the following variables:
 Our exploratory analysis is segmented into three distinct areas of focus: Dog bites by breeds, gender & neuter status, and borough.
 
 # Dog Bites vs. Breed
-In the Breed section, we found that the top 10 dog breeds that contributed to the most dog bite incidences are shown in the pie chart above. Besides the mixed and the unknown categories, the breed that contributed to the most dog bite incidences are bulls (29.2%), followed by shepards (5.06%) and shih tzus (4.51%).
+In the Breed section, we found that the top 10 dog breeds that contributed to the most dog bite incidences are shown in the pie chart above. Besides the mixed and the unknown categories, the breed that contributed to the most dog bite incidences are *bulls* (29.2%), followed by *shepards* (5.06%) and *shih tzus* (4.51%).
 
 ```{r echo=FALSE, fig.align='center'}
 top_breeds = dog_bites_clean |> 
@@ -250,7 +250,7 @@ gender_spay_plot_inter
 
 # Dog Bites vs. Borough
 
-Looking at license counts across boroughs, Manhattan has the most licensed dogs, followed by Brooklyn, Queens, Bronx, and Staten Island. Looking at dog bite incidences across these boroughs, however, Queens reported the most incidences, followed by Manhattan, Brooklyn, Bronx, and lastly Staten Island. The mismatch between these two sets of bar likely implies that Queens may be a hotspot for dog bite incidences. We will take a closer look at this by analyzing the bite-to-licnese ratio in the pie charts below.
+Looking at license counts across boroughs, Manhattan has the most licensed dogs, followed by Brooklyn, Queens, Bronx, and Staten Island. Looking at dog bite incidences across these boroughs, however, Queens reported the most incidences, followed by Manhattan, Brooklyn, Bronx, and lastly Staten Island. The mismatch between these two sets of bar likely implies that Queens may be a hotspot for dog bite incidences. 
 
 ```{r echo=FALSE}
 ny_zip_codes_filtered = ny_zip_codes |> 
@@ -290,5 +290,6 @@ rate_borough_data |>
 
 
 ## Discussion
+
 
 ## References
