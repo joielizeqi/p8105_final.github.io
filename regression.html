@@ -565,32 +565,32 @@ lasso_coefficients_df &lt;- as.data.frame(as.matrix(lasso_coefficients)) %&gt;%
   filter(Coefficient != 0)  # 筛选非零系数的变量
 
 print(lasso_coefficients_df)</code></pre>
-<pre><code>##             Coefficient           s1
-## 1          X.Intercept.  1.104458165
-## 2        X.Intercept..1  0.000000000
-## 3              year2016  0.059601229
-## 4              year2017  0.147817118
-## 5              year2018  0.071787901
-## 6              year2019  0.095582007
-## 7              year2020 -0.281729285
-## 8              year2021 -0.284386843
-## 9                month2 -0.015570617
-## 10               month3  0.001564948
-## 11               month4  0.105312366
-## 12               month5  0.158542466
-## 13               month6  0.227033645
-## 14               month7  0.184972035
-## 15               month8  0.206905164
-## 16               month9  0.120362051
-## 17              month10  0.069668346
-## 18              month11  0.060586284
-## 19              month12  0.000000000
-## 20              genderM  0.888248772
-## 21  spay_neuterNeutered -0.103609162
-## 22      boroughBrooklyn  0.299678045
-## 23     boroughManhattan  0.226911622
-## 24        boroughQueens  0.494793280
-## 25 boroughStaten.Island -0.557209451</code></pre>
+<pre><code>##             Coefficient            s1
+## 1          X.Intercept.  1.1070020943
+## 2        X.Intercept..1  0.0000000000
+## 3              year2016  0.0589093710
+## 4              year2017  0.1471430712
+## 5              year2018  0.0711125888
+## 6              year2019  0.0949096836
+## 7              year2020 -0.2819271186
+## 8              year2021 -0.2845450174
+## 9                month2 -0.0167225810
+## 10               month3  0.0000000000
+## 11               month4  0.1035515545
+## 12               month5  0.1567845172
+## 13               month6  0.2252885209
+## 14               month7  0.1832139058
+## 15               month8  0.2051502392
+## 16               month9  0.1185685845
+## 17              month10  0.0678487424
+## 18              month11  0.0587653785
+## 19              month12 -0.0009817948
+## 20              genderM  0.8880223677
+## 21  spay_neuterNeutered -0.1034176428
+## 22      boroughBrooklyn  0.2990382149
+## 23     boroughManhattan  0.2262717734
+## 24        boroughQueens  0.4941918529
+## 25 boroughStaten.Island -0.5573117663</code></pre>
 <p>Using the results of Lasso regression for prediction, the results are
 as follows:</p>
 <pre class="r"><code>final_model &lt;- glmnet(x, y, family = &quot;poisson&quot;, alpha = 1, lambda = best_lambda)
@@ -598,8 +598,8 @@ final_model</code></pre>
 <pre><code>## 
 ## Call:  glmnet(x = x, y = y, family = &quot;poisson&quot;, alpha = 1, lambda = best_lambda) 
 ## 
-##   Df  %Dev  Lambda
-## 1 22 60.62 0.00553</code></pre>
+##   Df  %Dev   Lambda
+## 1 23 60.62 0.006069</code></pre>
 <pre class="r"><code>#predictions_lasso &lt;- bites_by_group |&gt; mutate(predicted = predict(final_model, type = &quot;response&quot;))</code></pre>
 <p>发现每个都很重要</p>
 <pre class="r"><code>library(MASS)</code></pre>
