@@ -113,6 +113,7 @@ dog_bites_clean = dog_bites_df |>
 dog_licensing_df = read_csv("data/NYC_Dog_Licensing_Dataset.csv", na = c("NA", "", ".")) |> 
   janitor::clean_names() |> 
   rename_with(~ gsub("^x", "", .))
+
 ```
 
 # Variable features
