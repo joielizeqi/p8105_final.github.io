@@ -111,6 +111,8 @@ To assess whether the spatial distribution of dog license issuance and dog bite 
 
 Moran's I is a statistical metric commonly used in spatial data analysis to measure the degree of spatial autocorrelation. It is employed to determine whether there is a trend of spatial clustering or dispersion in spatial data.
 
+# Global Moran's I
+
 The global Moran's I is used to describe the average degree of association between all spatial elements and their neighboring elements across the entire study area. The formula for calculation is as follows:
 
 $$I = \frac{n}{{{S_0}}} \times \frac{{\sum\limits_{i = 1}^n {\sum\limits_{j = 1}^n {{w_{ij}}({y_i} - \bar y)({y_j} - \bar y)} } }}{{\sum\limits_{i = 1}^n {{{({y_i} - \bar y)}^2}} }}$$
@@ -227,6 +229,8 @@ summary_table <- data.frame(
 
 kable(summary_table, digits = 3, caption = "Summary of Moran's I Test")
 ```
+
+# Local Moran's I
 
 To further explore specific areas exhibiting spatial clustering, the involvement of local Moran's I is necessary. The formula for this index is as follows:
 
