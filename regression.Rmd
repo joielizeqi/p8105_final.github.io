@@ -191,7 +191,7 @@ log_best_lambda <- log(best_lambda)
 
 $\lambda$ is the regularization parameter in Lasso regression, controlling variable selection and the sparsity of the model. Finding the optimal $\lambda$ value is crucial as it balances model complexity and predictive performance. The ideal $\lambda$ value, derived from cross-validation, minimizes model error. For this study, the optimal $\lambda$ has been determined to be 0.005529689. 
 
-```{r cv_results, message=FALSE}
+```{r cv_results, message=FALSE, warning=FALSE}
 ggplot(cv_results, aes(x = log_lambda, y = mean_mse)) +
   geom_line(color = "blue", size = 1) +
   geom_ribbon(aes(ymin = lower_mse, ymax = upper_mse), alpha = 0.2, fill = "blue") +
@@ -238,12 +238,12 @@ After employing Lasso regression for feature selection, the study identified sev
 
 ### Results
 
-```{r glm_nb, message=FALSE, warning=FALSE}
+```{r glm_nb, message=FALSE, warning=FALSE, include=FALSE}
 library(MASS)
 
 model = glm.nb(bite_count ~ year + month + gender + spay_neuter + borough, data = bites_by_group)
 
-summary(model)
+
 model_summary <- tidy(model) %>%
   mutate(
     significance = case_when(
@@ -253,7 +253,8 @@ model_summary <- tidy(model) %>%
       TRUE ~ ""
     )
   )
-
+```
+```{r}
 kable(
   model_summary,
   col.names = c("Term", "Estimate", "SE", "Statistic", "P-value", "Significance"),
@@ -263,11 +264,34 @@ kable(
   scroll_box(height = "400px")
 ```
 
-从结果来看，。。。
+The dispersion parameter, θ = 25.18, indicates that the data exhibits overdispersion, meaning the variance is much larger than the mean. This justifies the use of the negative binomial regression model over a Poisson regression.
 
-模型还需要进一步evaluate。
+Null Deviance = 3914.5: This represents the deviance of the null model (a model with no predictors, only the intercept).
 
-### evaluation
+Residual Deviance = 1549.7: This represents the deviance of the fitted model with predictors included. The significant reduction in deviance indicates that the included predictors substantially improve model fit.
+
+Year: Some years (e.g., 2017, 2019) show statistically significant coefficients, suggesting that the number of bite incidents varies significantly across years. `year2021` (Coefficient = -0.28710, p < 0.001) indicates a significant *decrease* in bite counts compared to year2015.
+
+Month: Some months show no significant effects on bite counts (e.g., month2: p = 0.97; month3: p = 0.61). Several months (e.g., May, June, August) have significant coefficients, indicating seasonality in bite incidents.
+
+Gender: Male dogs (genderM) are associated with a significantly higher bite count, as indicated by the large positive coefficient.
+
+Spay/Neuter: Neutered dogs are associated with a lower bite count, with a statistically significant negative coefficient.
+
+Boroughs: Bite counts vary across boroughs, with Staten Island showing a significant negative association compared to the reference borough.
+
+*Conclusion:*
+
+* Different years have significantly impacted bite counts, particularly after 2020, where a notable reduction in incidents was observed. This might reflect external factors, such as the COVID-19 pandemic.
+* Monthly effects highlight significant seasonal variation, with summer months (e.g., June) showing higher bite counts.
+* Males are significantly more likely to be involved in bite incidents than females.
+* Neutered animals have significantly lower bite risks compared to non-neutered ones.
+* Brooklyn has significantly higher bite counts, while Staten Island has significantly fewer bites compared to Bronx. These differences might reflect variations in dog management policies, population density, or dog ownership practices across regions.
+
+
+
+
+### Model Evaluation
 
 **Multicollinearity Check**
 
@@ -294,7 +318,7 @@ GVIF:
 
 Measures the multicollinearity in the regression model. A GVIF value greater than 10 generally indicates a high multicollinearity issue. All GVIF values are close to 1, suggesting no significant multicollinearity.
 
-GVIF^(1/(2*Df)):
+Scaled GVIF:
 
 A scaled version of GVIF for categorical variables. This value adjusts GVIF based on the degrees of freedom to make it comparable across variables. In the results, all values are very close to 1, further confirming no multicollinearity.
 
@@ -308,7 +332,9 @@ residuals_sim = simulateResiduals(model)
 plot(residuals_sim)
 ```
 
-* QQ：`model`在残差分析
+`Q-Q Plot`: The residuals closely follow the expected line, indicating a good fit in terms of normality for the main effects-only model.
+
+`Residuals vs Predicted`: This shows some spread and potential systematic patterns, indicating the main effects model might *not fully* capture the variability in the data.
 
 
 ## Model with interaction
@@ -317,7 +343,7 @@ To further increase the precision of the model fit, interaction terms between va
 
 ### Results
 
-```{r glm_nb_interactions, warning=FALSE, message=FALSE, include=FALSE}
+```{r glm_nb_interactions, warning=FALSE, message=FALSE}
 model_all_interactions <- glm.nb(
   formula = bite_count ~ 
     year + month + gender + spay_neuter + borough +
@@ -361,7 +387,7 @@ filter_model = glm.nb(bite_count ~ year + month + gender + spay_neuter +
     data = bites_by_group)
 ```
 
-### Model evaluation
+### Model Evaluation
 
 Cross-validation of the final model is depicted in the following illustration, where the red dashed line represents the ideal prediction scenario (i.e., predicted values equal actual values). If points fall near this line, it indicates that the model predicts well. Points located above the diagonal line suggest that the model underestimates the actual values; conversely, if points are below the diagonal line, the model overestimates the actual values. 
 
@@ -380,6 +406,8 @@ kable(
   scroll_box(height = "400px")
 ```
 
+
+
 #### Interaction effect visualization
 
 ```{r, warning=FALSE, message=FALSE}
@@ -391,6 +419,8 @@ plot(interaction_effect_y_bo,
      xlab = "Year",
      ylab = "Predicted Bite Count")
 ```
+
+
 
 ```{r, warning=FALSE, message=FALSE}
 library(ggeffects)
