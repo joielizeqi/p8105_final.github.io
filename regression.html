@@ -935,6 +935,7 @@ indicated by the dashed lines.</p>
 <pre class="r"><code>residuals_sim = simulateResiduals(model_stepwise)
 plot(model_stepwise)</code></pre>
 <p><img src="regression_files/figure-html/unnamed-chunk-10-1.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-10-2.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-10-3.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-10-4.png" width="672" /></p>
+<<<<<<< HEAD
 <p>From the analysis of the four diagnostic plots, the fitted model
 exhibits several shortcomings. Firstly, the tails of the residual
 distribution slightly deviate from the assumed negative binomial
@@ -951,6 +952,24 @@ points with high leverage, which could be overly influencing the model’s
 predictions. These high leverage points warrant further investigation to
 determine whether they should be removed or adjusted to improve model
 accuracy and robustness.</p>
+</div>
+=======
+<p>主要问题: 非正态分布:</p>
+<p>Q-Q 图和残差分布图表明残差的分布偏离正态分布，可能需要对响应变量（如
+bite_count）进行变换（如对数变换）。残差分布的尾部偏离正态分布。
+异方差性:</p>
+<p>Scale-Location
+图显示残差的方差随拟合值变化，可能需要引入更灵活的分布（如负二项分布或零膨胀模型）。点的分布呈现条带状，且红色平滑线显示出非水平趋势。这表明残差方差可能随拟合值变化，存在异方差性。
+高杠杆点和异常点:</p>
+<p>Residuals vs Leverage 图显示存在高杠杆点（如 832 和
+637）。需要检查这些点是否数据录入错误，或者是否应在模型中单独处理。
+改进模型建议: 检查分布假设:</p>
+<p>如果模型使用的是泊松回归（GLM），可能需要切换到负二项分布（如
+glm.nb()）。 使用残差模拟工具（如 DHARMa）进一步诊断残差分布。
+调整异方差问题:</p>
+<p>引入加权最小二乘回归或重新指定响应变量的分布。 处理异常点:</p>
+<p>逐一检查高杠杆点和残差异常点，考虑是否需要移除或调整。</p>
+>>>>>>> 5ac2c6765e2c2a18249bed12409ba18138a0bb2b
 </div>
 </div>
 </div>
