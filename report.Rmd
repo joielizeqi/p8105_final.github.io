@@ -12,13 +12,31 @@ knitr::opts_chunk$set(collapse = TRUE, message = FALSE)
 
 ## Motivation
 
-Dogs have always been known as "people's best friend," playing a significant role in American families. However, dog bite incidents have been increasing. Data from 2022 shows that dog bites ranked among the top 15 reasons for nonfatal emergency department visits across all age groups, highlighting this serious public health issue. This project aims to investigate the complex relationships between dog bite incidents and various factors, such as dog characteristics, geographical distribution, and trends over time. By examining dog bite rates in different zip code areas, we hope to pinpoint potential hotspots that can inform public safety measures. We’ll also look into whether specific traits of dogs—like breed, age, gender, and whether they are neutered—are linked to how often bites occur. This analysis could help in developing targeted strategies to reduce the risk of dog bites.
+Dogs are often cherished as "man's best friend," but the rising number of dog bite incidents poses a growing public health concern. In 2022, dog bites were among the top 15 causes of nonfatal emergency department visits across all age groups. This project explores the factors contributing to dog bite incidents, including dog-specific traits like breed, age, gender, and spay/neuter status, as well as their geographical patterns and trends over time. By analyzing bite rates across different zip code areas, we aim to identify hotspots and better understand the relationship between dog characteristics and bite frequency. The findings will support efforts to develop data-driven strategies for preventing dog bites and improving public safety.
+
+<br><br> 
 
 ## Related Work
 
+We were inspired to perform this analysis after discovering dog bites data from the [NYC DOHMH](https://www.health.ny.gov/health_care/medicaid/redesign/ehr/registry/nycdohmh.htm). The New York State Department of Health (the Department) has been overseeing the health, safety, and well-being of New Yorkers since 1901 – from vaccinations to utilizing new developments in science as critical tools in the prevention and treatment of infectious diseases. The data could be found on [NYC OpenData](https://data.cityofnewyork.us/Health/DOHMH-Dog-Bite-Data/rsgh-akpg/about_data). Given that the dataset includes details such as the date of each dog bite, the borough, and various dog demographic variables, we saw this as an excellent opportunity to apply and explore the visualization and interactivity concepts covered in class.
+
+<br><br> 
+
 ## Initial Questions
 
+We began by exploring trends in NYC dog bite incidents over time, along with their associations with dog demographics and spay/neuter status. We were interested in the following:
+
+1. Which dog breeds are most frequently associated with dog bite incidents?
+
+2. Has the incidence rate of dog bites shown a decline over the years?
+
+3. Is the incidence rate of dog bites influenced by the dog's gender and neuter status?
+
+<br><br> 
+
 ## Evolution of Questions
+
+
 
 ## Data
 
