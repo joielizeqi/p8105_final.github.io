@@ -114,7 +114,7 @@ dog_licensing_df = read_csv("data/NYC_Dog_Licensing_Dataset.csv", na = c("NA", "
 ```
 
 # Variable features
-
+回归使用zipcode中累积的dogbite数量为因变量。
 
 
 # Negative Binomial Regression Analysis
@@ -176,7 +176,37 @@ model_all_interactions <- glm.nb(
 )
 
 model_stepwise <- stepAIC(model_all_interactions, direction = "both")
-summary(model_stepwise)
+```
+
+```{r}
+filter_model = glm.nb(bite_count ~ year + month + gender + spay_neuter + 
+    borough + year:spay_neuter + year:borough + month:spay_neuter + 
+    gender:spay_neuter + gender:borough + spay_neuter:borough, 
+    data = bites_by_group)
+
+summary(filter_model)
+```
+
+### Model 
+```{r}
+# Predicted vs Actual Bite Count
+inter_predict = bites_by_group |> 
+  mutate(predicted = predict(model_stepwise, type = "response"))
+
+ggplot(inter_predict, aes(x = predicted, y = bite_count)) +
+  geom_point(alpha = 0.5) +
+  geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
+  labs(title = "Predicted vs. Actual Bite Count",
+       x = "Predicted Bite Count",
+       y = "Actual Bite Count") +
+  theme_minimal()
+```
+
+
+```{r}
+library(DHARMa)
+residuals_sim = simulateResiduals(model_stepwise)
+plot(model_stepwise)
 ```
 
 # Generalized Linear Mixed Model (GLMM)
@@ -193,7 +223,9 @@ glmm_model = glmer.nb(
   bite_count ~ year + month + gender + spay_neuter + (1 | borough), 
   data = bites_by_group
 )
-glmm_model
+summary(glmm_model)
 ```
 
+
+# Model 
 # Conclusion
