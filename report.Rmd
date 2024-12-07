@@ -38,15 +38,44 @@ We began by exploring trends in NYC dog bite incidents over time, along with the
 
 As our project evolved, we delved into more in-depth questions:
 
-1. 
+1. Is the incidence rate of dog bites associated with the number of registered dog licenses?
 
-2.
+2. Can we utilize a regression model to investigate the spatial correlations between dog bite incidents and dog licenses?
 
-3.
+3. Which model is most suitable for analyzing the cumulative impact of various factors on dog bite incidents?
 
 <br><br> 
 
 ## Data
+
+The dataset utilized for analyzing and visualizing dog bite cases in New York City includes information on various factors such as sex, breed, and age. The data, covering the period from 2015 to 2022, were sourced from [NYC OpenData](https://data.cityofnewyork.us/Health/DOHMH-Dog-Bite-Data/rsgh-akpg/about_data). Data is collected from reports received online, mail, fax or by phone to 311 or NYC DOHMH Animal Bite Unit. Each record represents a single dog bite incident.
+
+Another dataset used in this project documents active dog licenses in New York City for a given year. This data is derived from the DOHMH Dog Licensing System, which facilitates the application and renewal of dog licenses. The dataset is also sourced from [NYC OpenData](https://data.cityofnewyork.us/Health/NYC-Dog-Licensing-Dataset/nu7n-tubp/about_data). 
+
+The dog bite dataset we utilized includes the following variables:
+
+* `UniqueID`: Unique dog bite case identifier.
+* `DateOfBite`: Date bitten.
+* `Species`: Animal Type (Dog).
+* `Breed`: Breed type.
+* `Age`: Dog's age at time of bite. Numbers with 'M' indicate months.
+* `Gender`: Sex of Dog. M=Male, F=Female, U=Unknown.
+* `SpayNeuter`: Surgical removal of dog's reproductive organs. True (reported to DOHMH as Spayed or Neutered), False (Unknown or Not Spayed or Neutered).
+* `Borough`: Dog bite Borough. Other' indicates that the bite took place outside New York City.
+* `ZipCode`: Dog bite Zipcode. Blank ZipCode indicates that information was not available.
+
+The NYC dog licensing dataset we utilized includes the following variables:
+
+* `AnimalName`: User-provided dog name (unless specified otherwise).
+* `AnimalGender`: M (Male) or F (Female) dog gender.
+* `AnimalBirthYear`: Year dog was born.
+* `BreedName`: Dog breed.
+* `ZipCode`: Owner zip code.
+* `LicenseIssuedDate`: Date the dog license was issued.
+* `LicenseExpiredDate`: Date the dog license expires.
+* `Extract Year`: Year the data was extracted.
+
+<br><br> 
 
 ## Exploratory Analysis
 
