@@ -15,20 +15,12 @@
 
 <script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
-<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
-<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
-<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
-<style>h1 {font-size: 34px;}
-       h1.title {font-size: 38px;}
-       h2 {font-size: 30px;}
-       h3 {font-size: 24px;}
-       h4 {font-size: 18px;}
-       h5 {font-size: 16px;}
-       h6 {font-size: 12px;}
-       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
-       pre:not([class]) { background-color: white }</style>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<link href="site_libs/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-5.3.1/bootstrap.bundle.min.js"></script>
+<script src="site_libs/bs3compat-0.8.0/transition.js"></script>
+<script src="site_libs/bs3compat-0.8.0/tabs.js"></script>
+<script src="site_libs/bs3compat-0.8.0/bs3compat.js"></script>
 <script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
@@ -36,8 +28,8 @@
 <script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
-<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -405,7 +397,68 @@ bite incidents</h1>
 
 <div id="variable-features" class="section level1">
 <h1>Variable features</h1>
-<p>回归使用zipcode中累积的dogbite数量为因变量。</p>
+<p>The dependent variable hypothesized in the article is the number of
+dog bite incidents per zipcode. The predictor variables include the year
+and month of the incident, characteristics of the dog, and the area
+where the incident occurred. The year is measured as an interval-level
+variable, with values from 1 (corresponding to 2015) to 7 (corresponding
+to 2021). The area of the incident is divided into variables ranging
+from 1 to 5, representing the five boroughs of New York City. The gender
+of the dog is a binary variable, with 1 indicating female and 2
+indicating male. Similarly, the sterilization status of the dog is also
+a binary variable, with 0 indicating unsterilized and 1 indicating
+sterilized.</p>
+<pre class="r"><code>data &lt;- data.frame(
+  `Variable` = c(&quot;dog_bite_incidents&quot;, &quot;year&quot;, &quot;month&quot;, &quot;gender&quot;, &quot;spay_neuter&quot;, &quot;borough&quot;),
+  `Range` = c(
+    &quot;$\\mathbb{N}$&quot;,
+    &quot;$\\{1, 2, 3, 4, 5, 6, 7\\}$&quot;,
+    &quot;$\\{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12\\}$&quot;,
+    &quot;$\\{1, 2\\}$&quot;,
+    &quot;$\\{0, 1\\}$&quot;,
+    &quot;$\\{1, 2, 3, 4, 5\\}$&quot;
+  )
+)
+
+knitr::kable(data, format = &quot;pipe&quot;, align = &quot;l&quot;, caption = &quot;Variable Implications&quot;)</code></pre>
+<table>
+<caption>Variable Implications</caption>
+<thead>
+<tr class="header">
+<th align="left">Variable</th>
+<th align="left">Range</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">dog_bite_incidents</td>
+<td align="left"><span class="math inline">\(\mathbb{N}\)</span></td>
+</tr>
+<tr class="even">
+<td align="left">year</td>
+<td align="left"><span class="math inline">\(\{1, 2, 3, 4, 5, 6,
+7\}\)</span></td>
+</tr>
+<tr class="odd">
+<td align="left">month</td>
+<td align="left"><span class="math inline">\(\{1, 2, 3, 4, 5, 6, 7, 8,
+9, 10, 11, 12\}\)</span></td>
+</tr>
+<tr class="even">
+<td align="left">gender</td>
+<td align="left"><span class="math inline">\(\{1, 2\}\)</span></td>
+</tr>
+<tr class="odd">
+<td align="left">spay_neuter</td>
+<td align="left"><span class="math inline">\(\{0, 1\}\)</span></td>
+</tr>
+<tr class="even">
+<td align="left">borough</td>
+<td align="left"><span class="math inline">\(\{1, 2, 3, 4,
+5\}\)</span></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="negative-binomial-regression-analysis" class="section level1">
 <h1>Negative Binomial Regression Analysis</h1>
@@ -420,23 +473,13 @@ values. From the Spatial Correlations section, the study area meets the
 three prerequisites for negative binomial regression: the dog bite
 incidents are not independent, exhibiting spatial clustering; the
 dependent variable shows overdispersion; and the frequency of dog bite
-incidents is sufficiently low.</p>
-<p>The dependent variable hypothesized in the article is the number of
-dog bite incidents per zipcode, which follows a negative binomial
-distribution. The predictor variables include the year and month of the
-incident, characteristics of the dog, and the area where the incident
-occurred. The year is measured as an interval-level variable, with
-values from 1 (corresponding to 2015) to 7 (corresponding to 2021). The
-area of the incident is divided into variables ranging from 1 to 5,
-representing the five boroughs of New York City. The gender of the dog
-is a binary variable, with 1 indicating female and 2 indicating male.
-Similarly, the sterilization status of the dog is also a binary
-variable, with 0 indicating unsterilized and 1 indicating sterilized.
-The model equation is as follows:</p>
+incidents is sufficiently low. Let the dependent variable follows a
+negative binomial distribution. The model equation is as follows:</p>
 <p><span class="math display">\[\ln ({\hat y_i}) = {\beta _0} + {\beta
 _1}{X_{i1}} + {\beta _2}{X_{i2}} +  \cdots {\beta _m}{X_{im}} +
-\xi\]</span> Here, <span class="math inline">\({y_i}\)</span> represents
-the frequency of dog bite incidents within a year, <span
+\xi\]</span></p>
+<p>Here, <span class="math inline">\({y_i}\)</span> represents the
+frequency of dog bite incidents within a year, <span
 class="math inline">\({\beta _m}\)</span> is the coefficient, <span
 class="math inline">\(X_m\)</span> are the explanatory variables, and
 <span class="math inline">\(\xi\)</span> represents the heterogeneity
@@ -454,8 +497,8 @@ it was originally.</p>
 _k}({X_{ik}} + 1) +  \cdots  + {\beta _m}{X_{im}}}}}}{{{e^{{\beta _0} +
 {\beta _1}{X_{i1}} +  \cdots  + {\beta _k}{X_{ik}} +  \cdots  + {\beta
 _m}{X_{im}}}}}} = {e^{{\beta _k}}}\]</span></p>
-<div id="original-model" class="section level3">
-<h3>Original Model</h3>
+<div id="original-model" class="section level2">
+<h2>Original Model</h2>
 <pre class="r"><code>library(MASS)</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;MASS&#39;</code></pre>
@@ -532,12 +575,60 @@ summary(model)</code></pre>
 ## 
 ##  2 x log-likelihood:  -7353.42</code></pre>
 </div>
-<div id="with-interaction" class="section level3">
-<h3>With Interaction</h3>
+<div id="with-interaction" class="section level2">
+<h2>With Interaction</h2>
 <p>To further increase the precision of the model fit, interaction terms
 between variables were added. After using stepwise reduction to simplify
 the model complexity, the final negative binomial regression model is as
-follows.</p>
+follows:</p>
+<pre class="r"><code>data &lt;- data.frame(
+  `Main Effect` = c(&quot;year&quot;, &quot;month&quot;, &quot;gender&quot;, &quot;spay_neuter&quot;, &quot;borough&quot;, &quot; &quot;),
+  `Double Interaction Effect` = c(
+    &quot;year * spay_neuter&quot;,
+    &quot;year * borough&quot;,
+    &quot;month * spay_neuter&quot;,
+    &quot;gender * spay_neuter&quot;,
+    &quot;gender * borough&quot;,
+    &quot;spay_neuter * borough&quot;
+  )
+)
+
+knitr::kable(data, format = &quot;pipe&quot;, align = &quot;l&quot;, caption = &quot;Final Negative Binomial Regression Model&quot;, escape = FALSE)</code></pre>
+<table>
+<caption>Final Negative Binomial Regression Model</caption>
+<thead>
+<tr class="header">
+<th align="left">Main.Effect</th>
+<th align="left">Double.Interaction.Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">year</td>
+<td align="left">year * spay_neuter</td>
+</tr>
+<tr class="even">
+<td align="left">month</td>
+<td align="left">year * borough</td>
+</tr>
+<tr class="odd">
+<td align="left">gender</td>
+<td align="left">month * spay_neuter</td>
+</tr>
+<tr class="even">
+<td align="left">spay_neuter</td>
+<td align="left">gender * spay_neuter</td>
+</tr>
+<tr class="odd">
+<td align="left">borough</td>
+<td align="left">gender * borough</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">spay_neuter * borough</td>
+</tr>
+</tbody>
+</table>
 <pre class="r"><code>filter_model = glm.nb(bite_count ~ year + month + gender + spay_neuter + 
     borough + year:spay_neuter + year:borough + month:spay_neuter + 
     gender:spay_neuter + gender:borough + spay_neuter:borough, 
@@ -722,21 +813,24 @@ follows.</p>
 ## Warning while fitting theta: iteration limit reached 
 ## 
 ##  2 x log-likelihood:  -6895.762</code></pre>
-<p>最终筛选得到的模型，主效应包括：<code>year</code> <code>month</code>
-<code>gender</code> <code>spay_neuter</code> <code>borough</code>。 *
-双重交互效应包括：year:spay_neuter：年份与绝育状态的交互。
-<code>year:borough</code>：年份与地区的交互。
-<code>month:spay_neuter</code>：月份与绝育状态的交互。
-<code>gender:spay_neuter</code>：性别与绝育状态的交互。
-<code>gender:borough</code>：性别与地区的交互。
-<code>spay_neuter:borough</code>：绝育状态与地区的交互。
-总结：最终得到的model包含了</p>
 </div>
-<div id="model-evaluation" class="section level3">
-<h3>Model evaluation</h3>
-<ol style="list-style-type: decimal">
-<li>首先进行显著性评估</li>
-</ol>
+<div id="model-evaluation" class="section level2">
+<h2>Model evaluation</h2>
+<p>Cross-validation of the final model is depicted in the following
+illustration, where the red dashed line represents the ideal prediction
+scenario (i.e., predicted values equal actual values). If points fall
+near this line, it indicates that the model predicts well. Points
+located above the diagonal line suggest that the model underestimates
+the actual values; conversely, if points are below the diagonal line,
+the model overestimates the actual values.</p>
+<p>Overall, while the scatter plot shows a slight systematic deviation,
+the final negative binomial regression model still accurately predicts
+low and medium value areas. However, the error is larger in high-value
+areas, where actual values tend to fall below the predicted values. This
+may indicate a tendency of the model to overfit in regions with high
+incident counts.</p>
+<div id="significance-evaluation" class="section level3">
+<h3>Significance evaluation</h3>
 <pre class="r"><code>filter_model_summary &lt;- tidy(filter_model, exponentiate = TRUE, conf.int = TRUE)
 print(filter_model_summary)</code></pre>
 <pre><code>## # A tibble: 74 × 7
@@ -753,10 +847,9 @@ print(filter_model_summary)</code></pre>
 ##  9 month3         1.01     0.0685    0.153  8.78e- 1    0.884     1.16 
 ## 10 month4         0.993    0.0685   -0.0967 9.23e- 1    0.869     1.14 
 ## # ℹ 64 more rows</code></pre>
-<ol start="2" style="list-style-type: decimal">
-<li>交互效应可视化：</li>
-</ol>
-<p>2.1 交互效应图</p>
+</div>
+<div id="interaction-effect-visualization" class="section level3">
+<h3>Interaction effect visualization</h3>
 <pre class="r"><code>library(effects)</code></pre>
 <pre><code>## Loading required package: carData</code></pre>
 <pre><code>## lattice theme set by effectsTheme()
@@ -767,13 +860,9 @@ plot(interaction_effect_y_bo,
      xlab = &quot;Year&quot;,
      ylab = &quot;Predicted Bite Count&quot;)</code></pre>
 <p><img src="regression_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
-<pre class="r"><code>library(ggeffects)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;ggeffects&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:spData&#39;:
-## 
-##     coffee_data</code></pre>
-<pre class="r"><code># 提取交互效应预测
+<pre class="r"><code>library(ggeffects)
+
+# 提取交互效应预测
 interaction_preds &lt;- ggpredict(filter_model, terms = c(&quot;year&quot;, &quot;borough&quot;))
 
 # 可视化交互效应
@@ -790,10 +879,16 @@ ggplot(interaction_preds, aes(x = x, y = predicted, color = group)) +
 <pre><code>## `geom_line()`: Each group consists of only one observation.
 ## ℹ Do you need to adjust the group aesthetic?</code></pre>
 <p><img src="regression_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
-<ol start="3" style="list-style-type: decimal">
-<li>模型预测</li>
-</ol>
-<p>图中红色虚线表示理想状态下的预测情况（即预测值等于实际值）。若点落在这条线附近，说明模型预测效果较好。若点的位置高于对角线，则模型低估了实际值；反之若点的位置低于对角线，则模型高估了实际值。</p>
+</div>
+<div id="prediction" class="section level3">
+<h3>Prediction</h3>
+<p>In the plot, the red dashed line represents the ideal prediction
+scenario where the predicted values equal the actual values. Points
+close to this line indicate that the model is performing well in its
+predictions. If points are positioned above the diagonal line, it
+suggests that the model has underestimated the actual values;
+conversely, if points are located below the diagonal line, it indicates
+that the model has overestimated the actual values. 。</p>
 <pre class="r"><code># Predicted vs Actual Bite Count
 inter_predict = bites_by_group |&gt; 
   mutate(predicted = predict(model_stepwise, type = &quot;response&quot;))
@@ -806,37 +901,57 @@ ggplot(inter_predict, aes(x = predicted, y = bite_count)) +
        y = &quot;Actual Bite Count&quot;) +
   theme_minimal()</code></pre>
 <p><img src="regression_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
-<p>此外，还可以通过残差模拟和诊断来评估拟合模型的质量。</p>
-<ol style="list-style-type: decimal">
-<li><p>Residuals vs Fitted (残差与拟合值图)
-用于检查拟合值和残差之间是否存在系统性关系。理想情况下，残差应随机分布在横轴（拟合值）附近，无明显模式，即红色虚线（平滑曲线）应接近水平直线。如果有明显模式（如曲线形分布），可能表示模型拟合不足。</p></li>
-<li><p>Q-Q Residuals (残差的 Q-Q 图)
-检查残差是否符合模型假设的分布。残差分布的尾部偏离正态分布。</p></li>
-<li><p>Scale-Location (缩放位置图)
-检查残差的方差是否均匀（同方差性）。点的分布呈现条带状，且红色平滑线显示出非水平趋势。这表明残差方差可能随拟合值变化，存在异方差性。</p></li>
-<li><p>Residuals vs Leverage (残差与杠杆值图)
-检查是否存在高杠杆值的观测点（对模型拟合影响较大的点）。理想情况:大多数点应集中在低杠杆值区域。没有点超出
-Cook’s 距离（虚线表示）。</p></li>
-</ol>
+<p>Additionally, the quality of the fitted model can be assessed through
+residual analysis and diagnostics, as illustrated in the following four
+plots.</p>
+<ul>
+<li>Residual vs. Fitted Plot:</li>
+</ul>
+<p>This graph helps to detect non-linearity, unequal error variances,
+and outliers. Ideally, the residuals should be randomly dispersed around
+the horizontal axis, meaning the red dashed line (a smooth curve) should
+be close to a horizontal straight line.</p>
+<ul>
+<li>Q-Q Plot:</li>
+</ul>
+<p>This plot is used to check whether the residuals conform to the
+distribution assumed by the model.</p>
+<ul>
+<li>Scale-Location Plot:</li>
+</ul>
+<p>This plot shows the spread of residuals versus fitted values and
+helps to check for homoscedasticity (constant spread of residuals). A
+model that meets this assumption will show a horizontal line with
+randomly spread points.</p>
+<ul>
+<li>Residuals vs. Leverage Plot:</li>
+</ul>
+<p>This plot is critical for identifying observations with high leverage
+values—points that have a significant impact on the model’s fit.
+Ideally, no points should exceed the threshold set by Cook’s distance,
+indicated by the dashed lines.</p>
 <pre class="r"><code>library(DHARMa)</code></pre>
 <pre><code>## This is DHARMa 0.4.7. For overview type &#39;?DHARMa&#39;. For recent changes, type news(package = &#39;DHARMa&#39;)</code></pre>
 <pre class="r"><code>residuals_sim = simulateResiduals(model_stepwise)
 plot(model_stepwise)</code></pre>
 <p><img src="regression_files/figure-html/unnamed-chunk-10-1.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-10-2.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-10-3.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-10-4.png" width="672" /></p>
-<p>主要问题: 非正态分布:</p>
-<p>Q-Q 图和残差分布图表明残差的分布偏离正态分布，可能需要对响应变量（如
-bite_count）进行变换（如对数变换）。 异方差性:</p>
-<p>Scale-Location
-图显示残差的方差随拟合值变化，可能需要引入更灵活的分布（如负二项分布或零膨胀模型）。
-高杠杆点和异常点:</p>
-<p>Residuals vs Leverage 图显示存在高杠杆点（如 832 和
-637）。需要检查这些点是否数据录入错误，或者是否应在模型中单独处理。
-改进模型建议: 检查分布假设:</p>
-<p>如果模型使用的是泊松回归（GLM），可能需要切换到负二项分布（如
-glm.nb()）。 使用残差模拟工具（如 DHARMa）进一步诊断残差分布。
-调整异方差问题:</p>
-<p>引入加权最小二乘回归或重新指定响应变量的分布。 处理异常点:</p>
-<p>逐一检查高杠杆点和残差异常点，考虑是否需要移除或调整。</p>
+<p>From the analysis of the four diagnostic plots, the fitted model
+exhibits several shortcomings. Firstly, the tails of the residual
+distribution slightly deviate from the assumed negative binomial
+distribution. This deviation suggests that the residuals might not be
+perfectly modeled, indicating potential issues with the model fit or the
+distributional assumptions. Secondly, the distribution of points in the
+Scale-Location plot appears striated, and the red smooth line shows a
+non-horizontal trend. This pattern indicates that the variance of the
+residuals may change with fitted values, suggesting the presence of
+heteroscedasticity. This non-constant variance can affect the
+reliability of the model’s standard errors and confidence
+intervals.Lastly, the Residuals vs Leverage Plot reveals the presence of
+points with high leverage, which could be overly influencing the model’s
+predictions. These high leverage points warrant further investigation to
+determine whether they should be removed or adjusted to improve model
+accuracy and robustness.</p>
+</div>
 </div>
 </div>
 <div id="regularized-model-lasso" class="section level1">
@@ -902,42 +1017,41 @@ lasso_coefficients_df &lt;- as.data.frame(as.matrix(lasso_coefficients)) %&gt;%
   filter(Coefficient != 0)  # 筛选非零系数的变量
 
 print(lasso_coefficients_df)</code></pre>
-<pre><code>##             Coefficient            s1
-## 1          X.Intercept.  1.1070020943
-## 2        X.Intercept..1  0.0000000000
-## 3              year2016  0.0589093710
-## 4              year2017  0.1471430712
-## 5              year2018  0.0711125888
-## 6              year2019  0.0949096836
-## 7              year2020 -0.2819271186
-## 8              year2021 -0.2845450174
-## 9                month2 -0.0167225810
-## 10               month3  0.0000000000
-## 11               month4  0.1035515545
-## 12               month5  0.1567845172
-## 13               month6  0.2252885209
-## 14               month7  0.1832139058
-## 15               month8  0.2051502392
-## 16               month9  0.1185685845
-## 17              month10  0.0678487424
-## 18              month11  0.0587653785
-## 19              month12 -0.0009817948
-## 20              genderM  0.8880223677
-## 21  spay_neuterNeutered -0.1034176428
-## 22      boroughBrooklyn  0.2990382149
-## 23     boroughManhattan  0.2262717734
-## 24        boroughQueens  0.4941918529
-## 25 boroughStaten.Island -0.5573117663</code></pre>
-<ul>
-<li>使用Lasso回归的结果进行预测</li>
-</ul>
+<pre><code>##             Coefficient           s1
+## 1          X.Intercept.  1.104458165
+## 2        X.Intercept..1  0.000000000
+## 3              year2016  0.059601229
+## 4              year2017  0.147817118
+## 5              year2018  0.071787901
+## 6              year2019  0.095582007
+## 7              year2020 -0.281729285
+## 8              year2021 -0.284386843
+## 9                month2 -0.015570617
+## 10               month3  0.001564948
+## 11               month4  0.105312366
+## 12               month5  0.158542466
+## 13               month6  0.227033645
+## 14               month7  0.184972035
+## 15               month8  0.206905164
+## 16               month9  0.120362051
+## 17              month10  0.069668346
+## 18              month11  0.060586284
+## 19              month12  0.000000000
+## 20              genderM  0.888248772
+## 21  spay_neuterNeutered -0.103609162
+## 22      boroughBrooklyn  0.299678045
+## 23     boroughManhattan  0.226911622
+## 24        boroughQueens  0.494793280
+## 25 boroughStaten.Island -0.557209451</code></pre>
+<p>Using the results of Lasso regression for prediction, the results are
+as follows:</p>
 <pre class="r"><code>final_model &lt;- glmnet(x, y, family = &quot;poisson&quot;, alpha = 1, lambda = best_lambda)
 final_model</code></pre>
 <pre><code>## 
 ## Call:  glmnet(x = x, y = y, family = &quot;poisson&quot;, alpha = 1, lambda = best_lambda) 
 ## 
-##   Df  %Dev   Lambda
-## 1 23 60.62 0.006069</code></pre>
+##   Df  %Dev  Lambda
+## 1 22 60.62 0.00553</code></pre>
 <pre class="r"><code>#predictions_lasso &lt;- bites_by_group |&gt; mutate(predicted = predict(final_model, type = &quot;response&quot;))</code></pre>
 </div>
 <div id="generalized-linear-mixed-model-glmm" class="section level1">
