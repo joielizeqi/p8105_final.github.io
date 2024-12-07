@@ -175,6 +175,29 @@ hole_trend = ggplot(daily_bites, aes(x = date_of_bite, y = bite_count)) +
 ggplotly(hole_trend)
 ```
 
+```{r, warning=FALSE, message=FALSE}
+bites_by_year_month = dog_bites_clean |>
+  count(year, month, name = "Bite_Count") |> 
+  mutate(hover_text = paste("Year:", year, "<br>Month:", month, "<br>Count:", Bite_Count))
 
+heatmap_interactive = plot_ly(
+  data = bites_by_year_month,
+  x = ~month,
+  y = ~year,
+  z = ~Bite_Count,
+  type = "heatmap",
+  colors = c("white", "red"),
+  text = ~hover_text,
+  hoverinfo = "text"
+) |>
+  layout(
+    title = "Dog Bites by Month & Year",
+    xaxis = list(title = "Month"),
+    yaxis = list(title = "Year"),
+    colorbar = list(title = "Count for Dog Bites")
+  )
 
-# Correlation between the number of dog bite incidents and dogs’ background
+heatmap_interactive
+```
+
+## Correlation between the number of dog bite incidents and dogs’ background
