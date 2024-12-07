@@ -12,7 +12,7 @@ knitr::opts_chunk$set(collapse = TRUE, message = FALSE)
 
 ## Motivation
 
-Dogs are often cherished as "man's best friend," but the rising number of dog bite incidents poses a growing public health concern. In 2022, dog bites were among the top 15 causes of nonfatal emergency department visits across all age groups. This project explores the factors contributing to dog bite incidents, including dog-specific traits like breed, age, gender, and spay/neuter status, as well as their geographical patterns and trends over time. By analyzing bite rates across different zip code areas, we aim to identify hotspots and better understand the relationship between dog characteristics and bite frequency. The findings will support efforts to develop data-driven strategies for preventing dog bites and improving public safety.
+Dogs are often cherished as "man's best friend", but the rising number of dog bite incidents poses a growing public health concern. In 2022, dog bites were among the top 15 causes of nonfatal emergency department visits across all age groups. This project explores the factors contributing to dog bite incidents, including dog-specific traits like breed, age, gender, and spay/neuter status, as well as their geographical patterns and trends over time. By analyzing bite rates across different zip code areas, we aim to identify hotspots and better understand the relationship between dog characteristics and bite frequency. The findings will support efforts to develop data-driven strategies for preventing dog bites and improving public safety.
 
 <br><br> 
 
@@ -36,7 +36,15 @@ We began by exploring trends in NYC dog bite incidents over time, along with the
 
 ## Evolution of Questions
 
+As our project evolved, we delved into more in-depth questions:
 
+1. 
+
+2.
+
+3.
+
+<br><br> 
 
 ## Data
 
