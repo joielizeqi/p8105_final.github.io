@@ -252,7 +252,7 @@ layout(
 ```
 
 
-### Top 15 Dog Bite Breeds by Year
+### Top 10 Dog Bite Breeds by Year
 
 ```{r}
 ui <- fluidPage(
@@ -295,7 +295,7 @@ server <- function(input, output, session) {
       group_by(breed) %>%
       summarise(count = n()) %>%
       arrange(desc(count)) %>%
-      slice_max(order_by = count, n = 15)  # Top 15 breeds
+      slice_max(order_by = count, n = 10)  # Top 10 breeds
 
     # Plotly Treemap
     plot_ly(

@@ -257,7 +257,7 @@ borough_interactive = ggplotly(borough_grouped_bar_plot)
 borough_interactive
 ```
 
-Looking at license counts across boroughs, Manhattan has the most licensed dogs, followed by Brooklyn, Queens, Bronx, and Staten Island. Looking at dog bite incidences across these boroughs, however, Queens reported the most incidences, followed by Manhattan, Brooklyn, Bronx, and lastly Staten Island. The mismatch between these two sets of bar likely implies that Queens may be a hotspot for dog bite incidences. We will take a closer look at this by analyzing the bite-to-licnese ratio in the pie charts below.
+Looking at license counts across boroughs, Manhattan has the most licensed dogs, followed by Brooklyn, Queens, Bronx, and Staten Island. Looking at dog bite incidences across these boroughs, however, Queens reported the most incidences, followed by Manhattan, Brooklyn, Bronx, and lastly Staten Island. The mismatch between these two sets of bar likely implies that Queens may be a hotspot for dog bite incidences. We will take a closer look at this by analyzing the bite-to-license ratio in the pie charts below.
 
 ```{r, warning=FALSE, message=FALSE}
 bite_borough_data = borough_data |>
@@ -325,4 +325,4 @@ combined_pies = subplot(
 combined_pies
 ```
 
-The first and second pie charts display the proportions of dog bites and dog licenses by boroughs, and they are consistent with the bar plot above. The third pie chart displays the bite-to-license ratios by boroughs. Looking at this metric, Queens has a high ratio of 23.6% but is topped by Bronx, which has the highest bite-tolicence ratio of 30.6%. This means that Bronx is also a possible hotspot for dog bite incidences. Next, we will use the Moran's I value in our ![spatial correlation analysis](correlation.html) part to more accurately determine areas with high dog bite incidences.
+The first and second pie charts display the proportions of dog bites and dog licenses by boroughs, and they are consistent with the bar plot above. The third pie chart displays the bite-to-license ratios by boroughs. Looking at this metric, Queens has a high ratio of 23.6% but is topped by Bronx, which has the highest bite-to-license ratio of 30.6%. This means that Bronx is also a possible hotspot for dog bite incidences. Next, we will use the Moran's I value in our [spatial correlation analysis](correlation.html) part to more accurately determine areas with high dog bite incidences.
