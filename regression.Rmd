@@ -163,11 +163,12 @@ Here, ${y_i}$ represents the frequency of dog bite incidents within a year, ${\b
 In negative binomial regression, where the conditional expectation $E(Y|X) = {e^{{\beta _0} + {\beta _1}{X_{i1}} + {\beta _2}{X_{i2}} +  \cdots {\beta _m}{X_{im}}}}$, the interpretation of the model's coefficients is as follows: when the explanatory variable ${X_k}$ increases by one unit, the average occurrence rate of dog bite incidents becomes ${e^{{\beta _k}}}$ times what it was originally.
 
 $$\frac{{E(Y|{X^*})}}{{E(Y|X)}} = \frac{{{e^{{\beta _0} + {\beta _1}{X_{i1}} +  \cdots  + {\beta _k}({X_{ik}} + 1) +  \cdots  + {\beta _m}{X_{im}}}}}}{{{e^{{\beta _0} + {\beta _1}{X_{i1}} +  \cdots  + {\beta _k}{X_{ik}} +  \cdots  + {\beta _m}{X_{im}}}}}} = {e^{{\beta _k}}}$$
+
 ## Regularized Model (Lasso)
 
 Initially, the paper employs Lasso regression on five primary variables, aiming to use regularization to reduce the number of variables in the model and thus avoid overfitting.
 
-```{r cv, warning=FALSE, message=FALSE}
+```{r lambda, warning=FALSE, message=FALSE}
 # lasso
 library(glmnet)
 
@@ -183,10 +184,7 @@ cv_results <- with(cv_model,
   lower_mse = cvlo,
   upper_mse = cvup
 ))
-```
 
-```{r lambda, warning=FALSE, message=FALSE}
-# 确定最佳lambda，
 best_lambda <- cv_model$lambda.min
 log_best_lambda <- log(best_lambda)
 ```
@@ -272,7 +270,7 @@ kable(
 
 **Multicollinearity Check**
 
-```{r, warning=FALSE, message=FALSE}
+```{r vif, warning=FALSE, message=FALSE}
 library(car)
 vif_results <- vif(model) %>%
   as.data.frame() %>%
@@ -304,10 +302,9 @@ In your results, all values are very close to 1, further confirming no multicoll
 
 This indicates that all predictors can be reliably used in regression model without the risk of biased coefficients caused by multicollinearity.
 
-
 **Residual Analysis**
 
-```{r, warning=FALSE, message=FALSE}
+```{r residuals_sim, warning=FALSE, message=FALSE}
 library(DHARMa)
 residuals_sim = simulateResiduals(model)
 plot(residuals_sim)
@@ -323,7 +320,7 @@ To further increase the precision of the model fit, interaction terms between va
 
 ### Results
 
-```{r, warning=FALSE, message=FALSE, include=FALSE}
+```{r glm_nb_interactions, warning=FALSE, message=FALSE, include=FALSE}
 model_all_interactions <- glm.nb(
   formula = bite_count ~ 
     year + month + gender + spay_neuter + borough +
@@ -378,10 +375,8 @@ Overall, while the scatter plot shows a slight systematic deviation, the final n
 #### Significance evaluation
 
 ```{r}
-
 filter_model_summary <- tidy(filter_model, exponentiate = TRUE, conf.int = TRUE)
 print(filter_model_summary)
-
 ```
 
 #### Interaction effect visualization
@@ -460,8 +455,7 @@ From the analysis of the four diagnostic plots, the fitted model exhibits severa
 
 # Generalized Linear Mixed Model (GLMM)
 
-为了解决上述模型拟合问题，本文进一步使用Generalized Linear Mixed Model (GLMM)对拟合模型进行优化。
-
+To address the model fitting issue, a generalized linear mixed model is employed. 
 The Generalized Linear Mixed Model (GLMM) is an extension of the Generalized Linear Model (GLM) and the Linear Mixed Model (LMM). GLMM consists of three main components: random effects, fixed effects, and a link function. Fixed effects represent the overall level parameters consistent across all observations, while random effects account for individual variability or group-level differences that may influence the response variable. The link function connects the linear predictor to the mean of the response variable distribution, allowing the dependent variable to deviate from a normal distribution and enabling modeling of various types of data, including binary, count, and continuous outcomes.
 
 Let the response variable $y$ belongs to the exponential family, its conditional distribution can be expressed as follows:
@@ -478,7 +472,7 @@ In the model, $g( \cdot )$ represents the link function, which connects the expe
 
 For the dog bite incidents dataset, the response variable $y$ represents the number of dog bite incidents per zipcode per month. Fixed effects in the model include year, month, gender, and sterilization status. Random effects are attributed to different boroughs (5 boroughs in total). Thus, for all response variables, ${\rm X}$ is a matrix containing year, month, gender, and sterilization status; $\vec \beta$ represents the coefficients for the fixed effects; ${\rm X}$ indicates the matrix for the borough each response variable belongs to; and $\vec b$ denotes the deviation for each borough (random effects). This setup allows the model to adjust for the influence of both environmental conditions and borough-specific variations in the occurrence of dog bites.
 
-```{r, warning=FALSE, message=FALSE}
+```{r glmer_nb, warning=FALSE, message=FALSE}
 library(lme4)
 glmm_model = glmer.nb(
   bite_count ~ year + month + gender + spay_neuter + (1 | borough), 
@@ -487,8 +481,8 @@ glmm_model = glmer.nb(
 summary(glmm_model)
 ```
 
+#### Residual analysis
 
-#### 残差分析
 ```{r, warning=FALSE, message=FALSE}
 library(DHARMa)
 residuals_glmm_sim = simulateResiduals(glmm_model)
@@ -496,7 +490,7 @@ plot(residuals_glmm_sim)
 ```
 有outlier，所以该模型并不。。。
 
-# Model对比： 
+# Model comparison
 
 三者相比，AIC。。。
 并且，残差分析显示，只有with interaction的有意义。
