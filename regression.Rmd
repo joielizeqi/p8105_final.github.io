@@ -7,7 +7,7 @@ output:
     toc: true
     toc_float: true
 ---
-```{r, message = FALSE, warning = FALSE}
+```{r, message = FALSE, warning = FALSE, include=FALSE}
 library(tidyverse)
 library(knitr)
 library(rvest)
@@ -160,7 +160,7 @@ summary(model)
 
 ### With Interaction
 
-```{r, warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE, include=FALSE}
 model_all_interactions <- glm.nb(
   formula = bite_count ~ 
     year + month + gender + spay_neuter + borough +
@@ -189,7 +189,7 @@ filter_model = glm.nb(bite_count ~ year + month + gender + spay_neuter +
 summary(filter_model)
 ```
 
-### Model 
+### Model evaluation
 ```{r}
 # Predicted vs Actual Bite Count
 inter_predict = bites_by_group |> 
@@ -211,13 +211,71 @@ residuals_sim = simulateResiduals(model_stepwise)
 plot(model_stepwise)
 ```
 
+# Regularized Model (Lasso)
+
+```{r, warning=FALSE}
+# lasso
+library(glmnet)
+
+# 将数据转换为矩阵
+x = model.matrix(bite_count ~ year + month + gender + spay_neuter + borough, data = bites_by_group)
+y = bites_by_group |> pull(bite_count)
+
+# Lasso 回归
+cv_model = cv.glmnet(x, y, family = "poisson", alpha = 1)  # Lasso：alpha = 1
+summary(cv_model)
+
+cv_results <- data.frame(
+  log_lambda = log(cv_model$lambda),
+  mean_mse = cv_model$cvm,
+  lower_mse = cv_model$cvlo,
+  upper_mse = cv_model$cvup
+)
+
+best_lambda <- cv_model$lambda.min
+log_best_lambda <- log(best_lambda)
+
+ggplot(cv_results, aes(x = log_lambda, y = mean_mse)) +
+  geom_line(color = "blue", size = 1) +
+  geom_ribbon(aes(ymin = lower_mse, ymax = upper_mse), alpha = 0.2, fill = "blue") +
+  geom_vline(xintercept = log_best_lambda, linetype = "dashed", color = "red") +
+  labs(
+    title = "Cross-Validation for Lasso Regression",
+    x = "Log(Lambda)",
+    y = "Mean Cross-Validated Error"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# 获取模型在最佳 lambda 下的系数
+lasso_coefficients <- coef(cv_model, s = "lambda.min")
+
+# 将系数转换为数据框以便查看
+lasso_coefficients_df <- as.data.frame(as.matrix(lasso_coefficients)) %>%
+  rownames_to_column("Variable") %>%
+  rename(Coefficient = 1) %>%
+  filter(Coefficient != 0)  # 筛选非零系数的变量
+
+print(lasso_coefficients_df)
+
+```
+
+* 使用Lasso回归的结果进行预测
+```{r}
+final_model <- glmnet(x, y, family = "poisson", alpha = 1, lambda = best_lambda)
+final_model
+#predictions_lasso <- bites_by_group |> mutate(predicted = predict(final_model, type = "response"))
+```
+
+
+
 # Generalized Linear Mixed Model (GLMM)
 
 另一方面，本文进一步使用Generalized Linear Mixed Model (GLMM)验证所得的回归结果。
 
 The Generalized Linear Mixed Model (GLMM) is an extension of the Generalized Linear Model (GLM) and the Linear Mixed Model (LMM). GLMM consists of three main components: random effects, fixed effects, and a link function. Fixed effects represent the overall level parameters consistent across all observations, while random effects account for individual variability or group-level differences that may influence the response variable. The link function connects the linear predictor to the mean of the response variable distribution, allowing the dependent variable to deviate from a normal distribution and enabling modeling of various types of data, including binary, count, and continuous outcomes.
 
-<<<<<<< HEAD
+
 Let the response variable $y$ belongs to the exponential family, its conditional distribution can be expressed as follows:
 
 $$f(y|b) = \prod\limits_{i = 1}^n {f({y_i}|{\eta _i})}$$

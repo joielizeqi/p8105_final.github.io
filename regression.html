@@ -33,6 +33,7 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
@@ -221,6 +222,9 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
 
 
@@ -383,6 +387,14 @@ div.tocify {
 
 <div id="header">
 
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">Cumulative impact of various factors on dog
@@ -391,19 +403,6 @@ bite incidents</h1>
 </div>
 
 
-<pre class="r"><code>library(tidyverse)
-library(knitr)
-library(rvest)
-library(broom)
-library(dplyr)
-library(purrr)
-library(ggplot2)
-library(plotly)
-library(readxl)
-library(reshape2)
-library(akima)
-library(wordcloud)
-library(tm)</code></pre>
 <div id="variable-features" class="section level1">
 <h1>Variable features</h1>
 <p>回归使用zipcode中累积的dogbite数量为因变量。</p>
@@ -411,10 +410,10 @@ library(tm)</code></pre>
 <div id="negative-binomial-regression-analysis" class="section level1">
 <h1>Negative Binomial Regression Analysis</h1>
 <p>To measure the combined effects of year, dog background
-characteristics (i.e., breed, gender, age, and whether neutered) and the
-Borough they belong to on the incidence of dog bites, we first conduct a
-negative binomial regression analysis using records of dog bite
-incidents in New York.</p>
+characteristics (i.e., gender and whether neutered) and the Borough they
+belong to on the incidence of dog bites, we first conduct a negative
+binomial regression analysis using records of dog bite incidents in New
+York.</p>
 <p>The negative binomial regression model is a type of count model
 designed for dependent variables that can only take non-negative integer
 values. From the Spatial Correlations section, the study area meets the
@@ -422,8 +421,18 @@ three prerequisites for negative binomial regression: the dog bite
 incidents are not independent, exhibiting spatial clustering; the
 dependent variable shows overdispersion; and the frequency of dog bite
 incidents is sufficiently low.</p>
-<p>本文假设的因变量是各zipcode的狗咬伤事件发生数量，which呈现负二项分布。Predictor
-variables包括事件发生的年份和月份，狗的背景特征和事件发生区域。其中，年份被测量为一个区间级变量，值从1（对应于2015年）到7（对应于2021年）。事件发生的地区将被划分为值从1-6的变量，分别代表纽约市的5个区还有others。狗的gender是一个二分变量，值为0表示未知，1表示male，2表示female。类似的，狗的绝育状态也是一个二分变量，值为0表示未绝育，1表示已绝育。模型方程如下：</p>
+<p>The dependent variable hypothesized in the article is the number of
+dog bite incidents per zipcode, which follows a negative binomial
+distribution. The predictor variables include the year and month of the
+incident, characteristics of the dog, and the area where the incident
+occurred. The year is measured as an interval-level variable, with
+values from 1 (corresponding to 2015) to 7 (corresponding to 2021). The
+area of the incident is divided into variables ranging from 1 to 5,
+representing the five boroughs of New York City. The gender of the dog
+is a binary variable, with 1 indicating female and 2 indicating male.
+Similarly, the sterilization status of the dog is also a binary
+variable, with 0 indicating unsterilized and 1 indicating sterilized.
+The model equation is as follows:</p>
 <p><span class="math display">\[\ln ({\hat y_i}) = {\beta _0} + {\beta
 _1}{X_{i1}} + {\beta _2}{X_{i2}} +  \cdots {\beta _m}{X_{im}} +
 \xi\]</span> Here, <span class="math inline">\({y_i}\)</span> represents
@@ -525,406 +534,6 @@ summary(model)</code></pre>
 </div>
 <div id="with-interaction" class="section level3">
 <h3>With Interaction</h3>
-<pre class="r"><code>model_all_interactions &lt;- glm.nb(
-  formula = bite_count ~ 
-    year + month + gender + spay_neuter + borough +
-    year * month + year * gender + year * spay_neuter + year * borough +
-    month * gender + month * spay_neuter + month * borough +
-    gender * spay_neuter + gender * borough + spay_neuter * borough +
-    year * month * gender + year * month * spay_neuter + year * month * borough + 
-    year * gender * spay_neuter + year * gender * borough + year * spay_neuter * borough +
-    month * gender * spay_neuter + month * gender * borough + month * spay_neuter * borough +
-    gender * spay_neuter * borough +
-    year * month * gender * spay_neuter + year * month * gender * borough +
-    year * month * spay_neuter * borough + year * gender * spay_neuter * borough +
-    month * gender * spay_neuter * borough,
-  data = bites_by_group
-)
-
-model_stepwise &lt;- stepAIC(model_all_interactions, direction = &quot;both&quot;)</code></pre>
-<pre><code>## Start:  AIC=8389.27
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year * month + year * gender + year * spay_neuter + year * 
-##     borough + month * gender + month * spay_neuter + month * 
-##     borough + gender * spay_neuter + gender * borough + spay_neuter * 
-##     borough + year * month * gender + year * month * spay_neuter + 
-##     year * month * borough + year * gender * spay_neuter + year * 
-##     gender * borough + year * spay_neuter * borough + month * 
-##     gender * spay_neuter + month * gender * borough + month * 
-##     spay_neuter * borough + gender * spay_neuter * borough + 
-##     year * month * gender * spay_neuter + year * month * gender * 
-##     borough + year * month * spay_neuter * borough + year * gender * 
-##     spay_neuter * borough + month * gender * spay_neuter * borough</code></pre>
-<pre><code>##                                     Df    AIC
-## - year:month:spay_neuter:borough   254 8071.1
-## - year:month:gender:borough        249 8090.4
-## - year:month:gender:spay_neuter     66 8320.2
-## - month:gender:spay_neuter:borough  44 8346.1
-## - year:gender:spay_neuter:borough   24 8357.8
-## &lt;none&gt;                                 8389.3</code></pre>
-<pre><code>## 
-## Step:  AIC=8071.05
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:gender + month:spay_neuter + month:borough + gender:spay_neuter + 
-##     gender:borough + spay_neuter:borough + year:month:gender + 
-##     year:month:spay_neuter + year:month:borough + year:gender:spay_neuter + 
-##     year:gender:borough + year:spay_neuter:borough + month:gender:spay_neuter + 
-##     month:gender:borough + month:spay_neuter:borough + gender:spay_neuter:borough + 
-##     year:month:gender:spay_neuter + year:month:gender:borough + 
-##     year:gender:spay_neuter:borough + month:gender:spay_neuter:borough</code></pre>
-<pre><code>##                                     Df    AIC
-## - year:month:gender:borough        250 7774.1
-## - year:month:gender:spay_neuter     66 8002.2
-## - month:gender:spay_neuter:borough  44 8026.8
-## - year:gender:spay_neuter:borough   24 8039.3
-## &lt;none&gt;                                 8071.1
-## + year:month:spay_neuter:borough   254 8389.3</code></pre>
-<pre><code>## 
-## Step:  AIC=7774.08
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:gender + month:spay_neuter + month:borough + gender:spay_neuter + 
-##     gender:borough + spay_neuter:borough + year:month:gender + 
-##     year:month:spay_neuter + year:month:borough + year:gender:spay_neuter + 
-##     year:gender:borough + year:spay_neuter:borough + month:gender:spay_neuter + 
-##     month:gender:borough + month:spay_neuter:borough + gender:spay_neuter:borough + 
-##     year:month:gender:spay_neuter + year:gender:spay_neuter:borough + 
-##     month:gender:spay_neuter:borough</code></pre>
-<pre><code>##                                     Df    AIC
-## - year:month:borough               263 7512.8
-## - year:month:gender:spay_neuter     66 7706.9
-## - month:gender:spay_neuter:borough  44 7729.7
-## - year:gender:spay_neuter:borough   24 7746.2
-## &lt;none&gt;                                 7774.1
-## + year:month:gender:borough        250 8071.1
-## + year:month:spay_neuter:borough   255 8090.4</code></pre>
-<pre><code>## 
-## Step:  AIC=7512.75
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:gender + month:spay_neuter + month:borough + gender:spay_neuter + 
-##     gender:borough + spay_neuter:borough + year:month:gender + 
-##     year:month:spay_neuter + year:gender:spay_neuter + year:gender:borough + 
-##     year:spay_neuter:borough + month:gender:spay_neuter + month:gender:borough + 
-##     month:spay_neuter:borough + gender:spay_neuter:borough + 
-##     year:month:gender:spay_neuter + year:gender:spay_neuter:borough + 
-##     month:gender:spay_neuter:borough</code></pre>
-<pre><code>##                                     Df    AIC
-## - year:month:gender:spay_neuter     66 7443.2
-## - month:gender:spay_neuter:borough  44 7465.5
-## - year:gender:spay_neuter:borough   24 7485.2
-## &lt;none&gt;                                 7512.8
-## + year:month:borough               263 7774.1</code></pre>
-<pre><code>## 
-## Step:  AIC=7443.17
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:gender + month:spay_neuter + month:borough + gender:spay_neuter + 
-##     gender:borough + spay_neuter:borough + year:month:gender + 
-##     year:month:spay_neuter + year:gender:spay_neuter + year:gender:borough + 
-##     year:spay_neuter:borough + month:gender:spay_neuter + month:gender:borough + 
-##     month:spay_neuter:borough + gender:spay_neuter:borough + 
-##     year:gender:spay_neuter:borough + month:gender:spay_neuter:borough</code></pre>
-<pre><code>##                                     Df    AIC
-## - year:month:gender                 66 7374.4
-## - year:month:spay_neuter            66 7389.4
-## - month:gender:spay_neuter:borough  44 7397.2
-## - year:gender:spay_neuter:borough   24 7416.8
-## &lt;none&gt;                                 7443.2
-## + year:month:gender:spay_neuter     66 7512.8
-## + year:month:borough               263 7706.9</code></pre>
-<pre><code>## 
-## Step:  AIC=7374.41
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:gender + month:spay_neuter + month:borough + gender:spay_neuter + 
-##     gender:borough + spay_neuter:borough + year:month:spay_neuter + 
-##     year:gender:spay_neuter + year:gender:borough + year:spay_neuter:borough + 
-##     month:gender:spay_neuter + month:gender:borough + month:spay_neuter:borough + 
-##     gender:spay_neuter:borough + year:gender:spay_neuter:borough + 
-##     month:gender:spay_neuter:borough</code></pre>
-<pre><code>##                                     Df    AIC
-## - year:month:spay_neuter            66 7319.9
-## - month:gender:spay_neuter:borough  44 7327.4
-## - year:gender:spay_neuter:borough   24 7346.7
-## &lt;none&gt;                                 7374.4
-## + year:month:gender                 66 7443.2
-## + year:month:borough               263 7635.4</code></pre>
-<pre><code>## 
-## Step:  AIC=7319.95
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:gender + month:spay_neuter + month:borough + gender:spay_neuter + 
-##     gender:borough + spay_neuter:borough + year:gender:spay_neuter + 
-##     year:gender:borough + year:spay_neuter:borough + month:gender:spay_neuter + 
-##     month:gender:borough + month:spay_neuter:borough + gender:spay_neuter:borough + 
-##     year:gender:spay_neuter:borough + month:gender:spay_neuter:borough</code></pre>
-<pre><code>##                                     Df    AIC
-## - month:gender:spay_neuter:borough  44 7273.5
-## - year:gender:spay_neuter:borough   24 7292.6
-## &lt;none&gt;                                 7319.9
-## - year:month                        66 7320.7
-## + year:month:spay_neuter            66 7374.4
-## + year:month:gender                 66 7389.4
-## + year:month:borough               263 7579.6</code></pre>
-<pre><code>## 
-## Step:  AIC=7273.52
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:gender + month:spay_neuter + month:borough + gender:spay_neuter + 
-##     gender:borough + spay_neuter:borough + year:gender:spay_neuter + 
-##     year:gender:borough + year:spay_neuter:borough + month:gender:spay_neuter + 
-##     month:gender:borough + month:spay_neuter:borough + gender:spay_neuter:borough + 
-##     year:gender:spay_neuter:borough</code></pre>
-<pre><code>##                                     Df    AIC
-## - month:gender:borough              44 7220.9
-## - month:spay_neuter:borough         44 7234.1
-## - year:gender:spay_neuter:borough   24 7245.4
-## - month:gender:spay_neuter          11 7261.1
-## - year:month                        66 7273.2
-## &lt;none&gt;                                 7273.5
-## + month:gender:spay_neuter:borough  44 7319.9
-## + year:month:spay_neuter            66 7327.4
-## + year:month:gender                 66 7344.0
-## + year:month:borough               263 7534.6</code></pre>
-<pre><code>## 
-## Step:  AIC=7220.93
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:gender + month:spay_neuter + month:borough + gender:spay_neuter + 
-##     gender:borough + spay_neuter:borough + year:gender:spay_neuter + 
-##     year:gender:borough + year:spay_neuter:borough + month:gender:spay_neuter + 
-##     month:spay_neuter:borough + gender:spay_neuter:borough + 
-##     year:gender:spay_neuter:borough</code></pre>
-<pre><code>##                                    Df    AIC
-## - month:spay_neuter:borough        44 7181.9
-## - year:gender:spay_neuter:borough  24 7193.6
-## - month:gender:spay_neuter         11 7208.8
-## - year:month                       66 7219.8
-## &lt;none&gt;                                7220.9
-## + month:gender:borough             44 7273.5
-## + year:month:spay_neuter           66 7274.7
-## + year:month:gender                66 7290.7
-## + year:month:borough              263 7481.4</code></pre>
-<pre><code>## 
-## Step:  AIC=7181.87
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:gender + month:spay_neuter + month:borough + gender:spay_neuter + 
-##     gender:borough + spay_neuter:borough + year:gender:spay_neuter + 
-##     year:gender:borough + year:spay_neuter:borough + month:gender:spay_neuter + 
-##     gender:spay_neuter:borough + year:gender:spay_neuter:borough</code></pre>
-<pre><code>##                                    Df    AIC
-## - year:gender:spay_neuter:borough  24 7153.9
-## - month:borough                    44 7156.3
-## - month:gender:spay_neuter         11 7169.8
-## - year:month                       66 7181.0
-## &lt;none&gt;                                7181.9
-## + month:spay_neuter:borough        44 7220.9
-## + month:gender:borough             44 7234.1
-## + year:month:spay_neuter           66 7234.7
-## + year:month:gender                66 7252.6
-## + year:month:borough              263 7437.9</code></pre>
-<pre><code>## 
-## Step:  AIC=7153.94
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:gender + month:spay_neuter + month:borough + gender:spay_neuter + 
-##     gender:borough + spay_neuter:borough + year:gender:spay_neuter + 
-##     year:gender:borough + year:spay_neuter:borough + month:gender:spay_neuter + 
-##     gender:spay_neuter:borough</code></pre>
-<pre><code>##                                    Df    AIC
-## - month:borough                    44 7128.6
-## - year:gender:borough              24 7132.6
-## - year:spay_neuter:borough         24 7142.0
-## - month:gender:spay_neuter         11 7142.1
-## - year:gender:spay_neuter           6 7146.2
-## - gender:spay_neuter:borough        4 7147.8
-## - year:month                       66 7152.8
-## &lt;none&gt;                                7153.9
-## + year:gender:spay_neuter:borough  24 7181.9
-## + month:spay_neuter:borough        44 7193.6
-## + month:gender:borough             44 7205.4
-## + year:month:spay_neuter           66 7206.8
-## + year:month:gender                66 7225.6
-## + year:month:borough              263 7409.6</code></pre>
-<pre><code>## 
-## Step:  AIC=7128.6
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:gender + month:spay_neuter + gender:spay_neuter + gender:borough + 
-##     spay_neuter:borough + year:gender:spay_neuter + year:gender:borough + 
-##     year:spay_neuter:borough + month:gender:spay_neuter + gender:spay_neuter:borough</code></pre>
-<pre><code>##                                   Df    AIC
-## - year:gender:borough             24 7106.9
-## - year:spay_neuter:borough        24 7116.5
-## - month:gender:spay_neuter        11 7116.7
-## - year:gender:spay_neuter          6 7121.0
-## - gender:spay_neuter:borough       4 7122.6
-## - year:month                      66 7126.9
-## &lt;none&gt;                               7128.6
-## + month:borough                   44 7153.9
-## + year:gender:spay_neuter:borough 24 7156.3
-## + year:month:spay_neuter          66 7181.6
-## + year:month:gender               66 7199.5</code></pre>
-<pre><code>## 
-## Step:  AIC=7106.86
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:gender + month:spay_neuter + gender:spay_neuter + gender:borough + 
-##     spay_neuter:borough + year:gender:spay_neuter + year:spay_neuter:borough + 
-##     month:gender:spay_neuter + gender:spay_neuter:borough</code></pre>
-<pre><code>##                              Df    AIC
-## - year:spay_neuter:borough   24 7094.6
-## - month:gender:spay_neuter   11 7094.7
-## - year:gender:spay_neuter     6 7098.1
-## - gender:spay_neuter:borough  4 7100.5
-## - year:month                 66 7105.2
-## &lt;none&gt;                          7106.9
-## + year:gender:borough        24 7128.6
-## + month:borough              44 7132.6
-## + year:month:spay_neuter     66 7159.9
-## + year:month:gender          66 7177.9</code></pre>
-<pre><code>## 
-## Step:  AIC=7094.63
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:gender + month:spay_neuter + gender:spay_neuter + gender:borough + 
-##     spay_neuter:borough + year:gender:spay_neuter + month:gender:spay_neuter + 
-##     gender:spay_neuter:borough</code></pre>
-<pre><code>##                              Df    AIC
-## - month:gender:spay_neuter   11 7082.5
-## - year:gender:spay_neuter     6 7086.0
-## - gender:spay_neuter:borough  4 7088.2
-## - year:month                 66 7092.7
-## &lt;none&gt;                          7094.6
-## + year:spay_neuter:borough   24 7106.9
-## + year:gender:borough        24 7116.5
-## + month:borough              44 7120.6
-## - year:borough               24 7137.0
-## + year:month:spay_neuter     66 7147.5
-## + year:month:gender          66 7165.9</code></pre>
-<pre><code>## 
-## Step:  AIC=7082.51
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:gender + month:spay_neuter + gender:spay_neuter + gender:borough + 
-##     spay_neuter:borough + year:gender:spay_neuter + gender:spay_neuter:borough</code></pre>
-<pre><code>##                              Df    AIC
-## - month:gender               11 7064.9
-## - year:gender:spay_neuter     6 7073.8
-## - gender:spay_neuter:borough  4 7076.0
-## - year:month                 66 7080.4
-## - month:spay_neuter          11 7082.4
-## &lt;none&gt;                          7082.5
-## + month:gender:spay_neuter   11 7094.6
-## + year:spay_neuter:borough   24 7094.7
-## + year:gender:borough        24 7104.6
-## + month:borough              44 7108.6
-## - year:borough               24 7125.3
-## + year:month:spay_neuter     66 7136.1
-## + year:month:gender          66 7153.0</code></pre>
-<pre><code>## 
-## Step:  AIC=7064.92
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:spay_neuter + gender:spay_neuter + gender:borough + 
-##     spay_neuter:borough + year:gender:spay_neuter + gender:spay_neuter:borough</code></pre>
-<pre><code>##                              Df    AIC
-## - year:gender:spay_neuter     6 7056.2
-## - gender:spay_neuter:borough  4 7058.4
-## - year:month                 66 7062.9
-## &lt;none&gt;                          7064.9
-## - month:spay_neuter          11 7065.0
-## + year:spay_neuter:borough   24 7077.0
-## + month:gender               11 7082.5
-## + year:gender:borough        24 7086.9
-## + month:borough              44 7091.0
-## - year:borough               24 7107.9
-## + year:month:spay_neuter     66 7118.8</code></pre>
-<pre><code>## 
-## Step:  AIC=7056.21
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:spay_neuter + gender:spay_neuter + gender:borough + 
-##     spay_neuter:borough + gender:spay_neuter:borough</code></pre>
-<pre><code>##                              Df    AIC
-## - gender:spay_neuter:borough  4 7049.7
-## - year:gender                 6 7052.2
-## - year:month                 66 7054.2
-## &lt;none&gt;                          7056.2
-## - month:spay_neuter          11 7056.3
-## + year:gender:spay_neuter     6 7064.9
-## + year:spay_neuter:borough   24 7068.1
-## + month:gender               11 7073.8
-## + year:gender:borough        24 7079.2
-## + month:borough              44 7082.3
-## - year:borough               24 7099.3
-## - year:spay_neuter            6 7107.2
-## + year:month:spay_neuter     66 7110.1</code></pre>
-<pre><code>## 
-## Step:  AIC=7049.72
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:spay_neuter + gender:spay_neuter + gender:borough + 
-##     spay_neuter:borough</code></pre>
-<pre><code>##                              Df    AIC
-## - year:gender                 6 7045.7
-## - year:month                 66 7047.8
-## &lt;none&gt;                          7049.7
-## - month:spay_neuter          11 7049.8
-## + gender:spay_neuter:borough  4 7056.2
-## - gender:spay_neuter          1 7056.5
-## - gender:borough              4 7057.3
-## + year:gender:spay_neuter     6 7058.4
-## + year:spay_neuter:borough   24 7061.7
-## + month:gender               11 7067.3
-## + year:gender:borough        24 7072.7
-## + month:borough              44 7075.7
-## - year:borough               24 7093.0
-## - year:spay_neuter            6 7100.9
-## + year:month:spay_neuter     66 7103.7
-## - spay_neuter:borough         4 7364.3</code></pre>
-<pre><code>## 
-## Step:  AIC=7045.75
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:spay_neuter + year:borough + month:spay_neuter + 
-##     gender:spay_neuter + gender:borough + spay_neuter:borough</code></pre>
-<pre><code>##                              Df    AIC
-## - year:month                 66 7043.8
-## &lt;none&gt;                          7045.7
-## - month:spay_neuter          11 7045.8
-## + year:gender                 6 7049.7
-## - gender:spay_neuter          1 7051.7
-## - gender:borough              4 7051.9
-## + gender:spay_neuter:borough  4 7052.2
-## + year:spay_neuter:borough   24 7057.5
-## + month:gender               11 7063.4
-## + month:borough              44 7071.7
-## - year:borough               24 7089.4
-## - year:spay_neuter            6 7096.1
-## + year:month:spay_neuter     66 7099.7
-## - spay_neuter:borough         4 7360.7</code></pre>
-<pre><code>## 
-## Step:  AIC=7043.76
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:spay_neuter + year:borough + month:spay_neuter + gender:spay_neuter + 
-##     gender:borough + spay_neuter:borough</code></pre>
-<pre><code>##                              Df    AIC
-## &lt;none&gt;                          7043.8
-## + year:month                 66 7045.7
-## - month:spay_neuter          11 7047.1
-## + year:gender                 6 7047.8
-## - gender:spay_neuter          1 7049.7
-## - gender:borough              4 7049.9
-## + gender:spay_neuter:borough  4 7050.2
-## + year:spay_neuter:borough   24 7055.9
-## + month:gender               11 7061.2
-## + month:borough              44 7070.3
-## - year:borough               24 7084.8
-## - year:spay_neuter            6 7096.0
-## - spay_neuter:borough         4 7340.9</code></pre>
 <pre class="r"><code>filter_model = glm.nb(bite_count ~ year + month + gender + spay_neuter + 
     borough + year:spay_neuter + year:borough + month:spay_neuter + 
     gender:spay_neuter + gender:borough + spay_neuter:borough, 
@@ -1110,8 +719,8 @@ model_stepwise &lt;- stepAIC(model_all_interactions, direction = &quot;both&quot
 ## 
 ##  2 x log-likelihood:  -6895.762</code></pre>
 </div>
-<div id="model" class="section level3">
-<h3>Model</h3>
+<div id="model-evaluation" class="section level3">
+<h3>Model evaluation</h3>
 <pre class="r"><code># Predicted vs Actual Bite Count
 inter_predict = bites_by_group |&gt; 
   mutate(predicted = predict(model_stepwise, type = &quot;response&quot;))
@@ -1131,6 +740,107 @@ plot(model_stepwise)</code></pre>
 <p><img src="regression_files/figure-html/unnamed-chunk-7-1.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-7-2.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-7-3.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-7-4.png" width="672" /></p>
 </div>
 </div>
+<div id="regularized-model-lasso" class="section level1">
+<h1>Regularized Model (Lasso)</h1>
+<pre class="r"><code># lasso
+library(glmnet)</code></pre>
+<pre><code>## Loading required package: Matrix</code></pre>
+<pre><code>## 
+## Attaching package: &#39;Matrix&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:tidyr&#39;:
+## 
+##     expand, pack, unpack</code></pre>
+<pre><code>## Loaded glmnet 4.1-8</code></pre>
+<pre class="r"><code># 将数据转换为矩阵
+x = model.matrix(bite_count ~ year + month + gender + spay_neuter + borough, data = bites_by_group)
+y = bites_by_group |&gt; pull(bite_count)
+
+# Lasso 回归
+cv_model = cv.glmnet(x, y, family = &quot;poisson&quot;, alpha = 1)  # Lasso：alpha = 1
+summary(cv_model)</code></pre>
+<pre><code>##            Length Class   Mode     
+## lambda     70     -none-  numeric  
+## cvm        70     -none-  numeric  
+## cvsd       70     -none-  numeric  
+## cvup       70     -none-  numeric  
+## cvlo       70     -none-  numeric  
+## nzero      70     -none-  numeric  
+## call        5     -none-  call     
+## name        1     -none-  character
+## glmnet.fit 12     fishnet list     
+## lambda.min  1     -none-  numeric  
+## lambda.1se  1     -none-  numeric  
+## index       2     -none-  numeric</code></pre>
+<pre class="r"><code>cv_results &lt;- data.frame(
+  log_lambda = log(cv_model$lambda),
+  mean_mse = cv_model$cvm,
+  lower_mse = cv_model$cvlo,
+  upper_mse = cv_model$cvup
+)
+
+best_lambda &lt;- cv_model$lambda.min
+log_best_lambda &lt;- log(best_lambda)
+
+ggplot(cv_results, aes(x = log_lambda, y = mean_mse)) +
+  geom_line(color = &quot;blue&quot;, size = 1) +
+  geom_ribbon(aes(ymin = lower_mse, ymax = upper_mse), alpha = 0.2, fill = &quot;blue&quot;) +
+  geom_vline(xintercept = log_best_lambda, linetype = &quot;dashed&quot;, color = &quot;red&quot;) +
+  labs(
+    title = &quot;Cross-Validation for Lasso Regression&quot;,
+    x = &quot;Log(Lambda)&quot;,
+    y = &quot;Mean Cross-Validated Error&quot;
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))</code></pre>
+<p><img src="regression_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre class="r"><code># 获取模型在最佳 lambda 下的系数
+lasso_coefficients &lt;- coef(cv_model, s = &quot;lambda.min&quot;)
+
+# 将系数转换为数据框以便查看
+lasso_coefficients_df &lt;- as.data.frame(as.matrix(lasso_coefficients)) %&gt;%
+  rownames_to_column(&quot;Variable&quot;) %&gt;%
+  rename(Coefficient = 1) %&gt;%
+  filter(Coefficient != 0)  # 筛选非零系数的变量
+
+print(lasso_coefficients_df)</code></pre>
+<pre><code>##             Coefficient           s1
+## 1          X.Intercept.  1.099801956
+## 2        X.Intercept..1  0.000000000
+## 3              year2016  0.060919855
+## 4              year2017  0.149129991
+## 5              year2018  0.073152001
+## 6              year2019  0.096986077
+## 7              year2020 -0.281514521
+## 8              year2021 -0.284247504
+## 9                month2 -0.013783521
+## 10               month3  0.004909783
+## 11               month4  0.108573609
+## 12               month5  0.161786633
+## 13               month6  0.230240597
+## 14               month7  0.188210282
+## 15               month8  0.210135475
+## 16               month9  0.123686574
+## 17              month10  0.073065927
+## 18              month11  0.063997436
+## 19              month12  0.000000000
+## 20              genderM  0.888757411
+## 21  spay_neuterNeutered -0.104073381
+## 22      boroughBrooklyn  0.300860807
+## 23     boroughManhattan  0.228158366
+## 24        boroughQueens  0.496004768
+## 25 boroughStaten.Island -0.557155290</code></pre>
+<ul>
+<li>使用Lasso回归的结果进行预测</li>
+</ul>
+<pre class="r"><code>final_model &lt;- glmnet(x, y, family = &quot;poisson&quot;, alpha = 1, lambda = best_lambda)
+final_model</code></pre>
+<pre><code>## 
+## Call:  glmnet(x = x, y = y, family = &quot;poisson&quot;, alpha = 1, lambda = best_lambda) 
+## 
+##   Df  %Dev   Lambda
+## 1 22 60.62 0.004183</code></pre>
+<pre class="r"><code>#predictions_lasso &lt;- bites_by_group |&gt; mutate(predicted = predict(final_model, type = &quot;response&quot;))</code></pre>
+</div>
 <div id="generalized-linear-mixed-model-glmm" class="section level1">
 <h1>Generalized Linear Mixed Model (GLMM)</h1>
 <p>另一方面，本文进一步使用Generalized Linear Mixed Model
@@ -1146,7 +856,6 @@ the mean of the response variable distribution, allowing the dependent
 variable to deviate from a normal distribution and enabling modeling of
 various types of data, including binary, count, and continuous
 outcomes.</p>
-<<<<<<< HEAD
 <p>Let the response variable <span class="math inline">\(y\)</span>
 belongs to the exponential family, its conditional distribution can be
 expressed as follows:</p>
@@ -1200,7 +909,7 @@ class="math inline">\({\rm
 X}\)</span>表示每个响应变量所属品种的矩阵；<span
 class="math inline">\(\vec
 b\)</span>为每个品种的偏差值（随机效应）。</p>
-=======
+<p>=======</p>
 <pre class="r"><code>library(lme4)
 glmm_model = glmer.nb(
   bite_count ~ year + month + gender + spay_neuter + (1 | borough), 
@@ -1250,9 +959,23 @@ summary(glmm_model)</code></pre>
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </div>
-<div id="model-1" class="section level1">
+<div id="model" class="section level1">
 <h1>Model</h1>
->>>>>>> 6e0a48bc06a0411fc9c5ffd605c67fd4cbef063b
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>6e0a48bc06a0411fc9c5ffd605c67fd4cbef063b</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
 </div>
 <div id="conclusion" class="section level1">
 <h1>Conclusion</h1>
@@ -1293,6 +1016,11 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 <script>
 $(document).ready(function ()  {
