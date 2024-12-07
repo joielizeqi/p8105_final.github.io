@@ -22,6 +22,10 @@ In negative binomial regression, where the conditional expectation $E(Y|X) = {e^
 
 $$\frac{{E(Y|{X^*})}}{{E(Y|X)}} = \frac{{{e^{{\beta _0} + {\beta _1}{X_{i1}} +  \cdots  + {\beta _k}({X_{ik}} + 1) +  \cdots  + {\beta _m}{X_{im}}}}}}{{{e^{{\beta _0} + {\beta _1}{X_{i1}} +  \cdots  + {\beta _k}{X_{ik}} +  \cdots  + {\beta _m}{X_{im}}}}}} = {e^{{\beta _k}}}$$
 
+
+
+
+
 # Generalized Linear Mixed Model (GLMM)
 
 另一方面，本文进一步使用Generalized Linear Mixed Model (GLMM)验证所得的回归结果。
