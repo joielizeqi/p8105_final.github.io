@@ -112,6 +112,7 @@ dog_bites_clean = dog_bites_df |>
   mutate(breed = ifelse(grepl("small", breed, ignore.case = TRUE), "small", breed)) |>
   mutate(breed = str_to_title(breed))
 
+# Dog license
 dog_licensing_df = read_csv("data/NYC_Dog_Licensing_Dataset.csv", na = c("NA", "", ".")) |> 
   janitor::clean_names() |> 
   rename_with(~ gsub("^x", "", .))
@@ -153,34 +154,27 @@ The top 10 dog breeds that contributed to the most dog bite incidences are shown
 
 In the pie chart, we notice that 5.88% of incidences were attributed to the American pit bull mix and 5.77% were attributed to the American pit bull terriers. Since the specific ancestry information for these dogs were not documented, it is unclear whether they are more related to the pit bull breed or the mixed breed. If they were to be classified as pit bulls, the pit bull category would make up an even bigger proportion of total dog bite incidences than it does now.
 
+
+
 ```{r, warning=FALSE, message=FALSE}
-breeds <- dog_bites_clean |> 
-  filter(breed != "unknown") |> 
-  drop_na(breed) |> 
-  pull(breed)
+bite_breed_counts <- dog_bites_clean |>
+  mutate(breed = tolower(breed)) |>  
+  filter(!is.na(breed), breed != "unknown", breed != "mixed") |>  
+  count(breed, name = "count") |>  
+  arrange(desc(count))  
 
-breeds <- tolower(breeds)
+set.seed(1234) 
 
-breed_text <- paste(breeds, collapse = " ")
-
-breed_source <- VectorSource(breed_text)
-breed_corpus <- Corpus(breed_source)
-breed_tdm <- TermDocumentMatrix(breed_corpus)
-
-breed_matrix <- as.matrix(breed_tdm)
-breed_freq <- sort(rowSums(breed_matrix), decreasing = TRUE)
-```
-
-```{r}
-set.seed(1234)
 wordcloud(
-  names(breed_freq), 
-  freq = breed_freq, 
-  scale = c(4, 0.5),  
+  words = pull(bite_breed_counts, breed), 
+  freq = pull(bite_breed_counts, count), 
+  min.freq = 1,
   max.words = 200,  
-  colors = brewer.pal(8, "Dark2")  
+  random.order = FALSE,
+  rot.per = 0.35,
+  colors = brewer.pal(8, "Dark2")
 )
-
+   
 ```
 
 COMMENT
