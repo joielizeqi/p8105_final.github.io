@@ -17,14 +17,10 @@ library(purrr)
 library(ggplot2)
 library(plotly)
 library(readxl)
-library(reshape2)
-library(akima)
-library(wordcloud)
-library(tm)
 library(kableExtra)
 ```
 
-```{r, message = FALSE, include=FALSE}
+```{r clean_data, message = FALSE, include=FALSE}
 # NYC zip code
 url = "https://p8105.com/data/zip_codes.html"
 ny_zip_codes = read_html(url) |>
@@ -167,22 +163,17 @@ Here, ${y_i}$ represents the frequency of dog bite incidents within a year, ${\b
 In negative binomial regression, where the conditional expectation $E(Y|X) = {e^{{\beta _0} + {\beta _1}{X_{i1}} + {\beta _2}{X_{i2}} +  \cdots {\beta _m}{X_{im}}}}$, the interpretation of the model's coefficients is as follows: when the explanatory variable ${X_k}$ increases by one unit, the average occurrence rate of dog bite incidents becomes ${e^{{\beta _k}}}$ times what it was originally.
 
 $$\frac{{E(Y|{X^*})}}{{E(Y|X)}} = \frac{{{e^{{\beta _0} + {\beta _1}{X_{i1}} +  \cdots  + {\beta _k}({X_{ik}} + 1) +  \cdots  + {\beta _m}{X_{im}}}}}}{{{e^{{\beta _0} + {\beta _1}{X_{i1}} +  \cdots  + {\beta _k}{X_{ik}} +  \cdots  + {\beta _m}{X_{im}}}}}} = {e^{{\beta _k}}}$$
-
-
-
-首先，使用lasso筛主变量.
-
 ## Regularized Model (Lasso)
 
-```{r, warning=FALSE, message=FALSE}
+Initially, the paper employs Lasso regression on five primary variables, aiming to use regularization to reduce the number of variables in the model and thus avoid overfitting.
+
+```{r cv, warning=FALSE, message=FALSE}
 # lasso
 library(glmnet)
 
-# 将数据转换为矩阵
 x = model.matrix(bite_count ~ year + month + gender + spay_neuter + borough, data = bites_by_group)
 y = bites_by_group |> pull(bite_count)
 
-# Lasso 回归
 cv_model = cv.glmnet(x, y, family = "poisson", alpha = 1)  # Lasso：alpha = 1
 
 cv_results <- with(cv_model, 
@@ -194,18 +185,15 @@ cv_results <- with(cv_model,
 ))
 ```
 
-```{r}
+```{r lambda, warning=FALSE, message=FALSE}
 # 确定最佳lambda，
 best_lambda <- cv_model$lambda.min
 log_best_lambda <- log(best_lambda)
 ```
 
-best_lambda：从交叉验证 (cv.glmnet) 。 中找到的使模型误差最小的正则化参数 lambda。0.005529689
-log_best_lambda：对最佳 lambda 取对数，用于后续绘图。
-目的：lambda 是正则化参数，控制变量选择和模型的稀疏性。找到合适的 lambda 值可以平衡模型复杂度和预测性能。
+$\lambda$ is the regularization parameter in Lasso regression, controlling variable selection and the sparsity of the model. Finding the optimal $\lambda$ value is crucial as it balances model complexity and predictive performance. The ideal $\lambda$ value, derived from cross-validation, minimizes model error. For this study, the optimal $\lambda$ has been determined to be 0.005529689. 
 
-
-```{r}
+```{r cv_results, message=FALSE}
 ggplot(cv_results, aes(x = log_lambda, y = mean_mse)) +
   geom_line(color = "blue", size = 1) +
   geom_ribbon(aes(ymin = lower_mse, ymax = upper_mse), alpha = 0.2, fill = "blue") +
@@ -218,15 +206,12 @@ ggplot(cv_results, aes(x = log_lambda, y = mean_mse)) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
 
-
-# 获取模型在最佳 lambda 下的系数
 lasso_coefficients <- coef(cv_model, s = "lambda.min")
 
-# 将系数转换为数据框以便查看
 lasso_coefficients_df <- as.data.frame(as.matrix(lasso_coefficients)) %>%
   rownames_to_column("Variable") %>%
   rename(Coefficient = 1) %>%
-  filter(Coefficient != 0)  # 筛选非零系数的变量
+  filter(Coefficient != 0)
 
 kable(
   lasso_coefficients_df,
@@ -241,22 +226,21 @@ kable(
   scroll_box(height = "300px")
 ```
 
+In summary, the Lasso regression model selected the following variables:
 
-Lasso 回归的主要目的是通过正则化减少模型中过多的变量，从而避免过拟合。Lasso 模型选择了以下变量：
+*   Time factor: `year` and `month`
+*   Individual characteristics: `gender` and `spay_neuter`
+*   Regional characteristics: `borough`
 
-* 时间因素：year 和 month
-* 个体特征：gender 和 spay_neuter
-* 地区特征：borough
-这些变量都包含在最终的模型 glm.nb() 中，因此可以确认目前的模型包含了 Lasso 结果所建议的关键变量。
+Therefore, these variables need to be included in the subsequent negative binomial regression analysis.
 
+## Main effects model
 
-## 主效应model
+After employing Lasso regression for feature selection, the study identified several key variables that influence the occurrence of dog bite incidents.   These variables include the `year`, `month`, `gender`, `spay_neuter`, and `borough`. These factors will be incorporated into a negative binomial generalized linear model (`glm.nb`) to predict the number of bite incidents.
 
-通过 Lasso 回归对数据进行特征选择后，我们识别了几个关键变量，包括年份 (year)、月份 (month)、性别 (gender)、绝育状态 (spay_neuter) 和所在地区 (borough)。这些变量被纳入最终的负二项广义线性模型 (glm.nb) 中，以预测咬伤事件数量 (bite_count)。
+### Results
 
-### 建模
-
-```{r, message=FALSE, warning=FALSE}
+```{r glm_nb, message=FALSE, warning=FALSE}
 library(MASS)
 
 model = glm.nb(bite_count ~ year + month + gender + spay_neuter + borough, data = bites_by_group)
@@ -306,6 +290,7 @@ kable(
 ) |> 
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = FALSE)
 ```
+
 GVIF:
 Measures the multicollinearity in the regression model. A GVIF value greater than 10 generally indicates a high multicollinearity issue.
 All GVIF values are close to 1, suggesting no significant multicollinearity.
@@ -331,27 +316,12 @@ plot(residuals_sim)
 * QQ：`model`在残差分析
 
 
-## With Interaction
+## Model with interaction
 
 
-To further increase the precision of the model fit, interaction terms between variables were added. After using stepwise reduction to simplify the model complexity, the final negative binomial regression model is as follows:
-### 建模
+To further increase the precision of the model fit, interaction terms between variables were added.
 
-```{r final_NBR, message=FALSE, warning=FALSE}
-data <- data.frame(
-  `Main Effect` = c("year", "month", "gender", "spay_neuter", "borough", " "),
-  `Double Interaction Effect` = c(
-    "year * spay_neuter",
-    "year * borough",
-    "month * spay_neuter",
-    "gender * spay_neuter",
-    "gender * borough",
-    "spay_neuter * borough"
-  )
-)
-
-knitr::kable(data, format = "pipe", align = "l", caption = "Final Negative Binomial Regression Model", escape = FALSE)
-```
+### Results
 
 ```{r, warning=FALSE, message=FALSE, include=FALSE}
 model_all_interactions <- glm.nb(
@@ -369,6 +339,26 @@ model_all_interactions <- glm.nb(
 
 model_stepwise <- stepAIC(model_all_interactions, direction = "both")
 ```
+
+After using stepwise reduction to simplify the model complexity, the final negative binomial regression model is as follows:
+
+```{r final_NBR, message=FALSE, warning=FALSE}
+data <- data.frame(
+  `Main Effect` = c("year", "month", "gender", "spay_neuter", "borough", " "),
+  `Double Interaction Effect` = c(
+    "year * spay_neuter",
+    "year * borough",
+    "month * spay_neuter",
+    "gender * spay_neuter",
+    "gender * borough",
+    "spay_neuter * borough"
+  )
+)
+
+knitr::kable(data, format = "pipe", align = "l", caption = "Final Negative Binomial Regression Model", escape = FALSE)
+```
+
+The final model with interaction is as follows:
 
 ```{r}
 filter_model = glm.nb(bite_count ~ year + month + gender + spay_neuter + 
@@ -409,10 +399,8 @@ plot(interaction_effect_y_bo,
 ```{r, warning=FALSE, message=FALSE}
 library(ggeffects)
 
-# 提取交互效应预测
 interaction_preds <- ggpredict(filter_model, terms = c("year", "borough"))
 
-# 可视化交互效应
 ggplot(interaction_preds, aes(x = x, y = predicted, color = group)) +
   geom_line() +
   geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = 0.2) +
@@ -468,8 +456,6 @@ plot(model_stepwise)
 ```
 
 From the analysis of the four diagnostic plots, the fitted model exhibits several shortcomings. Firstly, the tails of the residual distribution slightly deviate from the assumed negative binomial distribution. This deviation suggests that the residuals might not be perfectly modeled, indicating potential issues with the model fit or the distributional assumptions. Secondly, the distribution of points in the Scale-Location plot appears striated, and the red smooth line shows a non-horizontal trend. This pattern indicates that the variance of the residuals may change with fitted values, suggesting the presence of heteroscedasticity. This non-constant variance can affect the reliability of the model's standard errors and confidence intervals.Lastly, the Residuals vs Leverage Plot reveals the presence of points with high leverage, which could be overly influencing the model's predictions. These high leverage points warrant further investigation to determine whether they should be removed or adjusted to improve model accuracy and robustness.
-
-## 两模型对比
 
 # Generalized Linear Mixed Model (GLMM)
 
