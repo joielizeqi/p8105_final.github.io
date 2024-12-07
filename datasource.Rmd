@@ -31,7 +31,7 @@ dog_licensing =
   read_csv("data/NYC_Dog_Licensing_Dataset.csv")
 ```
 
-The dog bite dataset we ultilized has `r nrow(dog_bites)` observations and includes the following variables:
+The dog bite dataset we utilized has `r nrow(dog_bites)` observations and includes the following variables:
 
 * `UniqueID`: Unique dog bite case identifier.
 * `DateOfBite`: Date bitten.
@@ -43,7 +43,7 @@ The dog bite dataset we ultilized has `r nrow(dog_bites)` observations and inclu
 * `Borough`: Dog bite Borough. Other' indicates that the bite took place outside New York City.
 * `ZipCode`: Dog bite Zipcode. Blank ZipCode indicates that information was not available.
 
-The NYC dog licensing dataset we ultilized has `r nrow(dog_licensing)` observations and includes the following variables:
+The NYC dog licensing dataset we utilized has `r nrow(dog_licensing)` observations and includes the following variables:
 
 * `AnimalName`: User-provided dog name (unless specified otherwise).
 * `AnimalGender`: M (Male) or F (Female) dog gender.

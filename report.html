@@ -362,14 +362,64 @@ and neuter status?</p></li>
 <h2>Evolution of Questions</h2>
 <p>As our project evolved, we delved into more in-depth questions:</p>
 <ol style="list-style-type: decimal">
-<li></li>
-<li></li>
-<li></li>
+<li><p>Is the incidence rate of dog bites associated with the number of
+registered dog licenses?</p></li>
+<li><p>Can we utilize a regression model to investigate the spatial
+correlations between dog bite incidents and dog licenses?</p></li>
+<li><p>Which model is most suitable for analyzing the cumulative impact
+of various factors on dog bite incidents?</p></li>
 </ol>
 <p><br><br></p>
 </div>
 <div id="data" class="section level2">
 <h2>Data</h2>
+<p>The dataset utilized for analyzing and visualizing dog bite cases in
+New York City includes information on various factors such as sex,
+breed, and age. The data, covering the period from 2015 to 2022, were
+sourced from <a
+href="https://data.cityofnewyork.us/Health/DOHMH-Dog-Bite-Data/rsgh-akpg/about_data">NYC
+OpenData</a>. Data is collected from reports received online, mail, fax
+or by phone to 311 or NYC DOHMH Animal Bite Unit. Each record represents
+a single dog bite incident.</p>
+<p>Another dataset used in this project documents active dog licenses in
+New York City for a given year. This data is derived from the DOHMH Dog
+Licensing System, which facilitates the application and renewal of dog
+licenses. The dataset is also sourced from <a
+href="https://data.cityofnewyork.us/Health/NYC-Dog-Licensing-Dataset/nu7n-tubp/about_data">NYC
+OpenData</a>.</p>
+<p>The dog bite dataset we utilized includes the following
+variables:</p>
+<ul>
+<li><code>UniqueID</code>: Unique dog bite case identifier.</li>
+<li><code>DateOfBite</code>: Date bitten.</li>
+<li><code>Species</code>: Animal Type (Dog).</li>
+<li><code>Breed</code>: Breed type.</li>
+<li><code>Age</code>: Dog’s age at time of bite. Numbers with ‘M’
+indicate months.</li>
+<li><code>Gender</code>: Sex of Dog. M=Male, F=Female, U=Unknown.</li>
+<li><code>SpayNeuter</code>: Surgical removal of dog’s reproductive
+organs. True (reported to DOHMH as Spayed or Neutered), False (Unknown
+or Not Spayed or Neutered).</li>
+<li><code>Borough</code>: Dog bite Borough. Other’ indicates that the
+bite took place outside New York City.</li>
+<li><code>ZipCode</code>: Dog bite Zipcode. Blank ZipCode indicates that
+information was not available.</li>
+</ul>
+<p>The NYC dog licensing dataset we utilized includes the following
+variables:</p>
+<ul>
+<li><code>AnimalName</code>: User-provided dog name (unless specified
+otherwise).</li>
+<li><code>AnimalGender</code>: M (Male) or F (Female) dog gender.</li>
+<li><code>AnimalBirthYear</code>: Year dog was born.</li>
+<li><code>BreedName</code>: Dog breed.</li>
+<li><code>ZipCode</code>: Owner zip code.</li>
+<li><code>LicenseIssuedDate</code>: Date the dog license was
+issued.</li>
+<li><code>LicenseExpiredDate</code>: Date the dog license expires.</li>
+<li><code>Extract Year</code>: Year the data was extracted.</li>
+</ul>
+<p><br><br></p>
 </div>
 <div id="exploratory-analysis" class="section level2">
 <h2>Exploratory Analysis</h2>
