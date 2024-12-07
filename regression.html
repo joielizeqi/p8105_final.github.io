@@ -28,8 +28,8 @@
 <script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
-<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -349,8 +349,16 @@ div.tocify {
     <li>
       <a href="trends.html">Dog bite incidence trends</a>
     </li>
-    <li>
-      <a href="correlation.html">Spatial correlations</a>
+    <li class="dropdown-submenu">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Bite-to-license spatial correlation</a>
+      <ul class="dropdown-menu" role="menu">
+        <li>
+          <a href="distribution.html">Spatial distribution on NYC map</a>
+        </li>
+        <li>
+          <a href="correlation.html">Spatial correlation using Moran's I</a>
+        </li>
+      </ul>
     </li>
     <li>
       <a href="regression.html">Modeling dog bite incidences</a>
@@ -499,6 +507,101 @@ _k}({X_{ik}} + 1) +  \cdots  + {\beta _m}{X_{im}}}}}}{{{e^{{\beta _0} +
 _m}{X_{im}}}}}} = {e^{{\beta _k}}}\]</span></p>
 <div id="original-model" class="section level2">
 <h2>Original Model</h2>
+<p>首先，使用lasso筛主变量</p>
+<div id="regularized-model-lasso" class="section level3">
+<h3>Regularized Model (Lasso)</h3>
+<pre class="r"><code># lasso
+library(glmnet)
+
+# 将数据转换为矩阵
+x = model.matrix(bite_count ~ year + month + gender + spay_neuter + borough, data = bites_by_group)
+y = bites_by_group |&gt; pull(bite_count)
+
+# Lasso 回归
+cv_model = cv.glmnet(x, y, family = &quot;poisson&quot;, alpha = 1)  # Lasso：alpha = 1
+summary(cv_model)</code></pre>
+<pre><code>##            Length Class   Mode     
+## lambda     70     -none-  numeric  
+## cvm        70     -none-  numeric  
+## cvsd       70     -none-  numeric  
+## cvup       70     -none-  numeric  
+## cvlo       70     -none-  numeric  
+## nzero      70     -none-  numeric  
+## call        5     -none-  call     
+## name        1     -none-  character
+## glmnet.fit 12     fishnet list     
+## lambda.min  1     -none-  numeric  
+## lambda.1se  1     -none-  numeric  
+## index       2     -none-  numeric</code></pre>
+<pre class="r"><code>cv_results &lt;- data.frame(
+  log_lambda = log(cv_model$lambda),
+  mean_mse = cv_model$cvm,
+  lower_mse = cv_model$cvlo,
+  upper_mse = cv_model$cvup
+)
+
+best_lambda &lt;- cv_model$lambda.min
+log_best_lambda &lt;- log(best_lambda)
+
+ggplot(cv_results, aes(x = log_lambda, y = mean_mse)) +
+  geom_line(color = &quot;blue&quot;, size = 1) +
+  geom_ribbon(aes(ymin = lower_mse, ymax = upper_mse), alpha = 0.2, fill = &quot;blue&quot;) +
+  geom_vline(xintercept = log_best_lambda, linetype = &quot;dashed&quot;, color = &quot;red&quot;) +
+  labs(
+    title = &quot;Cross-Validation for Lasso Regression&quot;,
+    x = &quot;Log(Lambda)&quot;,
+    y = &quot;Mean Cross-Validated Error&quot;
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))</code></pre>
+<p><img src="regression_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code># 获取模型在最佳 lambda 下的系数
+lasso_coefficients &lt;- coef(cv_model, s = &quot;lambda.min&quot;)
+
+# 将系数转换为数据框以便查看
+lasso_coefficients_df &lt;- as.data.frame(as.matrix(lasso_coefficients)) %&gt;%
+  rownames_to_column(&quot;Variable&quot;) %&gt;%
+  rename(Coefficient = 1) %&gt;%
+  filter(Coefficient != 0)  # 筛选非零系数的变量
+
+print(lasso_coefficients_df)</code></pre>
+<pre><code>##             Coefficient           s1
+## 1          X.Intercept.  1.104458165
+## 2        X.Intercept..1  0.000000000
+## 3              year2016  0.059601229
+## 4              year2017  0.147817118
+## 5              year2018  0.071787901
+## 6              year2019  0.095582007
+## 7              year2020 -0.281729285
+## 8              year2021 -0.284386843
+## 9                month2 -0.015570617
+## 10               month3  0.001564948
+## 11               month4  0.105312366
+## 12               month5  0.158542466
+## 13               month6  0.227033645
+## 14               month7  0.184972035
+## 15               month8  0.206905164
+## 16               month9  0.120362051
+## 17              month10  0.069668346
+## 18              month11  0.060586284
+## 19              month12  0.000000000
+## 20              genderM  0.888248772
+## 21  spay_neuterNeutered -0.103609162
+## 22      boroughBrooklyn  0.299678045
+## 23     boroughManhattan  0.226911622
+## 24        boroughQueens  0.494793280
+## 25 boroughStaten.Island -0.557209451</code></pre>
+<p>Using the results of Lasso regression for prediction, the results are
+as follows:</p>
+<pre class="r"><code>final_model &lt;- glmnet(x, y, family = &quot;poisson&quot;, alpha = 1, lambda = best_lambda)
+final_model</code></pre>
+<pre><code>## 
+## Call:  glmnet(x = x, y = y, family = &quot;poisson&quot;, alpha = 1, lambda = best_lambda) 
+## 
+##   Df  %Dev  Lambda
+## 1 22 60.62 0.00553</code></pre>
+<pre class="r"><code>#predictions_lasso &lt;- bites_by_group |&gt; mutate(predicted = predict(final_model, type = &quot;response&quot;))</code></pre>
+<p>发现每个都很重要</p>
 <pre class="r"><code>library(MASS)</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;MASS&#39;</code></pre>
@@ -520,8 +623,7 @@ _m}{X_{im}}}}}} = {e^{{\beta _k}}}\]</span></p>
     month = factor(month)
   )
 
-bites_by_group = dog_bites_filtered %&gt;%
-  count(year, month, gender, spay_neuter, borough, name = &quot;bite_count&quot;)
+
 
 model = glm.nb(bite_count ~ year + month + gender + spay_neuter + borough, data = bites_by_group)
 
@@ -574,6 +676,7 @@ summary(model)</code></pre>
 ##           Std. Err.:  4.28 
 ## 
 ##  2 x log-likelihood:  -7353.42</code></pre>
+</div>
 </div>
 <div id="with-interaction" class="section level2">
 <h2>With Interaction</h2>
@@ -850,16 +953,14 @@ print(filter_model_summary)</code></pre>
 </div>
 <div id="interaction-effect-visualization" class="section level3">
 <h3>Interaction effect visualization</h3>
-<pre class="r"><code>library(effects)</code></pre>
-<pre><code>## Loading required package: carData</code></pre>
-<pre><code>## lattice theme set by effectsTheme()
-## See ?effectsTheme for details.</code></pre>
-<pre class="r"><code>interaction_effect_y_bo &lt;- effect(&quot;year:borough&quot;, filter_model)
+<pre class="r"><code>library(effects)
+
+interaction_effect_y_bo &lt;- effect(&quot;year:borough&quot;, filter_model)
 plot(interaction_effect_y_bo,
      main = &quot;Interaction Effect of Year and Borough on Bite Count&quot;,
      xlab = &quot;Year&quot;,
      ylab = &quot;Predicted Bite Count&quot;)</code></pre>
-<p><img src="regression_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="regression_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <pre class="r"><code>library(ggeffects)
 
 # 提取交互效应预测
@@ -876,9 +977,7 @@ ggplot(interaction_preds, aes(x = x, y = predicted, color = group)) +
     color = &quot;Borough&quot;
   ) +
   theme_minimal()</code></pre>
-<pre><code>## `geom_line()`: Each group consists of only one observation.
-## ℹ Do you need to adjust the group aesthetic?</code></pre>
-<p><img src="regression_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><img src="regression_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 </div>
 <div id="prediction" class="section level3">
 <h3>Prediction</h3>
@@ -900,7 +999,7 @@ ggplot(inter_predict, aes(x = predicted, y = bite_count)) +
        x = &quot;Predicted Bite Count&quot;,
        y = &quot;Actual Bite Count&quot;) +
   theme_minimal()</code></pre>
-<p><img src="regression_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="regression_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <p>Additionally, the quality of the fitted model can be assessed through
 residual analysis and diagnostics, as illustrated in the following four
 plots.</p>
@@ -930,12 +1029,10 @@ randomly spread points.</p>
 values—points that have a significant impact on the model’s fit.
 Ideally, no points should exceed the threshold set by Cook’s distance,
 indicated by the dashed lines.</p>
-<pre class="r"><code>library(DHARMa)</code></pre>
-<pre><code>## This is DHARMa 0.4.7. For overview type &#39;?DHARMa&#39;. For recent changes, type news(package = &#39;DHARMa&#39;)</code></pre>
-<pre class="r"><code>residuals_sim = simulateResiduals(model_stepwise)
+<pre class="r"><code>library(DHARMa)
+residuals_sim = simulateResiduals(model_stepwise)
 plot(model_stepwise)</code></pre>
-<p><img src="regression_files/figure-html/unnamed-chunk-10-1.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-10-2.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-10-3.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-10-4.png" width="672" /></p>
-<<<<<<< HEAD
+<p><img src="regression_files/figure-html/unnamed-chunk-12-1.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-12-2.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-12-3.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-12-4.png" width="672" /></p>
 <p>From the analysis of the four diagnostic plots, the fitted model
 exhibits several shortcomings. Firstly, the tails of the residual
 distribution slightly deviate from the assumed negative binomial
@@ -953,125 +1050,7 @@ predictions. These high leverage points warrant further investigation to
 determine whether they should be removed or adjusted to improve model
 accuracy and robustness.</p>
 </div>
-=======
-<p>主要问题: 非正态分布:</p>
-<p>Q-Q 图和残差分布图表明残差的分布偏离正态分布，可能需要对响应变量（如
-bite_count）进行变换（如对数变换）。残差分布的尾部偏离正态分布。
-异方差性:</p>
-<p>Scale-Location
-图显示残差的方差随拟合值变化，可能需要引入更灵活的分布（如负二项分布或零膨胀模型）。点的分布呈现条带状，且红色平滑线显示出非水平趋势。这表明残差方差可能随拟合值变化，存在异方差性。
-高杠杆点和异常点:</p>
-<p>Residuals vs Leverage 图显示存在高杠杆点（如 832 和
-637）。需要检查这些点是否数据录入错误，或者是否应在模型中单独处理。
-改进模型建议: 检查分布假设:</p>
-<p>如果模型使用的是泊松回归（GLM），可能需要切换到负二项分布（如
-glm.nb()）。 使用残差模拟工具（如 DHARMa）进一步诊断残差分布。
-调整异方差问题:</p>
-<p>引入加权最小二乘回归或重新指定响应变量的分布。 处理异常点:</p>
-<p>逐一检查高杠杆点和残差异常点，考虑是否需要移除或调整。</p>
->>>>>>> 5ac2c6765e2c2a18249bed12409ba18138a0bb2b
 </div>
-</div>
-</div>
-<div id="regularized-model-lasso" class="section level1">
-<h1>Regularized Model (Lasso)</h1>
-<pre class="r"><code># lasso
-library(glmnet)</code></pre>
-<pre><code>## Loading required package: Matrix</code></pre>
-<pre><code>## 
-## Attaching package: &#39;Matrix&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:tidyr&#39;:
-## 
-##     expand, pack, unpack</code></pre>
-<pre><code>## Loaded glmnet 4.1-8</code></pre>
-<pre class="r"><code># 将数据转换为矩阵
-x = model.matrix(bite_count ~ year + month + gender + spay_neuter + borough, data = bites_by_group)
-y = bites_by_group |&gt; pull(bite_count)
-
-# Lasso 回归
-cv_model = cv.glmnet(x, y, family = &quot;poisson&quot;, alpha = 1)  # Lasso：alpha = 1
-summary(cv_model)</code></pre>
-<pre><code>##            Length Class   Mode     
-## lambda     70     -none-  numeric  
-## cvm        70     -none-  numeric  
-## cvsd       70     -none-  numeric  
-## cvup       70     -none-  numeric  
-## cvlo       70     -none-  numeric  
-## nzero      70     -none-  numeric  
-## call        5     -none-  call     
-## name        1     -none-  character
-## glmnet.fit 12     fishnet list     
-## lambda.min  1     -none-  numeric  
-## lambda.1se  1     -none-  numeric  
-## index       2     -none-  numeric</code></pre>
-<pre class="r"><code>cv_results &lt;- data.frame(
-  log_lambda = log(cv_model$lambda),
-  mean_mse = cv_model$cvm,
-  lower_mse = cv_model$cvlo,
-  upper_mse = cv_model$cvup
-)
-
-best_lambda &lt;- cv_model$lambda.min
-log_best_lambda &lt;- log(best_lambda)
-
-ggplot(cv_results, aes(x = log_lambda, y = mean_mse)) +
-  geom_line(color = &quot;blue&quot;, size = 1) +
-  geom_ribbon(aes(ymin = lower_mse, ymax = upper_mse), alpha = 0.2, fill = &quot;blue&quot;) +
-  geom_vline(xintercept = log_best_lambda, linetype = &quot;dashed&quot;, color = &quot;red&quot;) +
-  labs(
-    title = &quot;Cross-Validation for Lasso Regression&quot;,
-    x = &quot;Log(Lambda)&quot;,
-    y = &quot;Mean Cross-Validated Error&quot;
-  ) +
-  theme_minimal() +
-  theme(plot.title = element_text(hjust = 0.5))</code></pre>
-<p><img src="regression_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-<pre class="r"><code># 获取模型在最佳 lambda 下的系数
-lasso_coefficients &lt;- coef(cv_model, s = &quot;lambda.min&quot;)
-
-# 将系数转换为数据框以便查看
-lasso_coefficients_df &lt;- as.data.frame(as.matrix(lasso_coefficients)) %&gt;%
-  rownames_to_column(&quot;Variable&quot;) %&gt;%
-  rename(Coefficient = 1) %&gt;%
-  filter(Coefficient != 0)  # 筛选非零系数的变量
-
-print(lasso_coefficients_df)</code></pre>
-<pre><code>##             Coefficient           s1
-## 1          X.Intercept.  1.104458165
-## 2        X.Intercept..1  0.000000000
-## 3              year2016  0.059601229
-## 4              year2017  0.147817118
-## 5              year2018  0.071787901
-## 6              year2019  0.095582007
-## 7              year2020 -0.281729285
-## 8              year2021 -0.284386843
-## 9                month2 -0.015570617
-## 10               month3  0.001564948
-## 11               month4  0.105312366
-## 12               month5  0.158542466
-## 13               month6  0.227033645
-## 14               month7  0.184972035
-## 15               month8  0.206905164
-## 16               month9  0.120362051
-## 17              month10  0.069668346
-## 18              month11  0.060586284
-## 19              month12  0.000000000
-## 20              genderM  0.888248772
-## 21  spay_neuterNeutered -0.103609162
-## 22      boroughBrooklyn  0.299678045
-## 23     boroughManhattan  0.226911622
-## 24        boroughQueens  0.494793280
-## 25 boroughStaten.Island -0.557209451</code></pre>
-<p>Using the results of Lasso regression for prediction, the results are
-as follows:</p>
-<pre class="r"><code>final_model &lt;- glmnet(x, y, family = &quot;poisson&quot;, alpha = 1, lambda = best_lambda)
-final_model</code></pre>
-<pre><code>## 
-## Call:  glmnet(x = x, y = y, family = &quot;poisson&quot;, alpha = 1, lambda = best_lambda) 
-## 
-##   Df  %Dev  Lambda
-## 1 22 60.62 0.00553</code></pre>
-<pre class="r"><code>#predictions_lasso &lt;- bites_by_group |&gt; mutate(predicted = predict(final_model, type = &quot;response&quot;))</code></pre>
 </div>
 <div id="generalized-linear-mixed-model-glmm" class="section level1">
 <h1>Generalized Linear Mixed Model (GLMM)</h1>
