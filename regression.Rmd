@@ -21,6 +21,7 @@ library(reshape2)
 library(akima)
 library(wordcloud)
 library(tm)
+library(kableExtra)
 ```
 
 ```{r, message = FALSE, include=FALSE}
@@ -114,8 +115,22 @@ dog_licensing_df = read_csv("data/NYC_Dog_Licensing_Dataset.csv", na = c("NA", "
   janitor::clean_names() |> 
   rename_with(~ gsub("^x", "", .))
 
+dog_bites_filtered = dog_bites_clean %>%
+  filter(gender != "U",
+         zip_code %in% valid_zipcodes,
+         borough != "Other") %>%
+  mutate(
+    gender = factor(gender),
+    spay_neuter = factor(spay_neuter, levels = c(FALSE, TRUE), labels = c("Not Neutered", "Neutered")),
+    borough = factor(borough),
+    year = factor(year),
+    month = factor(month)
+  )
+
 bites_by_group = dog_bites_filtered %>%
   count(year, month, gender, spay_neuter, borough, name = "bite_count")
+
+
 ```
 
 # Variable features
@@ -153,11 +168,11 @@ In negative binomial regression, where the conditional expectation $E(Y|X) = {e^
 
 $$\frac{{E(Y|{X^*})}}{{E(Y|X)}} = \frac{{{e^{{\beta _0} + {\beta _1}{X_{i1}} +  \cdots  + {\beta _k}({X_{ik}} + 1) +  \cdots  + {\beta _m}{X_{im}}}}}}{{{e^{{\beta _0} + {\beta _1}{X_{i1}} +  \cdots  + {\beta _k}{X_{ik}} +  \cdots  + {\beta _m}{X_{im}}}}}} = {e^{{\beta _k}}}$$
 
-## Original Model
 
-首先，使用lasso筛主变量
 
-### Regularized Model (Lasso)
+首先，使用lasso筛主变量.
+
+## Regularized Model (Lasso)
 
 ```{r, warning=FALSE, message=FALSE}
 # lasso
@@ -169,18 +184,28 @@ y = bites_by_group |> pull(bite_count)
 
 # Lasso 回归
 cv_model = cv.glmnet(x, y, family = "poisson", alpha = 1)  # Lasso：alpha = 1
-summary(cv_model)
 
-cv_results <- data.frame(
-  log_lambda = log(cv_model$lambda),
-  mean_mse = cv_model$cvm,
-  lower_mse = cv_model$cvlo,
-  upper_mse = cv_model$cvup
-)
+cv_results <- with(cv_model, 
+  data.frame(
+  log_lambda = log(lambda),
+  mean_mse = cvm,
+  lower_mse = cvlo,
+  upper_mse = cvup
+))
+```
 
+```{r}
+# 确定最佳lambda，
 best_lambda <- cv_model$lambda.min
 log_best_lambda <- log(best_lambda)
+```
 
+best_lambda：从交叉验证 (cv.glmnet) 。 中找到的使模型误差最小的正则化参数 lambda。0.005529689
+log_best_lambda：对最佳 lambda 取对数，用于后续绘图。
+目的：lambda 是正则化参数，控制变量选择和模型的稀疏性。找到合适的 lambda 值可以平衡模型复杂度和预测性能。
+
+
+```{r}
 ggplot(cv_results, aes(x = log_lambda, y = mean_mse)) +
   geom_line(color = "blue", size = 1) +
   geom_ribbon(aes(ymin = lower_mse, ymax = upper_mse), alpha = 0.2, fill = "blue") +
@@ -193,6 +218,7 @@ ggplot(cv_results, aes(x = log_lambda, y = mean_mse)) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))
 
+
 # 获取模型在最佳 lambda 下的系数
 lasso_coefficients <- coef(cv_model, s = "lambda.min")
 
@@ -202,46 +228,114 @@ lasso_coefficients_df <- as.data.frame(as.matrix(lasso_coefficients)) %>%
   rename(Coefficient = 1) %>%
   filter(Coefficient != 0)  # 筛选非零系数的变量
 
-print(lasso_coefficients_df)
+kable(
+  lasso_coefficients_df,
+  caption = "Cross-Validation Results for Lasso Regression",
+  align = "c",
+  digits = 4
+) |> 
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+    full_width = TRUE
+  ) |> 
+  scroll_box(height = "300px")
 ```
 
-Using the results of Lasso regression for prediction, the results are as follows:
 
-```{r, warning=FALSE, message=FALSE}
-final_model <- glmnet(x, y, family = "poisson", alpha = 1, lambda = best_lambda)
-final_model
-#predictions_lasso <- bites_by_group |> mutate(predicted = predict(final_model, type = "response"))
-```
+Lasso 回归的主要目的是通过正则化减少模型中过多的变量，从而避免过拟合。Lasso 模型选择了以下变量：
 
-发现每个都很重要
+* 时间因素：year 和 month
+* 个体特征：gender 和 spay_neuter
+* 地区特征：borough
+这些变量都包含在最终的模型 glm.nb() 中，因此可以确认目前的模型包含了 Lasso 结果所建议的关键变量。
 
-```{r}
+
+## 主效应model
+
+通过 Lasso 回归对数据进行特征选择后，我们识别了几个关键变量，包括年份 (year)、月份 (month)、性别 (gender)、绝育状态 (spay_neuter) 和所在地区 (borough)。这些变量被纳入最终的负二项广义线性模型 (glm.nb) 中，以预测咬伤事件数量 (bite_count)。
+
+### 建模
+
+```{r, message=FALSE, warning=FALSE}
 library(MASS)
-
-dog_bites_filtered = dog_bites_clean %>%
-  filter(gender != "U",
-         zip_code %in% valid_zipcodes,
-         borough != "Other") %>%
-  mutate(
-    gender = factor(gender),
-    spay_neuter = factor(spay_neuter, levels = c(FALSE, TRUE), labels = c("Not Neutered", "Neutered")),
-    borough = factor(borough),
-    year = factor(year),
-    month = factor(month)
-  )
-
-
 
 model = glm.nb(bite_count ~ year + month + gender + spay_neuter + borough, data = bites_by_group)
 
-summary(model)
+model_summary <- tidy(model) %>%
+  mutate(
+    significance = case_when(
+      p.value < 0.001 ~ "***",
+      p.value < 0.01 ~ "**",
+      p.value < 0.05 ~ "*",
+      TRUE ~ ""
+    )
+  )
+
+kable(
+  model_summary,
+  col.names = c("Term", "Estimate", "SE", "Statistic", "P-value", "Significance"),
+  caption = "Summary of Negative Binomial Regression Results"
+) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = TRUE) %>%
+  scroll_box(height = "400px")
 ```
 
+从结果来看，。。。
+
+模型还需要进一步evaluate。
+
+### evaluation
+
+**Multicollinearity Check**
+
+```{r, warning=FALSE, message=FALSE}
+library(car)
+vif_results <- vif(model) %>%
+  as.data.frame() %>%
+  rownames_to_column("Predictor") %>%
+  rename(
+    GVIF = GVIF,
+    DF = Df,
+    `GVIF^(1/(2*DF))` = `GVIF^(1/(2*Df))`
+  )
+
+kable(
+  vif_results,
+  col.names = c("Predictor", "GVIF", "DF", "Scaled GVIF"),
+  caption = "Multicollinearity Check (GVIF)"
+) |> 
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = FALSE)
+```
+GVIF:
+Measures the multicollinearity in the regression model. A GVIF value greater than 10 generally indicates a high multicollinearity issue.
+All GVIF values are close to 1, suggesting no significant multicollinearity.
+
+GVIF^(1/(2*Df)):
+
+A scaled version of GVIF for categorical variables. This value adjusts GVIF based on the degrees of freedom to make it comparable across variables.
+In your results, all values are very close to 1, further confirming no multicollinearity.
+
+`model` does not exhibit multicollinearity among the predictors, as all GVIF values and their scaled counterparts are well below the threshold of concern (commonly 10 or higher).
+
+This indicates that all predictors can be reliably used in regression model without the risk of biased coefficients caused by multicollinearity.
+
+
+**Residual Analysis**
+
+```{r, warning=FALSE, message=FALSE}
+library(DHARMa)
+residuals_sim = simulateResiduals(model)
+plot(residuals_sim)
+```
+
+* QQ：`model`在残差分析
 
 
 ## With Interaction
 
+
 To further increase the precision of the model fit, interaction terms between variables were added. After using stepwise reduction to simplify the model complexity, the final negative binomial regression model is as follows:
+### 建模
 
 ```{r final_NBR, message=FALSE, warning=FALSE}
 data <- data.frame(
@@ -269,10 +363,7 @@ model_all_interactions <- glm.nb(
     year * month * gender + year * month * spay_neuter + year * month * borough + 
     year * gender * spay_neuter + year * gender * borough + year * spay_neuter * borough +
     month * gender * spay_neuter + month * gender * borough + month * spay_neuter * borough +
-    gender * spay_neuter * borough +
-    year * month * gender * spay_neuter + year * month * gender * borough +
-    year * month * spay_neuter * borough + year * gender * spay_neuter * borough +
-    month * gender * spay_neuter * borough,
+    gender * spay_neuter * borough,
   data = bites_by_group
 )
 
@@ -288,13 +379,13 @@ filter_model = glm.nb(bite_count ~ year + month + gender + spay_neuter +
 summary(filter_model)
 ```
 
-## Model evaluation
+### Model evaluation
 
 Cross-validation of the final model is depicted in the following illustration, where the red dashed line represents the ideal prediction scenario (i.e., predicted values equal actual values). If points fall near this line, it indicates that the model predicts well. Points located above the diagonal line suggest that the model underestimates the actual values; conversely, if points are below the diagonal line, the model overestimates the actual values. 
 
 Overall, while the scatter plot shows a slight systematic deviation, the final negative binomial regression model still accurately predicts low and medium value areas. However, the error is larger in high-value areas, where actual values tend to fall below the predicted values. This may indicate a tendency of the model to overfit in regions with high incident counts.
 
-### Significance evaluation
+#### Significance evaluation
 
 ```{r}
 
@@ -303,7 +394,7 @@ print(filter_model_summary)
 
 ```
 
-### Interaction effect visualization
+#### Interaction effect visualization
 
 ```{r, warning=FALSE, message=FALSE}
 library(effects)
@@ -334,7 +425,7 @@ ggplot(interaction_preds, aes(x = x, y = predicted, color = group)) +
   theme_minimal()
 ```
 
-### Prediction
+#### Prediction
 
 In the plot, the red dashed line represents the ideal prediction scenario where the predicted values equal the actual values. Points close to this line indicate that the model is performing well in its predictions. If points are positioned above the diagonal line, it suggests that the model has underestimated the actual values; conversely, if points are located below the diagonal line, it indicates that the model has overestimated the actual values.
 。
@@ -378,6 +469,8 @@ plot(model_stepwise)
 
 From the analysis of the four diagnostic plots, the fitted model exhibits several shortcomings. Firstly, the tails of the residual distribution slightly deviate from the assumed negative binomial distribution. This deviation suggests that the residuals might not be perfectly modeled, indicating potential issues with the model fit or the distributional assumptions. Secondly, the distribution of points in the Scale-Location plot appears striated, and the red smooth line shows a non-horizontal trend. This pattern indicates that the variance of the residuals may change with fitted values, suggesting the presence of heteroscedasticity. This non-constant variance can affect the reliability of the model's standard errors and confidence intervals.Lastly, the Residuals vs Leverage Plot reveals the presence of points with high leverage, which could be overly influencing the model's predictions. These high leverage points warrant further investigation to determine whether they should be removed or adjusted to improve model accuracy and robustness.
 
+## 两模型对比
+
 # Generalized Linear Mixed Model (GLMM)
 
 为了解决上述模型拟合问题，本文进一步使用Generalized Linear Mixed Model (GLMM)对拟合模型进行优化。
@@ -407,6 +500,11 @@ glmm_model = glmer.nb(
 summary(glmm_model)
 ```
 
-# Model 
+# Model对比： 
 
 # Conclusion
+
+三个模型对比，只含有主效应的model。。。。
+含有inter。。。
+后续生成的。。。但是能解释一些。。。
+
