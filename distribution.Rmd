@@ -72,6 +72,8 @@ dog_licensing_df = read_csv("data/NYC_Dog_Licensing_Dataset.csv", na = c("NA", "
 
 # Relationship between dog licenses and dog bites
 
+Each zipcode is treated as an observation, and for each zipcode, the number of dog licenses and dog bite incidents from 2014 to 2022 are compared as shown in the graph. 
+
 ```{r message=FALSE, warning=FALSE}
 valid_zipcodes = pull(ny_zip_codes, zip_code)
 bites_by_zip = dog_bites_clean |>
@@ -92,12 +94,12 @@ scatter_plot_interactive = ggplotly(
   ggplot(data = zip_data, aes(x = License_Count, y = Bite_Count)) +
     geom_point(color = "blue", alpha = 0.6) +
     geom_smooth(method = "lm", color = "red") +
-    labs(title = "Relationship", x = "licenses", y = "Bite") +
+    labs(title = "License vs. Bite", x = "License Count", y = "Bite Count") +
     theme_minimal()
 )
 
 scatter_plot_interactive
 ```
 
-
+Overall, the positive slope of the regression line indicates a positive correlation between the number of licenses and the number of bite incidents.   In areas with fewer licenses, the distribution of data points is denser, suggesting that bite incident variability is more stable and the model fit might be better in these regions.  Conversely, in areas with a high number of licenses, the data points are more dispersed, indicating that bite incident variability is less predictable when license counts are high. Lastly, the confidence interval, depicted in gray, gradually widens after the license count reaches 3000, indicating increased uncertainty in the model's predictions in areas with higher numbers of licenses. 
 
