@@ -113,6 +113,9 @@ dog_bites_clean = dog_bites_df |>
 dog_licensing_df = read_csv("data/NYC_Dog_Licensing_Dataset.csv", na = c("NA", "", ".")) |> 
   janitor::clean_names() |> 
   rename_with(~ gsub("^x", "", .))
+
+bites_by_group = dog_bites_filtered %>%
+  count(year, month, gender, spay_neuter, borough, name = "bite_count")
 ```
 
 # Variable features
@@ -152,6 +155,66 @@ $$\frac{{E(Y|{X^*})}}{{E(Y|X)}} = \frac{{{e^{{\beta _0} + {\beta _1}{X_{i1}} +  
 
 ## Original Model
 
+首先，使用lasso筛主变量
+
+### Regularized Model (Lasso)
+
+```{r, warning=FALSE, message=FALSE}
+# lasso
+library(glmnet)
+
+# 将数据转换为矩阵
+x = model.matrix(bite_count ~ year + month + gender + spay_neuter + borough, data = bites_by_group)
+y = bites_by_group |> pull(bite_count)
+
+# Lasso 回归
+cv_model = cv.glmnet(x, y, family = "poisson", alpha = 1)  # Lasso：alpha = 1
+summary(cv_model)
+
+cv_results <- data.frame(
+  log_lambda = log(cv_model$lambda),
+  mean_mse = cv_model$cvm,
+  lower_mse = cv_model$cvlo,
+  upper_mse = cv_model$cvup
+)
+
+best_lambda <- cv_model$lambda.min
+log_best_lambda <- log(best_lambda)
+
+ggplot(cv_results, aes(x = log_lambda, y = mean_mse)) +
+  geom_line(color = "blue", size = 1) +
+  geom_ribbon(aes(ymin = lower_mse, ymax = upper_mse), alpha = 0.2, fill = "blue") +
+  geom_vline(xintercept = log_best_lambda, linetype = "dashed", color = "red") +
+  labs(
+    title = "Cross-Validation for Lasso Regression",
+    x = "Log(Lambda)",
+    y = "Mean Cross-Validated Error"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# 获取模型在最佳 lambda 下的系数
+lasso_coefficients <- coef(cv_model, s = "lambda.min")
+
+# 将系数转换为数据框以便查看
+lasso_coefficients_df <- as.data.frame(as.matrix(lasso_coefficients)) %>%
+  rownames_to_column("Variable") %>%
+  rename(Coefficient = 1) %>%
+  filter(Coefficient != 0)  # 筛选非零系数的变量
+
+print(lasso_coefficients_df)
+```
+
+Using the results of Lasso regression for prediction, the results are as follows:
+
+```{r, warning=FALSE, message=FALSE}
+final_model <- glmnet(x, y, family = "poisson", alpha = 1, lambda = best_lambda)
+final_model
+#predictions_lasso <- bites_by_group |> mutate(predicted = predict(final_model, type = "response"))
+```
+
+发现每个都很重要
+
 ```{r}
 library(MASS)
 
@@ -167,13 +230,14 @@ dog_bites_filtered = dog_bites_clean %>%
     month = factor(month)
   )
 
-bites_by_group = dog_bites_filtered %>%
-  count(year, month, gender, spay_neuter, borough, name = "bite_count")
+
 
 model = glm.nb(bite_count ~ year + month + gender + spay_neuter + borough, data = bites_by_group)
 
 summary(model)
 ```
+
+
 
 ## With Interaction
 
@@ -241,7 +305,7 @@ print(filter_model_summary)
 
 ### Interaction effect visualization
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 library(effects)
 
 interaction_effect_y_bo <- effect("year:borough", filter_model)
@@ -251,7 +315,7 @@ plot(interaction_effect_y_bo,
      ylab = "Predicted Bite Count")
 ```
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 library(ggeffects)
 
 # 提取交互效应预测
@@ -274,7 +338,7 @@ ggplot(interaction_preds, aes(x = x, y = predicted, color = group)) +
 
 In the plot, the red dashed line represents the ideal prediction scenario where the predicted values equal the actual values. Points close to this line indicate that the model is performing well in its predictions. If points are positioned above the diagonal line, it suggests that the model has underestimated the actual values; conversely, if points are located below the diagonal line, it indicates that the model has overestimated the actual values.
 。
-```{r}
+```{r, warning=FALSE, message=FALSE}
 # Predicted vs Actual Bite Count
 inter_predict = bites_by_group |> 
   mutate(predicted = predict(model_stepwise, type = "response"))
@@ -306,70 +370,13 @@ This plot shows the spread of residuals versus fitted values and helps to check 
 
 This plot is critical for identifying observations with high leverage values—points that have a significant impact on the model's fit. Ideally, no points should exceed the threshold set by Cook’s distance, indicated by the dashed lines.
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 library(DHARMa)
 residuals_sim = simulateResiduals(model_stepwise)
 plot(model_stepwise)
 ```
 
 From the analysis of the four diagnostic plots, the fitted model exhibits several shortcomings. Firstly, the tails of the residual distribution slightly deviate from the assumed negative binomial distribution. This deviation suggests that the residuals might not be perfectly modeled, indicating potential issues with the model fit or the distributional assumptions. Secondly, the distribution of points in the Scale-Location plot appears striated, and the red smooth line shows a non-horizontal trend. This pattern indicates that the variance of the residuals may change with fitted values, suggesting the presence of heteroscedasticity. This non-constant variance can affect the reliability of the model's standard errors and confidence intervals.Lastly, the Residuals vs Leverage Plot reveals the presence of points with high leverage, which could be overly influencing the model's predictions. These high leverage points warrant further investigation to determine whether they should be removed or adjusted to improve model accuracy and robustness.
-
-# Regularized Model (Lasso)
-
-```{r, warning=FALSE}
-# lasso
-library(glmnet)
-
-# 将数据转换为矩阵
-x = model.matrix(bite_count ~ year + month + gender + spay_neuter + borough, data = bites_by_group)
-y = bites_by_group |> pull(bite_count)
-
-# Lasso 回归
-cv_model = cv.glmnet(x, y, family = "poisson", alpha = 1)  # Lasso：alpha = 1
-summary(cv_model)
-
-cv_results <- data.frame(
-  log_lambda = log(cv_model$lambda),
-  mean_mse = cv_model$cvm,
-  lower_mse = cv_model$cvlo,
-  upper_mse = cv_model$cvup
-)
-
-best_lambda <- cv_model$lambda.min
-log_best_lambda <- log(best_lambda)
-
-ggplot(cv_results, aes(x = log_lambda, y = mean_mse)) +
-  geom_line(color = "blue", size = 1) +
-  geom_ribbon(aes(ymin = lower_mse, ymax = upper_mse), alpha = 0.2, fill = "blue") +
-  geom_vline(xintercept = log_best_lambda, linetype = "dashed", color = "red") +
-  labs(
-    title = "Cross-Validation for Lasso Regression",
-    x = "Log(Lambda)",
-    y = "Mean Cross-Validated Error"
-  ) +
-  theme_minimal() +
-  theme(plot.title = element_text(hjust = 0.5))
-
-# 获取模型在最佳 lambda 下的系数
-lasso_coefficients <- coef(cv_model, s = "lambda.min")
-
-# 将系数转换为数据框以便查看
-lasso_coefficients_df <- as.data.frame(as.matrix(lasso_coefficients)) %>%
-  rownames_to_column("Variable") %>%
-  rename(Coefficient = 1) %>%
-  filter(Coefficient != 0)  # 筛选非零系数的变量
-
-print(lasso_coefficients_df)
-
-```
-
-Using the results of Lasso regression for prediction, the results are as follows:
-
-```{r}
-final_model <- glmnet(x, y, family = "poisson", alpha = 1, lambda = best_lambda)
-final_model
-#predictions_lasso <- bites_by_group |> mutate(predicted = predict(final_model, type = "response"))
-```
 
 # Generalized Linear Mixed Model (GLMM)
 
