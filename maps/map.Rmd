@@ -227,7 +227,7 @@ tmap_save(map_2022, "map_2022.html")
 # 创建 HTML 页面，带按钮切换功能
 html_page <- tags$html(
   tags$head(
-    tags$title("Dog Bite Count Interactive Map"),
+    tags$title("Interactive Map of Dog Bite & License Count"),
     tags$script("
       function showMap(mapId) {
         document.getElementById('map2015').style.display = (mapId === 'map2015') ? 'block' : 'none';
@@ -242,7 +242,7 @@ html_page <- tags$html(
     ")
   ),
   tags$body(
-    tags$h1("Dog Bite Count Interactive Map"),
+    tags$h1("Interactive Map of Dog Bite & License Count"),
     tags$div(
       tags$button("2015", onclick = "showMap('map2015')"),
       tags$button("2016", onclick = "showMap('map2016')"),

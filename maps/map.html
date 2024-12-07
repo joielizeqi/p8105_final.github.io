@@ -11,7 +11,7 @@
 
 <meta name="author" content="Weiqi Liang" />
 
-<meta name="date" content="2024-12-04" />
+<meta name="date" content="2024-12-07" />
 
 <title>2.1.Map</title>
 
@@ -352,7 +352,7 @@ display: none;
 
 <h1 class="title toc-ignore">2.1.Map</h1>
 <h4 class="author">Weiqi Liang</h4>
-<h4 class="date">2024-12-04</h4>
+<h4 class="date">2024-12-07</h4>
 
 </div>
 
@@ -378,7 +378,7 @@ distribution of dogs</h2>
 shp_NY = st_read(&quot;./data/NYC_zipcode/ZIP_CODE_040114.shp&quot;) |&gt;
   select(-BLDGZIP, -PO_NAME, -POPULATION, -STATE, -URL)</code></pre>
 <pre><code>## Reading layer `ZIP_CODE_040114&#39; from data source 
-##   `D:\Study\Fall 2024\P8105 data science\hw\map\data\NYC_zipcode\ZIP_CODE_040114.shp&#39; 
+##   `D:\Study\Fall 2024\P8105 data science\hw\p8105_final.github.io\maps\data\NYC_zipcode\ZIP_CODE_040114.shp&#39; 
 ##   using driver `ESRI Shapefile&#39;
 ## Simple feature collection with 263 features and 12 fields
 ## Geometry type: POLYGON
@@ -574,7 +574,7 @@ tmap_save(map_2022, &quot;map_2022.html&quot;)
 # 创建 HTML 页面，带按钮切换功能
 html_page &lt;- tags$html(
   tags$head(
-    tags$title(&quot;Dog Bite Count Interactive Map&quot;),
+    tags$title(&quot;Interactive Map of Dog Bite &amp; License Count&quot;),
     tags$script(&quot;
       function showMap(mapId) {
         document.getElementById(&#39;map2015&#39;).style.display = (mapId === &#39;map2015&#39;) ? &#39;block&#39; : &#39;none&#39;;
@@ -589,7 +589,7 @@ html_page &lt;- tags$html(
     &quot;)
   ),
   tags$body(
-    tags$h1(&quot;Dog Bite Count Interactive Map&quot;),
+    tags$h1(&quot;Interactive Map of Dog Bite &amp; License Count&quot;),
     tags$div(
       tags$button(&quot;2015&quot;, onclick = &quot;showMap(&#39;map2015&#39;)&quot;),
       tags$button(&quot;2016&quot;, onclick = &quot;showMap(&#39;map2016&#39;)&quot;),
