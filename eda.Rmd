@@ -298,8 +298,9 @@ rate_borough_data = borough_data |>
          Ratio_Label = paste0(borough, " (", round(Ratio_Percentage, 1), "%)"))
 rate_borough_data |> 
   dplyr::select(borough, Bite_Count, License_Count, Bite_to_License_Ratio) %>% # 选择前四列
-  mutate(Bite_to_License_Ratio = scales::percent(Bite_to_License_Ratio)) |> 
-kable(col.names = c("Borough", "Bite Count", "License Count", "Bite to License Ratio (%)"),
+  mutate(Bite_to_License_Ratio = scales::percent(Bite_to_License_Ratio)) |>
+  kable(col.names = c("Borough", "Bite Count", "License Count", "Bite to License Ratio (%)"),
+        align = c("l", "c", "c", "c"),
   caption = "Dog Bite to License Ratio by Borough")
 
 ratio_pie_interactive = plot_ly(
