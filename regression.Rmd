@@ -261,6 +261,7 @@ library(MASS)
 
 model = glm.nb(bite_count ~ year + month + gender + spay_neuter + borough, data = bites_by_group)
 
+summary(model)
 model_summary <- tidy(model) %>%
   mutate(
     significance = case_when(
@@ -304,20 +305,17 @@ kable(
   col.names = c("Predictor", "GVIF", "DF", "Scaled GVIF"),
   caption = "Multicollinearity Check (GVIF)"
 ) |> 
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = FALSE)
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = TRUE)
 ```
 GVIF:
-Measures the multicollinearity in the regression model. A GVIF value greater than 10 generally indicates a high multicollinearity issue.
-All GVIF values are close to 1, suggesting no significant multicollinearity.
+
+Measures the multicollinearity in the regression model. A GVIF value greater than 10 generally indicates a high multicollinearity issue. All GVIF values are close to 1, suggesting no significant multicollinearity.
 
 GVIF^(1/(2*Df)):
 
-A scaled version of GVIF for categorical variables. This value adjusts GVIF based on the degrees of freedom to make it comparable across variables.
-In your results, all values are very close to 1, further confirming no multicollinearity.
+A scaled version of GVIF for categorical variables. This value adjusts GVIF based on the degrees of freedom to make it comparable across variables. In the results, all values are very close to 1, further confirming no multicollinearity.
 
-`model` does not exhibit multicollinearity among the predictors, as all GVIF values and their scaled counterparts are well below the threshold of concern (commonly 10 or higher).
-
-This indicates that all predictors can be reliably used in regression model without the risk of biased coefficients caused by multicollinearity.
+Therefore, `model` does not exhibit multicollinearity among the predictors, as all GVIF values and their scaled counterparts are well below the threshold of concern (commonly 10 or higher). This indicates that all predictors can be reliably used in regression model without the risk of biased coefficients caused by multicollinearity.
 
 
 **Residual Analysis**
@@ -335,6 +333,7 @@ plot(residuals_sim)
 
 
 To further increase the precision of the model fit, interaction terms between variables were added. After using stepwise reduction to simplify the model complexity, the final negative binomial regression model is as follows:
+
 ### 建模
 
 ```{r final_NBR, message=FALSE, warning=FALSE}
@@ -370,13 +369,11 @@ model_all_interactions <- glm.nb(
 model_stepwise <- stepAIC(model_all_interactions, direction = "both")
 ```
 
-```{r}
+```{r, warning=FALSE}
 filter_model = glm.nb(bite_count ~ year + month + gender + spay_neuter + 
     borough + year:spay_neuter + year:borough + month:spay_neuter + 
     gender:spay_neuter + gender:borough + spay_neuter:borough, 
     data = bites_by_group)
-
-summary(filter_model)
 ```
 
 ### Model evaluation
@@ -390,8 +387,13 @@ Overall, while the scatter plot shows a slight systematic deviation, the final n
 ```{r}
 
 filter_model_summary <- tidy(filter_model, exponentiate = TRUE, conf.int = TRUE)
-print(filter_model_summary)
 
+kable(
+  filter_model_summary,
+  caption = "Summary of Negative Binomial Regression (with interactions) Results"
+) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = TRUE) %>%
+  scroll_box(height = "400px")
 ```
 
 #### Interaction effect visualization
@@ -424,6 +426,15 @@ ggplot(interaction_preds, aes(x = x, y = predicted, color = group)) +
   ) +
   theme_minimal()
 ```
+
+#### 残差分析
+```{r, warning=FALSE, message=FALSE}
+library(DHARMa)
+residuals_sim = simulateResiduals(model_stepwise)
+plot(model_stepwise)
+```
+
+From the analysis of the four diagnostic plots, the fitted model exhibits several shortcomings. Firstly, the tails of the residual distribution slightly deviate from the assumed negative binomial distribution. This deviation suggests that the residuals might not be perfectly modeled, indicating potential issues with the model fit or the distributional assumptions. Secondly, the distribution of points in the Scale-Location plot appears striated, and the red smooth line shows a non-horizontal trend. This pattern indicates that the variance of the residuals may change with fitted values, suggesting the presence of heteroscedasticity. This non-constant variance can affect the reliability of the model's standard errors and confidence intervals.Lastly, the Residuals vs Leverage Plot reveals the presence of points with high leverage, which could be overly influencing the model's predictions. These high leverage points warrant further investigation to determine whether they should be removed or adjusted to improve model accuracy and robustness.
 
 #### Prediction
 
@@ -461,14 +472,7 @@ This plot shows the spread of residuals versus fitted values and helps to check 
 
 This plot is critical for identifying observations with high leverage values—points that have a significant impact on the model's fit. Ideally, no points should exceed the threshold set by Cook’s distance, indicated by the dashed lines.
 
-#### 残差分析
-```{r, warning=FALSE, message=FALSE}
-library(DHARMa)
-residuals_sim = simulateResiduals(model_stepwise)
-plot(model_stepwise)
-```
 
-From the analysis of the four diagnostic plots, the fitted model exhibits several shortcomings. Firstly, the tails of the residual distribution slightly deviate from the assumed negative binomial distribution. This deviation suggests that the residuals might not be perfectly modeled, indicating potential issues with the model fit or the distributional assumptions. Secondly, the distribution of points in the Scale-Location plot appears striated, and the red smooth line shows a non-horizontal trend. This pattern indicates that the variance of the residuals may change with fitted values, suggesting the presence of heteroscedasticity. This non-constant variance can affect the reliability of the model's standard errors and confidence intervals.Lastly, the Residuals vs Leverage Plot reveals the presence of points with high leverage, which could be overly influencing the model's predictions. These high leverage points warrant further investigation to determine whether they should be removed or adjusted to improve model accuracy and robustness.
 
 ## 两模型对比
 
