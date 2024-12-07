@@ -1,5 +1,5 @@
 ---
-title: "Spatial heterogeneity of dog bite incidents and dog license"
+title: "Spatial correlations of dog bite incidents and dog licenses"
 output:
   html_document:
     code_folding: hide
@@ -107,7 +107,7 @@ bite_counts = bite |>
 
 ```
 
-To assess whether the spatial distribution of dog license issuance and dog bite incidents in New York City exhibits spatial heterogeneity and clustering characteristics, this study calculated both the global and local Moran's I for these variables during the research period.
+To assess whether the spatial distribution of dog license issuance and dog bite incidents in New York City exhibits spatial correlations and clustering characteristics, this study calculated both the global and local Moran's I for these variables during the research period.
 
 Moran's I is a statistical metric commonly used in spatial data analysis to measure the degree of spatial autocorrelation. It is employed to determine whether there is a trend of spatial clustering or dispersion in spatial data.
 
@@ -256,7 +256,9 @@ colnames(data) <- c(
 kable(data, format = "pipe", align = "c", caption = "Implications of Local Moran's I")
 ```
 
-```{r local_Moran, message=FALSE, warning=FALSE}
+The local Moran's I for both dog bite incidents and dog licenses in each zip code are displayed in the map below. Zip code areas highlighted in red exhibit significant high-high spatial clustering for dog bite incidents, while those outlined in yellow show significant high-high clustering for dog licenses. This aligns with the characteristics of the study area. It is generally believed that dog owners tend to walk their dogs near their homes. Therefore, dogs with a higher likelihood of causing harm are more likely to impact nearby zip codes, leading to clusters of high incidence areas for dog bites. Given this behavior, it is reasonable that there are no significant high-low or low-high clustering patterns for dog bite incidents in the study area. Moreover, if an area with dog bite incidents shows a significant low-low clustering, it simply indicates that this neighboring region has fewer dogs compared to others. As there is no significant low-low clustering of dog licenses in New York City, the absence of significant low-low clustering of dog bite incidents is also justified.
+
+```{r local_map, message=FALSE, warning=FALSE}
 locaI = localmoran(shp_NYall$sc, weight_NY, alternative = "greater") |>
   as.data.frame() |>
   setNames(c("I", "Expected_I", "Variance", "Z_score", "P_value"))
@@ -272,9 +274,7 @@ locaI_license = localmoran(shp_NYall_license$license_sc, weight_NY, alternative 
 shp_locaI_license <- cbind(shp_NY, locaI_license) |>  
    mutate(I = ifelse(is.na(I), 0, I)) |>
    select(-ST_FIPS, -CTY_FIPS, -SHAPE_AREA, -SHAPE_LEN)
-```
-
-```{r local_map, message=FALSE, warning=FALSE}
+###############################################################################
 tmap_mode("view")
 
 map_locaI =
@@ -294,8 +294,9 @@ map_locaI =
 map_locaI
 ```
 
-The map above displays the local Moran's Indices for each zip code in New York City from 2015 to 2021. Zip code areas highlighted in red exhibit significant high-high spatial clustering for dog bite incidents, while those outlined in yellow show significant high-high clustering for dog licenses. This aligns with the characteristics of the study area. It is generally believed that dog owners tend to walk their dogs near their homes. Therefore, dogs with a higher likelihood of causing harm are more likely to impact nearby zip codes, leading to clusters of high incidence areas for dog bites. Given this behavior, it is reasonable that there are no significant high-low or low-high clustering patterns for dog bite incidents in the study area. Moreover, if an area with dog bite incidents shows a significant low-low clustering, it simply indicates that this neighboring region has fewer dogs compared to others. As there is no significant low-low clustering of dog licenses in New York City, the absence of significant low-low clustering of dog bite incidents is also justified.
-
 ```{r include=FALSE}
 rm(list = ls())
 ```
+
+
+The zip codes 10029, 10035, 11217, and 11237 on the map all exhibit significant high-high clustering for both dog bite incidents and licenses, with neighboring areas also showing trends of high concentrations of dog licenses. This indicates that a higher number of dogs in these areas is a non-negligible factor contributing to the increase in dog bite incidents. Additionally, there is a significant high-value clustering of dog bite incidents in the northern part of New York City, without a corresponding high concentration of dog ownership. Future research should focus on exploring other potential factors that may increase dog bite incidents in this area, such as management of parks that allow dogs, local dog ownership environments, and regulatory policies.
