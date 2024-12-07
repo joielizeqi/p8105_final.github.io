@@ -161,7 +161,13 @@ summary(model)
 
 ### With Interaction
 
+<<<<<<< HEAD
 ```{r, warning=FALSE, message=FALSE, include=FALSE}
+=======
+To further increase the precision of the model fit, interaction terms between variables were added. After using stepwise reduction to simplify the model complexity, the final Negative Binomial Regression model is as follows:
+
+```{r, warning=FALSE, message=FALSE}
+>>>>>>> 16360040288404821ecf2f330fc7342b4eb19952
 model_all_interactions <- glm.nb(
   formula = bite_count ~ 
     year + month + gender + spay_neuter + borough +
