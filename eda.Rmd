@@ -47,12 +47,6 @@ dog_bites_df = read_csv("data/Dog_Bites_Data.csv", na = c("NA", "", ".")) |>
   janitor::clean_names() |> 
   rename_with(~ gsub("^x", "", .))
 
-# glimpse(dog_bites_df)
-# summary(dog_bites_df)
-unique_breeds <- dog_bites_df %>%
-  pull(breed) %>%
-  unique() %>%
-  paste(collapse = ", ")
 
 dog_bites_clean = dog_bites_df |> 
   mutate(date_of_bite = as.Date(date_of_bite, format = "%B %d %Y")) |> 
