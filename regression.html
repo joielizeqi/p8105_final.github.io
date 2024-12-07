@@ -13,7 +13,7 @@
 
 <title>Cumulative impact of various factors on dog bite incidents</title>
 
-<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 <link href="site_libs/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet" />
@@ -546,12 +546,11 @@ log_best_lambda：对最佳 lambda 取对数，用于后续绘图。 目的：la
   ) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5))</code></pre>
-<pre><code>## Warning: Using `size` aesthetic for lines was deprecated in ggplot2
-## 3.4.0.
+<pre><code>## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
 ## ℹ Please use `linewidth` instead.
 ## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_lifecycle_warnings()` to see where this
-## warning was generated.</code></pre>
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+## generated.</code></pre>
 <p><img src="regression_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <pre class="r"><code># 获取模型在最佳 lambda 下的系数
 lasso_coefficients &lt;- coef(cv_model, s = &quot;lambda.min&quot;)
@@ -595,7 +594,7 @@ s1
 X.Intercept.
 </td>
 <td style="text-align:center;">
-1.1070
+1.1045
 </td>
 </tr>
 <tr>
@@ -611,7 +610,7 @@ X.Intercept..1
 year2016
 </td>
 <td style="text-align:center;">
-0.0589
+0.0596
 </td>
 </tr>
 <tr>
@@ -619,7 +618,7 @@ year2016
 year2017
 </td>
 <td style="text-align:center;">
-0.1471
+0.1478
 </td>
 </tr>
 <tr>
@@ -627,7 +626,7 @@ year2017
 year2018
 </td>
 <td style="text-align:center;">
-0.0711
+0.0718
 </td>
 </tr>
 <tr>
@@ -635,7 +634,7 @@ year2018
 year2019
 </td>
 <td style="text-align:center;">
-0.0949
+0.0956
 </td>
 </tr>
 <tr>
@@ -643,7 +642,7 @@ year2019
 year2020
 </td>
 <td style="text-align:center;">
--0.2819
+-0.2817
 </td>
 </tr>
 <tr>
@@ -651,7 +650,7 @@ year2020
 year2021
 </td>
 <td style="text-align:center;">
--0.2845
+-0.2844
 </td>
 </tr>
 <tr>
@@ -659,7 +658,7 @@ year2021
 month2
 </td>
 <td style="text-align:center;">
--0.0167
+-0.0156
 </td>
 </tr>
 <tr>
@@ -667,7 +666,7 @@ month2
 month3
 </td>
 <td style="text-align:center;">
-0.0000
+0.0016
 </td>
 </tr>
 <tr>
@@ -675,7 +674,7 @@ month3
 month4
 </td>
 <td style="text-align:center;">
-0.1036
+0.1053
 </td>
 </tr>
 <tr>
@@ -683,7 +682,7 @@ month4
 month5
 </td>
 <td style="text-align:center;">
-0.1568
+0.1585
 </td>
 </tr>
 <tr>
@@ -691,7 +690,7 @@ month5
 month6
 </td>
 <td style="text-align:center;">
-0.2253
+0.2270
 </td>
 </tr>
 <tr>
@@ -699,7 +698,7 @@ month6
 month7
 </td>
 <td style="text-align:center;">
-0.1832
+0.1850
 </td>
 </tr>
 <tr>
@@ -707,7 +706,7 @@ month7
 month8
 </td>
 <td style="text-align:center;">
-0.2052
+0.2069
 </td>
 </tr>
 <tr>
@@ -715,7 +714,7 @@ month8
 month9
 </td>
 <td style="text-align:center;">
-0.1186
+0.1204
 </td>
 </tr>
 <tr>
@@ -723,7 +722,7 @@ month9
 month10
 </td>
 <td style="text-align:center;">
-0.0678
+0.0697
 </td>
 </tr>
 <tr>
@@ -731,7 +730,7 @@ month10
 month11
 </td>
 <td style="text-align:center;">
-0.0588
+0.0606
 </td>
 </tr>
 <tr>
@@ -739,7 +738,7 @@ month11
 month12
 </td>
 <td style="text-align:center;">
--0.0010
+0.0000
 </td>
 </tr>
 <tr>
@@ -747,7 +746,7 @@ month12
 genderM
 </td>
 <td style="text-align:center;">
-0.8880
+0.8882
 </td>
 </tr>
 <tr>
@@ -755,7 +754,7 @@ genderM
 spay_neuterNeutered
 </td>
 <td style="text-align:center;">
--0.1034
+-0.1036
 </td>
 </tr>
 <tr>
@@ -763,7 +762,7 @@ spay_neuterNeutered
 boroughBrooklyn
 </td>
 <td style="text-align:center;">
-0.2990
+0.2997
 </td>
 </tr>
 <tr>
@@ -771,7 +770,7 @@ boroughBrooklyn
 boroughManhattan
 </td>
 <td style="text-align:center;">
-0.2263
+0.2269
 </td>
 </tr>
 <tr>
@@ -779,7 +778,7 @@ boroughManhattan
 boroughQueens
 </td>
 <td style="text-align:center;">
-0.4942
+0.4948
 </td>
 </tr>
 <tr>
@@ -787,7 +786,7 @@ boroughQueens
 boroughStaten.Island
 </td>
 <td style="text-align:center;">
--0.5573
+-0.5572
 </td>
 </tr>
 </tbody>
@@ -832,7 +831,8 @@ kable(
 ) %&gt;%
   kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;, &quot;condensed&quot;), full_width = TRUE) %&gt;%
   scroll_box(height = &quot;400px&quot;)</code></pre>
-<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; ">
+<div
+style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; ">
 <table class="table table-striped table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
 <caption>
 Summary of Negative Binomial Regression Results
@@ -1341,7 +1341,6 @@ boroughStaten Island
 </ul>
 <p>从结果来看，。。。</p>
 <p>模型还需要进一步evaluate。</p>
-</div>
 <div id="evaluation" class="section level3">
 <h3>evaluation</h3>
 <p><strong>Multicollinearity Check</strong></p>
@@ -1478,7 +1477,6 @@ plot(residuals_sim)</code></pre>
 <li>QQ：<code>model</code>在残差分析</li>
 </ul>
 </div>
-</div>
 <div id="with-interaction" class="section level2">
 <h2>With Interaction</h2>
 <p>To further increase the precision of the model fit, interaction terms
@@ -1547,7 +1545,7 @@ knitr::kable(data, format = &quot;pipe&quot;, align = &quot;l&quot;, caption = &
 ## glm.nb(formula = bite_count ~ year + month + gender + spay_neuter + 
 ##     borough + year:spay_neuter + year:borough + month:spay_neuter + 
 ##     gender:spay_neuter + gender:borough + spay_neuter:borough, 
-##     data = bites_by_group, init.theta = 35483.47117, link = log)
+##     data = bites_by_group, init.theta = 35483.63491, link = log)
 ## 
 ## Coefficients:
 ##                                           Estimate Std. Error z value Pr(&gt;|z|)
@@ -1703,7 +1701,7 @@ knitr::kable(data, format = &quot;pipe&quot;, align = &quot;l&quot;, caption = &
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## (Dispersion parameter for Negative Binomial(35483.47) family taken to be 1)
+## (Dispersion parameter for Negative Binomial(35483.63) family taken to be 1)
 ## 
 ##     Null deviance: 4944.9  on 1572  degrees of freedom
 ## Residual deviance: 1437.1  on 1499  degrees of freedom
@@ -1712,7 +1710,7 @@ knitr::kable(data, format = &quot;pipe&quot;, align = &quot;l&quot;, caption = &
 ## Number of Fisher Scoring iterations: 1
 ## 
 ## 
-##               Theta:  35483 
+##               Theta:  35484 
 ##           Std. Err.:  232188 
 ## Warning while fitting theta: iteration limit reached 
 ## 
@@ -1829,6 +1827,9 @@ randomly spread points.</p>
 values—points that have a significant impact on the model’s fit.
 Ideally, no points should exceed the threshold set by Cook’s distance,
 indicated by the dashed lines.</p>
+</div>
+<div id="残差分析" class="section level4">
+<h4>残差分析</h4>
 <pre class="r"><code>library(DHARMa)
 residuals_sim = simulateResiduals(model_stepwise)
 plot(model_stepwise)</code></pre>
@@ -1854,7 +1855,6 @@ accuracy and robustness.</p>
 </div>
 <div id="两模型对比" class="section level2">
 <h2>两模型对比</h2>
-</div>
 </div>
 <div id="generalized-linear-mixed-model-glmm" class="section level1">
 <h1>Generalized Linear Mixed Model (GLMM)</h1>
@@ -1955,36 +1955,50 @@ summary(glmm_model)</code></pre>
 ## 
 ## Fixed effects:
 ##                      Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)          1.180470   0.169990   6.944 3.80e-12 ***
-## year2016             0.069806   0.041693   1.674 0.094078 .  
-## year2017             0.153529   0.040996   3.745 0.000180 ***
-## year2018             0.075276   0.041613   1.809 0.070461 .  
-## year2019             0.094144   0.041424   2.273 0.023046 *  
-## year2020            -0.278896   0.045542  -6.124 9.13e-10 ***
-## year2021            -0.286872   0.045946  -6.244 4.27e-10 ***
-## month2               0.002486   0.058860   0.042 0.966308    
-## month3               0.029951   0.058422   0.513 0.608178    
-## month4               0.127436   0.057261   2.226 0.026045 *  
-## month5               0.180650   0.056724   3.185 0.001449 ** 
-## month6               0.244655   0.056073   4.363 1.28e-05 ***
-## month7               0.201825   0.056635   3.564 0.000366 ***
-## month8               0.227603   0.056478   4.030 5.58e-05 ***
-## month9               0.142908   0.057234   2.497 0.012529 *  
-## month10              0.091132   0.057894   1.574 0.115463    
-## month11              0.088932   0.057919   1.535 0.124670    
-## month12              0.018502   0.059011   0.314 0.753869    
-## genderM              0.884881   0.024565  36.022  &lt; 2e-16 ***
+## (Intercept)          1.180466   0.169985   6.945 3.80e-12 ***
+## year2016             0.069807   0.041693   1.674 0.094071 .  
+## year2017             0.153530   0.040995   3.745 0.000180 ***
+## year2018             0.075276   0.041613   1.809 0.070459 .  
+## year2019             0.094146   0.041424   2.273 0.023043 *  
+## year2020            -0.278894   0.045542  -6.124 9.13e-10 ***
+## year2021            -0.286869   0.045945  -6.244 4.27e-10 ***
+## month2               0.002486   0.058859   0.042 0.966312    
+## month3               0.029950   0.058421   0.513 0.608193    
+## month4               0.127434   0.057260   2.226 0.026045 *  
+## month5               0.180648   0.056723   3.185 0.001449 ** 
+## month6               0.244653   0.056072   4.363 1.28e-05 ***
+## month7               0.201824   0.056634   3.564 0.000366 ***
+## month8               0.227600   0.056477   4.030 5.58e-05 ***
+## month9               0.142905   0.057233   2.497 0.012529 *  
+## month10              0.091131   0.057893   1.574 0.115462    
+## month11              0.088930   0.057918   1.535 0.124671    
+## month12              0.018499   0.059010   0.313 0.753909    
+## genderM              0.884882   0.024565  36.023  &lt; 2e-16 ***
 ## spay_neuterNeutered -0.112301   0.022910  -4.902 9.50e-07 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div id="残差分析-1" class="section level4">
+<h4>残差分析</h4>
+<pre class="r"><code>library(DHARMa)
+residuals_glmm_sim = simulateResiduals(glmm_model)
+plot(residuals_glmm_sim)</code></pre>
+<p><img src="regression_files/figure-html/unnamed-chunk-17-1.png" width="672" />
+有outlier，所以该模型并不。。。</p>
+</div>
 </div>
 <div id="model对比" class="section level1">
 <h1>Model对比：</h1>
+<p>三者相比，AIC。。。 并且，残差分析显示，只有with
+interaction的有意义。</p>
 </div>
 <div id="conclusion" class="section level1">
 <h1>Conclusion</h1>
 <p>三个模型对比，只含有主效应的model。。。。 含有inter。。。
 后续生成的。。。但是能解释一些。。。</p>
+</div>
+</div>
+</div>
+</div>
 </div>
 
 
