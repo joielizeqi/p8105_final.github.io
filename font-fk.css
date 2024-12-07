@@ -12,3 +12,11 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
 h1 {
   font-size: 20px; /* Main title */
 }
+
+/* Move subdropdown to the left */
+#navbar .navbar-right .dropdown .show .dropdown-submenu .dropdown-menu {
+  top: 0;
+  left: -100%; /* Move the submenu to the left */
+  margin-left: 0;
+  margin-right: 0;
+}
