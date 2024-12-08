@@ -387,7 +387,8 @@ data <- data.frame(
 knitr::kable(data, format = "pipe", align = "l", caption = "Final Negative Binomial Regression Model", escape = FALSE)
 ```
 
-The final model with interaction is as follows:
+The final model with interaction is detailed in the following table. Initially, the intercept is 3.83 with a p-value near zero, indicating that the baseline level of the response variable (on a logarithmic scale) is significant when other variables are not considered. For the main effect variables, the years 2016, 2018, and 2019 show a significant increase in the log change of event counts compared to 2015; male dogs, compared to female dogs, exhibit stronger aggression, with a 10.59 times increase in the incidence of dog bite events, calculated as with $e^{2.36}$. The coefficient for neutering, 0.3960, indicates a significant reduction in the log count of bite incidents for neutered dogs compared to unneutered dogs. Geographically, the coefficients for Manhattan and Staten Island are 0.72 and 0.48, respectively, showing significantly lower event counts compared to the Bronx. Regarding interaction terms, the years 2018, 2020, and 2021 show a significant reduction in interaction with the neutering status.
+
 
 ```{r final_interaction, message=FALSE, warning=FALSE}
 filter_model = glm.nb(bite_count ~ year + month + gender + spay_neuter + 
