@@ -291,17 +291,18 @@ rate_borough_data |>
 ## Trends of Dog Bite Incidents over Time
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
-dog_bites_trend_plot = dog_bites_clean %>% 
+dog_bites_trend_plot = dog_bites_clean |> 
   mutate(
     year = as.factor(year),
     month = month(date_of_bite),
     day_of_month = day(date_of_bite), 
     common_date = mdy(paste(month, day_of_month, "2020"))
-  ) %>%
-  group_by(common_date, year) %>%  
-  summarise(bites_count = n(), .groups = "drop") %>%  
+  ) |>
+  group_by(common_date, year) |>  
+  summarise(bites_count = n(), .groups = "drop") |>  
   ggplot(aes(x = common_date, y = bites_count, 
-             group = year, color = year)) +
+             group = year, color = year,
+             text = paste("Count:", bites_count, "<br>Year:", year))) +
   geom_point(alpha = .3) +
   geom_smooth(se = FALSE, span = 0.5) + 
   labs(
@@ -314,10 +315,11 @@ dog_bites_trend_plot = dog_bites_clean %>%
     text = element_text(size = 15), 
     axis.text.x = element_text(angle = 60, hjust = 1, size = 10)
   ) +
-  scale_color_viridis_d(end = .8) +  
+  scale_color_viridis_d(end = .8) + 
   scale_x_date(date_breaks = "1 month", labels = function(x) format(x, "%b"))
 
-ggplotly(dog_bites_trend_plot)
+plotly_trend <- ggplotly(dog_bites_trend_plot, tooltip = "text")
+plotly_trend
 ```
 
 Across all years, there is a noticeable seasonal trend, with incidents peaking during the summer months (June to August) and declining in the colder months (November to January). While the general patterns remain consistent, some variability exists, with years like 2020 and 2021 showing slightly lower bite rates compared to earlier years, such as 2015-2017. This trend suggests a potential link between warmer weather, increased outdoor activities, and higher human-dog interactions, contributing to a rise in dog bite incidents during summer.
