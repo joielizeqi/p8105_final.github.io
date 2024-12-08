@@ -191,7 +191,6 @@ log_best_lambda <- log(best_lambda)
 
 $\lambda$ is the regularization parameter in Lasso regression, controlling variable selection and the sparsity of the model. Finding the optimal $\lambda$ value is crucial as it balances model complexity and predictive performance. The ideal $\lambda$ value, derived from cross-validation, minimizes model error. For this study, the optimal $\lambda$ has been determined to be 0.005529689. 
 
-
 ```{r cv_results, message=FALSE, warning=FALSE}
 
 ggplot(cv_results, aes(x = log_lambda, y = mean_mse)) +
@@ -240,6 +239,12 @@ After employing Lasso regression for feature selection, the study identified sev
 
 ### Results
 
+The results of the main effects model fitting are presented in the following table. 
+
+The dispersion parameter, $\theta = 25.18$, indicates that the data exhibits overdispersion, meaning the variance is much larger than the mean. This justifies the use of the negative binomial regression model over a Poisson regression.
+
+The deviance of the null model (a model with no predictors, only the intercept) is $3914.5$. This represents the deviance of the fitted model with predictors included is $1549.7$. The significant reduction in deviance indicates that the included predictors substantially improve model fit.
+
 ```{r glm_nb, message=FALSE, warning=FALSE, include=FALSE}
 library(MASS)
 
@@ -267,13 +272,6 @@ kable(
   scroll_box(height = "400px")
 ```
 
-The dispersion parameter, θ = 25.18, indicates that the data exhibits overdispersion, meaning the variance is much larger than the mean. This justifies the use of the negative binomial regression model over a Poisson regression.
-
-Null Deviance = 3914.5: This represents the deviance of the null model (a model with no predictors, only the intercept).
-
-<<<<<<< HEAD
-Residual Deviance = 1549.7: This represents the deviance of the fitted model with predictors included. The significant reduction in deviance indicates that the included predictors substantially improve model fit.
-
 Year: Some years (e.g., 2017, 2019) show statistically significant coefficients, suggesting that the number of bite incidents varies significantly across years. `year2021` (Coefficient = -0.28710, p < 0.001) indicates a significant *decrease* in bite counts compared to year2015.
 
 Month: Some months show no significant effects on bite counts (e.g., month2: p = 0.97; month3: p = 0.61). Several months (e.g., May, June, August) have significant coefficients, indicating seasonality in bite incidents.
@@ -284,17 +282,17 @@ Spay/Neuter: Neutered dogs are associated with a lower bite count, with a statis
 
 Boroughs: Bite counts vary across boroughs, with Staten Island showing a significant negative association compared to the reference borough.
 
-*Conclusion:*
+From the coefficient of fitting results, this study draws the following conclusions:
 
 * Different years have significantly impacted bite counts, particularly after 2020, where a notable reduction in incidents was observed. This might reflect external factors, such as the COVID-19 pandemic.
+
 * Monthly effects highlight significant seasonal variation, with summer months (e.g., June) showing higher bite counts.
+
 * Males are significantly more likely to be involved in bite incidents than females.
+
 * Neutered animals have significantly lower bite risks compared to non-neutered ones.
+
 * Brooklyn has significantly higher bite counts, while Staten Island has significantly fewer bites compared to Bronx. These differences might reflect variations in dog management policies, population density, or dog ownership practices across regions.
-
-
-
-
 
 ### Evaluation
 
@@ -324,16 +322,13 @@ Generalized Variance Inflation Factor (GVIF) measures the multicollinearity in t
 Scaled GVIF adjusts GVIF based on the degrees of freedom to make it comparable across variables. It is defined as $GVIF^{(1/(2*Df))}$.
 As shown in the table above, the GVIF and scaled GVIF are all close to 1, indicating that there is no significant multicollinearity in the final model.
 
-
 As shown in the table above, results does not exhibit multicollinearity among the predictors, as all GVIF values and their scaled counterparts are well below the threshold of concern (commonly 10 or higher). This indicates that all predictors can be reliably used in regression model without the risk of biased coefficients caused by multicollinearity.
-
 
 ```{r residuals_sim, warning=FALSE, message=FALSE}
 library(DHARMa)
 residuals_sim = simulateResiduals(model)
 plot(residuals_sim)
 ```
-
 
 `Q-Q Plot`: 
 
@@ -351,14 +346,13 @@ The residuals closely follow the expected line, indicating a good fit in terms o
 
 This shows some spread and potential systematic patterns, indicating the main effects model might *not fully* capture the variability in the data.
 
-
 ## Model with interaction
 
 To further increase the precision of the model fit, interaction terms between variables were added.
 
 ### Results
 
-```{r glm_nb_interactions, warning=FALSE, message=FALSE}
+```{r glm_nb_interactions, warning=FALSE, message=FALSE, results = "hide"}
 model_all_interactions <- glm.nb(
   formula = bite_count ~ 
     year + month + gender + spay_neuter + borough +
@@ -375,7 +369,7 @@ model_all_interactions <- glm.nb(
 model_stepwise <- stepAIC(model_all_interactions, direction = "both")
 ```
 
-After using stepwise reduction to simplify the model complexity, the final negative binomial regression model is as follows:
+After using stepwise reduction to simplify the model complexity, the variables of final negative binomial regression model are as follow:
 
 ```{r final_NBR, message=FALSE, warning=FALSE}
 data <- data.frame(
@@ -395,7 +389,7 @@ knitr::kable(data, format = "pipe", align = "l", caption = "Final Negative Binom
 
 The final model with interaction is as follows:
 
-```{r final_interaction}
+```{r final_interaction, message=FALSE, warning=FALSE}
 filter_model = glm.nb(bite_count ~ year + month + gender + spay_neuter + 
     borough + year:spay_neuter + year:borough + month:spay_neuter + 
     gender:spay_neuter + gender:borough + spay_neuter:borough, 
@@ -411,45 +405,7 @@ kable(
   scroll_box(height = "400px")
 ```
 
-
 ### Evaluation
-
-Cross-validation of the final model is depicted in the following illustration, where the red dashed line represents the ideal prediction scenario (i.e., predicted values equal actual values). If points fall near this line, it indicates that the model predicts well. Points located above the diagonal line suggest that the model underestimates the actual values; conversely, if points are below the diagonal line, the model overestimates the actual values. 
-
-Overall, while the scatter plot shows a slight systematic deviation, the final negative binomial regression model still accurately predicts low and medium value areas. However, the error is larger in high-value areas, where actual values tend to fall below the predicted values. This may indicate a tendency of the model to overfit in regions with high incident counts.
-
-#### Interaction effect visualization
-
-```{r, warning=FALSE, message=FALSE}
-library(effects)
-
-interaction_effect_y_bo <- effect("year:borough", filter_model)
-plot(interaction_effect_y_bo,
-     main = "Interaction Effect of Year and Borough on Bite Count",
-     xlab = "Year",
-     ylab = "Predicted Bite Count")
-```
-
-
-
-```{r, warning=FALSE, message=FALSE}
-library(ggeffects)
-
-interaction_preds <- ggpredict(filter_model, terms = c("year", "borough"))
-
-ggplot(interaction_preds, aes(x = x, y = predicted, color = group)) +
-  geom_line() +
-  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = 0.2) +
-  labs(
-    title = "Predicted Bite Counts by Year and Borough",
-    x = "Year",
-    y = "Predicted Bite Count",
-    color = "Borough"
-  ) +
-  theme_minimal()
-```
-
-#### Residual analysis
 
 Additionally, the quality of the fitted model can be assessed through residual analysis and diagnostics, as illustrated in the following four plots.
 
@@ -479,8 +435,8 @@ From the analysis of the four diagnostic plots, the fitted model exhibits severa
 
 #### Prediction
 
-In the plot, the red dashed line represents the ideal prediction scenario where the predicted values equal the actual values. Points close to this line indicate that the model is performing well in its predictions. If points are positioned above the diagonal line, it suggests that the model has underestimated the actual values; conversely, if points are located below the diagonal line, it indicates that the model has overestimated the actual values.
-。
+Cross-validation of the final model is depicted in the following illustration, where the red dashed line represents the ideal prediction scenario (i.e., predicted values equal actual values). If points fall near this line, it indicates that the model predicts well. Points located above the diagonal line suggest that the model underestimates the actual values; conversely, if points are below the diagonal line, the model overestimates the actual values. 
+
 ```{r, warning=FALSE, message=FALSE}
 # Predicted vs Actual Bite Count
 inter_predict = bites_by_group |> 
@@ -494,6 +450,8 @@ ggplot(inter_predict, aes(x = predicted, y = bite_count)) +
        y = "Actual Bite Count") +
   theme_minimal()
 ```
+
+Overall, while the scatter plot shows a slight systematic deviation, the final negative binomial regression model still accurately predicts low and medium value areas. However, the error is larger in high-value areas, where actual values tend to fall below the predicted values. This may indicate a tendency of the model to overfit in regions with high incident counts.
 
 # Generalized Linear Mixed Model (GLMM)
 
