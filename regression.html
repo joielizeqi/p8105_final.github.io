@@ -591,7 +591,7 @@ s1
 X.Intercept.
 </td>
 <td style="text-align:center;">
-1.0998
+1.1022
 </td>
 </tr>
 <tr>
@@ -607,7 +607,7 @@ X.Intercept..1
 year2016
 </td>
 <td style="text-align:center;">
-0.0609
+0.0602
 </td>
 </tr>
 <tr>
@@ -615,7 +615,7 @@ year2016
 year2017
 </td>
 <td style="text-align:center;">
-0.1491
+0.1484
 </td>
 </tr>
 <tr>
@@ -623,7 +623,7 @@ year2017
 year2018
 </td>
 <td style="text-align:center;">
-0.0732
+0.0724
 </td>
 </tr>
 <tr>
@@ -631,7 +631,7 @@ year2018
 year2019
 </td>
 <td style="text-align:center;">
-0.0970
+0.0962
 </td>
 </tr>
 <tr>
@@ -639,7 +639,7 @@ year2019
 year2020
 </td>
 <td style="text-align:center;">
--0.2815
+-0.2816
 </td>
 </tr>
 <tr>
@@ -647,7 +647,7 @@ year2020
 year2021
 </td>
 <td style="text-align:center;">
--0.2842
+-0.2843
 </td>
 </tr>
 <tr>
@@ -655,7 +655,7 @@ year2021
 month2
 </td>
 <td style="text-align:center;">
--0.0138
+-0.0144
 </td>
 </tr>
 <tr>
@@ -663,7 +663,7 @@ month2
 month3
 </td>
 <td style="text-align:center;">
-0.0049
+0.0033
 </td>
 </tr>
 <tr>
@@ -671,7 +671,7 @@ month3
 month4
 </td>
 <td style="text-align:center;">
-0.1086
+0.1070
 </td>
 </tr>
 <tr>
@@ -679,7 +679,7 @@ month4
 month5
 </td>
 <td style="text-align:center;">
-0.1618
+0.1602
 </td>
 </tr>
 <tr>
@@ -687,7 +687,7 @@ month5
 month6
 </td>
 <td style="text-align:center;">
-0.2302
+0.2287
 </td>
 </tr>
 <tr>
@@ -695,7 +695,7 @@ month6
 month7
 </td>
 <td style="text-align:center;">
-0.1882
+0.1866
 </td>
 </tr>
 <tr>
@@ -703,7 +703,7 @@ month7
 month8
 </td>
 <td style="text-align:center;">
-0.2101
+0.2085
 </td>
 </tr>
 <tr>
@@ -711,7 +711,7 @@ month8
 month9
 </td>
 <td style="text-align:center;">
-0.1237
+0.1220
 </td>
 </tr>
 <tr>
@@ -719,7 +719,7 @@ month9
 month10
 </td>
 <td style="text-align:center;">
-0.0731
+0.0713
 </td>
 </tr>
 <tr>
@@ -727,7 +727,7 @@ month10
 month11
 </td>
 <td style="text-align:center;">
-0.0640
+0.0622
 </td>
 </tr>
 <tr>
@@ -743,7 +743,7 @@ month12
 genderM
 </td>
 <td style="text-align:center;">
-0.8888
+0.8885
 </td>
 </tr>
 <tr>
@@ -751,7 +751,7 @@ genderM
 spay_neuterNeutered
 </td>
 <td style="text-align:center;">
--0.1041
+-0.1038
 </td>
 </tr>
 <tr>
@@ -759,7 +759,7 @@ spay_neuterNeutered
 boroughBrooklyn
 </td>
 <td style="text-align:center;">
-0.3009
+0.3002
 </td>
 </tr>
 <tr>
@@ -767,7 +767,7 @@ boroughBrooklyn
 boroughManhattan
 </td>
 <td style="text-align:center;">
-0.2282
+0.2275
 </td>
 </tr>
 <tr>
@@ -775,7 +775,7 @@ boroughManhattan
 boroughQueens
 </td>
 <td style="text-align:center;">
-0.4960
+0.4953
 </td>
 </tr>
 <tr>
@@ -783,7 +783,7 @@ boroughQueens
 boroughStaten.Island
 </td>
 <td style="text-align:center;">
--0.5572
+-0.5571
 </td>
 </tr>
 </tbody>
@@ -811,6 +811,18 @@ binomial generalized linear model (<code>glm.nb</code>) to predict the
 number of bite incidents.</p>
 <div id="results" class="section level3">
 <h3>Results</h3>
+<p>The results of the main effects model fitting are presented in the
+following table.</p>
+<p>The dispersion parameter, <span class="math inline">\(\theta =
+25.18\)</span>, indicates that the data exhibits overdispersion, meaning
+the variance is much larger than the mean. This justifies the use of the
+negative binomial regression model over a Poisson regression.</p>
+<p>The deviance of the null model (a model with no predictors, only the
+intercept) is <span class="math inline">\(3914.5\)</span>. This
+represents the deviance of the fitted model with predictors included is
+<span class="math inline">\(1549.7\)</span>. The significant reduction
+in deviance indicates that the included predictors substantially improve
+model fit.</p>
 <pre class="r"><code>kable(
   model_summary,
   col.names = c(&quot;Term&quot;, &quot;Estimate&quot;, &quot;SE&quot;, &quot;Statistic&quot;, &quot;P-value&quot;, &quot;Significance&quot;),
@@ -1326,16 +1338,6 @@ boroughStaten Island
 </ul></li>
 </ul></li>
 </ul>
-<p>The dispersion parameter, θ = 25.18, indicates that the data exhibits
-overdispersion, meaning the variance is much larger than the mean. This
-justifies the use of the negative binomial regression model over a
-Poisson regression.</p>
-<p>Null Deviance = 3914.5: This represents the deviance of the null
-model (a model with no predictors, only the intercept).</p>
-<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD Residual Deviance = 1549.7: This
-represents the deviance of the fitted model with predictors included.
-The significant reduction in deviance indicates that the included
-predictors substantially improve model fit.</p>
 <p>Year: Some years (e.g., 2017, 2019) show statistically significant
 coefficients, suggesting that the number of bite incidents varies
 significantly across years. <code>year2021</code> (Coefficient =
@@ -1352,22 +1354,23 @@ with a statistically significant negative coefficient.</p>
 <p>Boroughs: Bite counts vary across boroughs, with Staten Island
 showing a significant negative association compared to the reference
 borough.</p>
-<p><em>Conclusion:</em></p>
+<p>From the coefficient of fitting results, this study draws the
+following conclusions:</p>
 <ul>
-<li>Different years have significantly impacted bite counts,
+<li><p>Different years have significantly impacted bite counts,
 particularly after 2020, where a notable reduction in incidents was
 observed. This might reflect external factors, such as the COVID-19
-pandemic.</li>
-<li>Monthly effects highlight significant seasonal variation, with
-summer months (e.g., June) showing higher bite counts.</li>
-<li>Males are significantly more likely to be involved in bite incidents
-than females.</li>
-<li>Neutered animals have significantly lower bite risks compared to
-non-neutered ones.</li>
-<li>Brooklyn has significantly higher bite counts, while Staten Island
-has significantly fewer bites compared to Bronx. These differences might
-reflect variations in dog management policies, population density, or
-dog ownership practices across regions.</li>
+pandemic.</p></li>
+<li><p>Monthly effects highlight significant seasonal variation, with
+summer months (e.g., June) showing higher bite counts.</p></li>
+<li><p>Males are significantly more likely to be involved in bite
+incidents than females.</p></li>
+<li><p>Neutered animals have significantly lower bite risks compared to
+non-neutered ones.</p></li>
+<li><p>Brooklyn has significantly higher bite counts, while Staten
+Island has significantly fewer bites compared to Bronx. These
+differences might reflect variations in dog management policies,
+population density, or dog ownership practices across regions.</p></li>
 </ul>
 <div id="evaluation" class="section level3">
 <h3>Evaluation</h3>
@@ -1555,311 +1558,8 @@ between variables were added.</p>
 )
 
 model_stepwise &lt;- stepAIC(model_all_interactions, direction = &quot;both&quot;)</code></pre>
-<pre><code>## Start:  AIC=7634.33
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year * month + year * gender + year * spay_neuter + year * 
-##     borough + month * gender + month * spay_neuter + month * 
-##     borough + gender * spay_neuter + gender * borough + spay_neuter * 
-##     borough + year * month * gender + year * month * spay_neuter + 
-##     year * month * borough + year * gender * spay_neuter + year * 
-##     gender * borough + year * spay_neuter * borough + month * 
-##     gender * spay_neuter + month * gender * borough + month * 
-##     spay_neuter * borough + gender * spay_neuter * borough</code></pre>
-<pre><code>##                               Df    AIC
-## - year:month:borough         263 7370.0
-## - year:month:gender           66 7561.1
-## - year:month:spay_neuter      66 7580.1
-## - month:gender:borough        44 7580.6
-## - month:spay_neuter:borough   44 7589.2
-## - year:gender:borough         24 7614.4
-## - month:gender:spay_neuter    11 7622.2
-## - year:spay_neuter:borough    24 7623.6
-## - year:gender:spay_neuter      6 7626.0
-## - gender:spay_neuter:borough   4 7628.3
-## &lt;none&gt;                           7634.3</code></pre>
-<pre><code>## 
-## Step:  AIC=7370.02
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:gender + month:spay_neuter + month:borough + gender:spay_neuter + 
-##     gender:borough + spay_neuter:borough + year:month:gender + 
-##     year:month:spay_neuter + year:gender:spay_neuter + year:gender:borough + 
-##     year:spay_neuter:borough + month:gender:spay_neuter + month:gender:borough + 
-##     month:spay_neuter:borough + gender:spay_neuter:borough</code></pre>
-<pre><code>##                               Df    AIC
-## - year:month:gender           66 7299.3
-## - year:month:spay_neuter      66 7316.9
-## - month:gender:borough        44 7317.1
-## - month:spay_neuter:borough   44 7330.2
-## - year:gender:borough         24 7349.5
-## - month:gender:spay_neuter    11 7357.6
-## - year:spay_neuter:borough    24 7358.2
-## - year:gender:spay_neuter      6 7361.9
-## - gender:spay_neuter:borough   4 7364.3
-## &lt;none&gt;                           7370.0
-## + year:month:borough         263 7634.3</code></pre>
-<pre><code>## 
-## Step:  AIC=7299.32
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:gender + month:spay_neuter + month:borough + gender:spay_neuter + 
-##     gender:borough + spay_neuter:borough + year:month:spay_neuter + 
-##     year:gender:spay_neuter + year:gender:borough + year:spay_neuter:borough + 
-##     month:gender:spay_neuter + month:gender:borough + month:spay_neuter:borough + 
-##     gender:spay_neuter:borough</code></pre>
-<pre><code>##                               Df    AIC
-## - year:month:spay_neuter      66 7245.4
-## - month:gender:borough        44 7247.5
-## - month:spay_neuter:borough   44 7258.4
-## - year:gender:borough         24 7278.5
-## - year:spay_neuter:borough    24 7287.4
-## - month:gender:spay_neuter    11 7287.9
-## - year:gender:spay_neuter      6 7291.7
-## - gender:spay_neuter:borough   4 7293.5
-## &lt;none&gt;                           7299.3
-## + year:month:gender           66 7370.0
-## + year:month:borough         263 7561.1</code></pre>
-<pre><code>## 
-## Step:  AIC=7245.41
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:gender + month:spay_neuter + month:borough + gender:spay_neuter + 
-##     gender:borough + spay_neuter:borough + year:gender:spay_neuter + 
-##     year:gender:borough + year:spay_neuter:borough + month:gender:spay_neuter + 
-##     month:gender:borough + month:spay_neuter:borough + gender:spay_neuter:borough</code></pre>
-<pre><code>##                               Df    AIC
-## - month:gender:borough        44 7193.6
-## - month:spay_neuter:borough   44 7205.4
-## - year:gender:borough         24 7224.5
-## - year:spay_neuter:borough    24 7233.3
-## - month:gender:spay_neuter    11 7233.3
-## - year:gender:spay_neuter      6 7237.6
-## - gender:spay_neuter:borough   4 7239.5
-## - year:month                  66 7244.7
-## &lt;none&gt;                           7245.4
-## + year:month:spay_neuter      66 7299.3
-## + year:month:gender           66 7316.9
-## + year:month:borough         263 7505.7</code></pre>
-<pre><code>## 
-## Step:  AIC=7193.61
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:gender + month:spay_neuter + month:borough + gender:spay_neuter + 
-##     gender:borough + spay_neuter:borough + year:gender:spay_neuter + 
-##     year:gender:borough + year:spay_neuter:borough + month:gender:spay_neuter + 
-##     month:spay_neuter:borough + gender:spay_neuter:borough</code></pre>
-<pre><code>##                               Df    AIC
-## - month:spay_neuter:borough   44 7153.9
-## - year:gender:borough         24 7172.1
-## - year:spay_neuter:borough    24 7181.3
-## - month:gender:spay_neuter    11 7181.8
-## - year:gender:spay_neuter      6 7185.9
-## - gender:spay_neuter:borough   4 7187.5
-## - year:month                  66 7192.1
-## &lt;none&gt;                           7193.6
-## + month:gender:borough        44 7245.4
-## + year:month:spay_neuter      66 7247.5
-## + year:month:gender           66 7264.2
-## + year:month:borough         263 7453.8</code></pre>
-<pre><code>## 
-## Step:  AIC=7153.94
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:gender + month:spay_neuter + month:borough + gender:spay_neuter + 
-##     gender:borough + spay_neuter:borough + year:gender:spay_neuter + 
-##     year:gender:borough + year:spay_neuter:borough + month:gender:spay_neuter + 
-##     gender:spay_neuter:borough</code></pre>
-<pre><code>##                               Df    AIC
-## - month:borough               44 7128.6
-## - year:gender:borough         24 7132.6
-## - year:spay_neuter:borough    24 7142.0
-## - month:gender:spay_neuter    11 7142.1
-## - year:gender:spay_neuter      6 7146.2
-## - gender:spay_neuter:borough   4 7147.8
-## - year:month                  66 7152.8
-## &lt;none&gt;                           7153.9
-## + month:spay_neuter:borough   44 7193.6
-## + month:gender:borough        44 7205.4
-## + year:month:spay_neuter      66 7206.8
-## + year:month:gender           66 7225.6
-## + year:month:borough         263 7409.6</code></pre>
-<pre><code>## 
-## Step:  AIC=7128.6
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:gender + month:spay_neuter + gender:spay_neuter + gender:borough + 
-##     spay_neuter:borough + year:gender:spay_neuter + year:gender:borough + 
-##     year:spay_neuter:borough + month:gender:spay_neuter + gender:spay_neuter:borough</code></pre>
-<pre><code>##                              Df    AIC
-## - year:gender:borough        24 7106.9
-## - year:spay_neuter:borough   24 7116.5
-## - month:gender:spay_neuter   11 7116.7
-## - year:gender:spay_neuter     6 7121.0
-## - gender:spay_neuter:borough  4 7122.6
-## - year:month                 66 7126.9
-## &lt;none&gt;                          7128.6
-## + month:borough              44 7153.9
-## + year:month:spay_neuter     66 7181.6
-## + year:month:gender          66 7199.5</code></pre>
-<pre><code>## 
-## Step:  AIC=7106.86
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:gender + month:spay_neuter + gender:spay_neuter + gender:borough + 
-##     spay_neuter:borough + year:gender:spay_neuter + year:spay_neuter:borough + 
-##     month:gender:spay_neuter + gender:spay_neuter:borough</code></pre>
-<pre><code>##                              Df    AIC
-## - year:spay_neuter:borough   24 7094.6
-## - month:gender:spay_neuter   11 7094.7
-## - year:gender:spay_neuter     6 7098.1
-## - gender:spay_neuter:borough  4 7100.5
-## - year:month                 66 7105.2
-## &lt;none&gt;                          7106.9
-## + year:gender:borough        24 7128.6
-## + month:borough              44 7132.6
-## + year:month:spay_neuter     66 7159.9
-## + year:month:gender          66 7177.9</code></pre>
-<pre><code>## 
-## Step:  AIC=7094.63
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:gender + month:spay_neuter + gender:spay_neuter + gender:borough + 
-##     spay_neuter:borough + year:gender:spay_neuter + month:gender:spay_neuter + 
-##     gender:spay_neuter:borough</code></pre>
-<pre><code>##                              Df    AIC
-## - month:gender:spay_neuter   11 7082.5
-## - year:gender:spay_neuter     6 7086.0
-## - gender:spay_neuter:borough  4 7088.2
-## - year:month                 66 7092.7
-## &lt;none&gt;                          7094.6
-## + year:spay_neuter:borough   24 7106.9
-## + year:gender:borough        24 7116.5
-## + month:borough              44 7120.6
-## - year:borough               24 7137.0
-## + year:month:spay_neuter     66 7147.5
-## + year:month:gender          66 7165.9</code></pre>
-<pre><code>## 
-## Step:  AIC=7082.51
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:gender + month:spay_neuter + gender:spay_neuter + gender:borough + 
-##     spay_neuter:borough + year:gender:spay_neuter + gender:spay_neuter:borough</code></pre>
-<pre><code>##                              Df    AIC
-## - month:gender               11 7064.9
-## - year:gender:spay_neuter     6 7073.8
-## - gender:spay_neuter:borough  4 7076.0
-## - year:month                 66 7080.4
-## - month:spay_neuter          11 7082.4
-## &lt;none&gt;                          7082.5
-## + month:gender:spay_neuter   11 7094.6
-## + year:spay_neuter:borough   24 7094.7
-## + year:gender:borough        24 7104.6
-## + month:borough              44 7108.6
-## - year:borough               24 7125.3
-## + year:month:spay_neuter     66 7136.1
-## + year:month:gender          66 7153.0</code></pre>
-<pre><code>## 
-## Step:  AIC=7064.92
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:spay_neuter + gender:spay_neuter + gender:borough + 
-##     spay_neuter:borough + year:gender:spay_neuter + gender:spay_neuter:borough</code></pre>
-<pre><code>##                              Df    AIC
-## - year:gender:spay_neuter     6 7056.2
-## - gender:spay_neuter:borough  4 7058.4
-## - year:month                 66 7062.9
-## &lt;none&gt;                          7064.9
-## - month:spay_neuter          11 7065.0
-## + year:spay_neuter:borough   24 7077.0
-## + month:gender               11 7082.5
-## + year:gender:borough        24 7086.9
-## + month:borough              44 7091.0
-## - year:borough               24 7107.9
-## + year:month:spay_neuter     66 7118.8</code></pre>
-<pre><code>## 
-## Step:  AIC=7056.21
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:spay_neuter + gender:spay_neuter + gender:borough + 
-##     spay_neuter:borough + gender:spay_neuter:borough</code></pre>
-<pre><code>##                              Df    AIC
-## - gender:spay_neuter:borough  4 7049.7
-## - year:gender                 6 7052.2
-## - year:month                 66 7054.2
-## &lt;none&gt;                          7056.2
-## - month:spay_neuter          11 7056.3
-## + year:gender:spay_neuter     6 7064.9
-## + year:spay_neuter:borough   24 7068.1
-## + month:gender               11 7073.8
-## + year:gender:borough        24 7079.2
-## + month:borough              44 7082.3
-## - year:borough               24 7099.3
-## - year:spay_neuter            6 7107.2
-## + year:month:spay_neuter     66 7110.1</code></pre>
-<pre><code>## 
-## Step:  AIC=7049.72
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:gender + year:spay_neuter + year:borough + 
-##     month:spay_neuter + gender:spay_neuter + gender:borough + 
-##     spay_neuter:borough</code></pre>
-<pre><code>##                              Df    AIC
-## - year:gender                 6 7045.7
-## - year:month                 66 7047.8
-## &lt;none&gt;                          7049.7
-## - month:spay_neuter          11 7049.8
-## + gender:spay_neuter:borough  4 7056.2
-## - gender:spay_neuter          1 7056.5
-## - gender:borough              4 7057.3
-## + year:gender:spay_neuter     6 7058.4
-## + year:spay_neuter:borough   24 7061.7
-## + month:gender               11 7067.3
-## + year:gender:borough        24 7072.7
-## + month:borough              44 7075.7
-## - year:borough               24 7093.0
-## - year:spay_neuter            6 7100.9
-## + year:month:spay_neuter     66 7103.7
-## - spay_neuter:borough         4 7364.3</code></pre>
-<pre><code>## 
-## Step:  AIC=7045.75
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:month + year:spay_neuter + year:borough + month:spay_neuter + 
-##     gender:spay_neuter + gender:borough + spay_neuter:borough</code></pre>
-<pre><code>##                              Df    AIC
-## - year:month                 66 7043.8
-## &lt;none&gt;                          7045.7
-## - month:spay_neuter          11 7045.8
-## + year:gender                 6 7049.7
-## - gender:spay_neuter          1 7051.7
-## - gender:borough              4 7051.9
-## + gender:spay_neuter:borough  4 7052.2
-## + year:spay_neuter:borough   24 7057.5
-## + month:gender               11 7063.4
-## + month:borough              44 7071.7
-## - year:borough               24 7089.4
-## - year:spay_neuter            6 7096.1
-## + year:month:spay_neuter     66 7099.7
-## - spay_neuter:borough         4 7360.7</code></pre>
-<pre><code>## 
-## Step:  AIC=7043.76
-## bite_count ~ year + month + gender + spay_neuter + borough + 
-##     year:spay_neuter + year:borough + month:spay_neuter + gender:spay_neuter + 
-##     gender:borough + spay_neuter:borough</code></pre>
-<pre><code>##                              Df    AIC
-## &lt;none&gt;                          7043.8
-## + year:month                 66 7045.7
-## - month:spay_neuter          11 7047.1
-## + year:gender                 6 7047.8
-## - gender:spay_neuter          1 7049.7
-## - gender:borough              4 7049.9
-## + gender:spay_neuter:borough  4 7050.2
-## + year:spay_neuter:borough   24 7055.9
-## + month:gender               11 7061.2
-## + month:borough              44 7070.3
-## - year:borough               24 7084.8
-## - year:spay_neuter            6 7096.0
-## - spay_neuter:borough         4 7340.9</code></pre>
 <p>After using stepwise reduction to simplify the model complexity, the
-final negative binomial regression model is as follows:</p>
+variables of final negative binomial regression model are as follow:</p>
 <pre class="r"><code>data &lt;- data.frame(
   `Main Effect` = c(&quot;year&quot;, &quot;month&quot;, &quot;gender&quot;, &quot;spay_neuter&quot;, &quot;borough&quot;, &quot; &quot;),
   `Double Interaction Effect` = c(
@@ -1912,12 +1612,9 @@ knitr::kable(data, format = &quot;pipe&quot;, align = &quot;l&quot;, caption = &
 <pre class="r"><code>filter_model = glm.nb(bite_count ~ year + month + gender + spay_neuter + 
     borough + year:spay_neuter + year:borough + month:spay_neuter + 
     gender:spay_neuter + gender:borough + spay_neuter:borough, 
-    data = bites_by_group)</code></pre>
-<pre><code>## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-## control$trace &gt; : iteration limit reached
-## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-## control$trace &gt; : iteration limit reached</code></pre>
-<pre class="r"><code>filter_model_summary &lt;- tidy(filter_model, exponentiate = TRUE, conf.int = TRUE)
+    data = bites_by_group)
+
+filter_model_summary &lt;- tidy(filter_model, exponentiate = TRUE, conf.int = TRUE)
 
 kable(
   filter_model_summary,
@@ -3665,47 +3362,6 @@ spay_neuterNeutered:boroughStaten Island
 </div>
 <div id="evaluation-1" class="section level3">
 <h3>Evaluation</h3>
-<p>Cross-validation of the final model is depicted in the following
-illustration, where the red dashed line represents the ideal prediction
-scenario (i.e., predicted values equal actual values). If points fall
-near this line, it indicates that the model predicts well. Points
-located above the diagonal line suggest that the model underestimates
-the actual values; conversely, if points are below the diagonal line,
-the model overestimates the actual values.</p>
-<p>Overall, while the scatter plot shows a slight systematic deviation,
-the final negative binomial regression model still accurately predicts
-low and medium value areas. However, the error is larger in high-value
-areas, where actual values tend to fall below the predicted values. This
-may indicate a tendency of the model to overfit in regions with high
-incident counts.</p>
-<div id="interaction-effect-visualization" class="section level4">
-<h4>Interaction effect visualization</h4>
-<pre class="r"><code>library(effects)
-
-interaction_effect_y_bo &lt;- effect(&quot;year:borough&quot;, filter_model)
-plot(interaction_effect_y_bo,
-     main = &quot;Interaction Effect of Year and Borough on Bite Count&quot;,
-     xlab = &quot;Year&quot;,
-     ylab = &quot;Predicted Bite Count&quot;)</code></pre>
-<p><img src="regression_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<pre class="r"><code>library(ggeffects)
-
-interaction_preds &lt;- ggpredict(filter_model, terms = c(&quot;year&quot;, &quot;borough&quot;))
-
-ggplot(interaction_preds, aes(x = x, y = predicted, color = group)) +
-  geom_line() +
-  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = 0.2) +
-  labs(
-    title = &quot;Predicted Bite Counts by Year and Borough&quot;,
-    x = &quot;Year&quot;,
-    y = &quot;Predicted Bite Count&quot;,
-    color = &quot;Borough&quot;
-  ) +
-  theme_minimal()</code></pre>
-<p><img src="regression_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-</div>
-<div id="residual-analysis" class="section level4">
-<h4>Residual analysis</h4>
 <p>Additionally, the quality of the fitted model can be assessed through
 residual analysis and diagnostics, as illustrated in the following four
 plots.</p>
@@ -3738,7 +3394,7 @@ indicated by the dashed lines.</p>
 <pre class="r"><code>library(DHARMa)
 residuals_sim = simulateResiduals(model_stepwise)
 plot(model_stepwise)</code></pre>
-<p><img src="regression_files/figure-html/unnamed-chunk-5-1.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-5-2.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-5-3.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-5-4.png" width="672" /></p>
+<p><img src="regression_files/figure-html/unnamed-chunk-3-1.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-3-2.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-3-3.png" width="672" /><img src="regression_files/figure-html/unnamed-chunk-3-4.png" width="672" /></p>
 <p>From the analysis of the four diagnostic plots, the fitted model
 exhibits several shortcomings. Firstly, the tails of the residual
 distribution slightly deviate from the assumed negative binomial
@@ -3756,15 +3412,15 @@ predictions. These high leverage points warrant further investigation to
 determine whether they should be removed or adjusted to improve model
 accuracy and robustness.</p>
 </div>
-<div id="prediction" class="section level4">
-<h4>Prediction</h4>
-<p>In the plot, the red dashed line represents the ideal prediction
-scenario where the predicted values equal the actual values. Points
-close to this line indicate that the model is performing well in its
-predictions. If points are positioned above the diagonal line, it
-suggests that the model has underestimated the actual values;
-conversely, if points are located below the diagonal line, it indicates
-that the model has overestimated the actual values. 。</p>
+<div id="prediction" class="section level3">
+<h3>Prediction</h3>
+<p>Cross-validation of the final model is depicted in the following
+illustration, where the red dashed line represents the ideal prediction
+scenario (i.e., predicted values equal actual values). If points fall
+near this line, it indicates that the model predicts well. Points
+located above the diagonal line suggest that the model underestimates
+the actual values; conversely, if points are below the diagonal line,
+the model overestimates the actual values.</p>
 <pre class="r"><code># Predicted vs Actual Bite Count
 inter_predict = bites_by_group |&gt; 
   mutate(predicted = predict(model_stepwise, type = &quot;response&quot;))
@@ -3776,8 +3432,13 @@ ggplot(inter_predict, aes(x = predicted, y = bite_count)) +
        x = &quot;Predicted Bite Count&quot;,
        y = &quot;Actual Bite Count&quot;) +
   theme_minimal()</code></pre>
-<p><img src="regression_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-</div>
+<p><img src="regression_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Overall, while the scatter plot shows a slight systematic deviation,
+the final negative binomial regression model still accurately predicts
+low and medium value areas. However, the error is larger in high-value
+areas, where actual values tend to fall below the predicted values. This
+may indicate a tendency of the model to overfit in regions with high
+incident counts.</p>
 </div>
 </div>
 <div id="generalized-linear-mixed-model-glmm" class="section level1">
@@ -3852,6 +3513,8 @@ and <span class="math inline">\(\vec b\)</span> denotes the deviation
 for each borough (random effects). This setup allows the model to adjust
 for the influence of both environmental conditions and borough-specific
 variations in the occurrence of dog bites.</p>
+<div id="results-2" class="section level2">
+<h2>Results</h2>
 <pre class="r"><code>library(lme4)
 glmm_model = glmer.nb(
   bite_count ~ year + month + gender + spay_neuter + (1 | borough), 
@@ -3900,24 +3563,545 @@ summary(glmm_model)</code></pre>
 ## spay_neuterNeutered -0.112301   0.022910  -4.902 9.50e-07 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div id="residual-analysis-1" class="section level4">
-<h4>Residual analysis</h4>
+<pre class="r"><code>library(broom.mixed)
+glmm_model_summary &lt;-
+  broom.mixed::tidy(glmm_model) %&gt;%
+  mutate(
+    significance = case_when(
+      p.value &lt; 0.001 ~ &quot;***&quot;,
+      p.value &lt; 0.01 ~ &quot;**&quot;,
+      p.value &lt; 0.05 ~ &quot;*&quot;,
+      TRUE ~ &quot;&quot;
+    )
+  ) |&gt; 
+  dplyr::select(-effect, -group)</code></pre>
+<pre class="r"><code>kable(
+  glmm_model_summary,
+  col.names = c(&quot;Term&quot;, &quot;Estimate&quot;, &quot;SE&quot;, &quot;Statistic&quot;, &quot;P-value&quot;, &quot;Significance&quot;),
+  caption = &quot;Summary of Negative Binomial Regression Results&quot;
+) %&gt;%
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;, &quot;condensed&quot;), full_width = TRUE) %&gt;%
+  scroll_box(height = &quot;400px&quot;)</code></pre>
+<div
+style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; ">
+<table class="table table-striped table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
+<caption>
+Summary of Negative Binomial Regression Results
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Term
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Estimate
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+SE
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Statistic
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+P-value
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Significance
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+1.1804665
+</td>
+<td style="text-align:right;">
+0.1699854
+</td>
+<td style="text-align:right;">
+6.9445164
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:left;">
+***
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+year2016
+</td>
+<td style="text-align:right;">
+0.0698070
+</td>
+<td style="text-align:right;">
+0.0416932
+</td>
+<td style="text-align:right;">
+1.6743026
+</td>
+<td style="text-align:right;">
+0.0940711
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+year2017
+</td>
+<td style="text-align:right;">
+0.1535296
+</td>
+<td style="text-align:right;">
+0.0409953
+</td>
+<td style="text-align:right;">
+3.7450517
+</td>
+<td style="text-align:right;">
+0.0001804
+</td>
+<td style="text-align:left;">
+***
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+year2018
+</td>
+<td style="text-align:right;">
+0.0752759
+</td>
+<td style="text-align:right;">
+0.0416131
+</td>
+<td style="text-align:right;">
+1.8089477
+</td>
+<td style="text-align:right;">
+0.0704591
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+year2019
+</td>
+<td style="text-align:right;">
+0.0941456
+</td>
+<td style="text-align:right;">
+0.0414242
+</td>
+<td style="text-align:right;">
+2.2727192
+</td>
+<td style="text-align:right;">
+0.0230431
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+</tr>
+<tr>
+<td style="text-align:left;">
+year2020
+</td>
+<td style="text-align:right;">
+-0.2788938
+</td>
+<td style="text-align:right;">
+0.0455420
+</td>
+<td style="text-align:right;">
+-6.1238848
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:left;">
+***
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+year2021
+</td>
+<td style="text-align:right;">
+-0.2868691
+</td>
+<td style="text-align:right;">
+0.0459453
+</td>
+<td style="text-align:right;">
+-6.2437123
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:left;">
+***
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+month2
+</td>
+<td style="text-align:right;">
+0.0024859
+</td>
+<td style="text-align:right;">
+0.0588592
+</td>
+<td style="text-align:right;">
+0.0422342
+</td>
+<td style="text-align:right;">
+0.9663120
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+month3
+</td>
+<td style="text-align:right;">
+0.0299497
+</td>
+<td style="text-align:right;">
+0.0584208
+</td>
+<td style="text-align:right;">
+0.5126548
+</td>
+<td style="text-align:right;">
+0.6081928
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+month4
+</td>
+<td style="text-align:right;">
+0.1274342
+</td>
+<td style="text-align:right;">
+0.0572598
+</td>
+<td style="text-align:right;">
+2.2255456
+</td>
+<td style="text-align:right;">
+0.0260446
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+</tr>
+<tr>
+<td style="text-align:left;">
+month5
+</td>
+<td style="text-align:right;">
+0.1806481
+</td>
+<td style="text-align:right;">
+0.0567229
+</td>
+<td style="text-align:right;">
+3.1847452
+</td>
+<td style="text-align:right;">
+0.0014488
+</td>
+<td style="text-align:left;">
+**
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+month6
+</td>
+<td style="text-align:right;">
+0.2446528
+</td>
+<td style="text-align:right;">
+0.0560720
+</td>
+<td style="text-align:right;">
+4.3631934
+</td>
+<td style="text-align:right;">
+0.0000128
+</td>
+<td style="text-align:left;">
+***
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+month7
+</td>
+<td style="text-align:right;">
+0.2018245
+</td>
+<td style="text-align:right;">
+0.0566339
+</td>
+<td style="text-align:right;">
+3.5636679
+</td>
+<td style="text-align:right;">
+0.0003657
+</td>
+<td style="text-align:left;">
+***
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+month8
+</td>
+<td style="text-align:right;">
+0.2276003
+</td>
+<td style="text-align:right;">
+0.0564774
+</td>
+<td style="text-align:right;">
+4.0299325
+</td>
+<td style="text-align:right;">
+0.0000558
+</td>
+<td style="text-align:left;">
+***
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+month9
+</td>
+<td style="text-align:right;">
+0.1429054
+</td>
+<td style="text-align:right;">
+0.0572333
+</td>
+<td style="text-align:right;">
+2.4968912
+</td>
+<td style="text-align:right;">
+0.0125287
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+</tr>
+<tr>
+<td style="text-align:left;">
+month10
+</td>
+<td style="text-align:right;">
+0.0911307
+</td>
+<td style="text-align:right;">
+0.0578934
+</td>
+<td style="text-align:right;">
+1.5741114
+</td>
+<td style="text-align:right;">
+0.1154617
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+month11
+</td>
+<td style="text-align:right;">
+0.0889304
+</td>
+<td style="text-align:right;">
+0.0579177
+</td>
+<td style="text-align:right;">
+1.5354601
+</td>
+<td style="text-align:right;">
+0.1246709
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+month12
+</td>
+<td style="text-align:right;">
+0.0184990
+</td>
+<td style="text-align:right;">
+0.0590100
+</td>
+<td style="text-align:right;">
+0.3134894
+</td>
+<td style="text-align:right;">
+0.7539089
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+genderM
+</td>
+<td style="text-align:right;">
+0.8848816
+</td>
+<td style="text-align:right;">
+0.0245647
+</td>
+<td style="text-align:right;">
+36.0225275
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:left;">
+***
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+spay_neuterNeutered
+</td>
+<td style="text-align:right;">
+-0.1123005
+</td>
+<td style="text-align:right;">
+0.0229100
+</td>
+<td style="text-align:right;">
+-4.9018117
+</td>
+<td style="text-align:right;">
+0.0000009
+</td>
+<td style="text-align:left;">
+***
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sd__(Intercept)
+</td>
+<td style="text-align:right;">
+0.3600968
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+</tbody>
+</table>
+</div></li>
+</ul></li>
+</ul></li>
+</ul>
+<p>Random Effects：</p>
+<p><code>Borough</code>: Variance: 0.1297, standard Deviation: 0.3601.
+Indicates moderate variability between boroughs in the baseline bite
+count.</p>
+<p>Fixed Effects:</p>
+<ul>
+<li><code>Year</code>: 2017 has <em>positive</em> coefficient (0.15336,
+p &lt; 0.001), suggesting a higher bite count compared to 2015. While
+2020 and 2021 have strong <em>negative</em> coefficients (-0.27884 and
+-0.28669, p &lt; 0.001), indicating a substantial reduction in bite
+counts. This could relate to external factors like the COVID-19
+pandemic.</li>
+<li><code>Month</code>: Positive coefficient (0.12734, p = 0.026),
+suggesting higher bite counts in April. In May, June and July, all p
+&lt; 0.001, maybe there is a seasonal peak during summer.</li>
+<li><code>Gender</code>: Male dogs have strong positive coefficient
+(0.88482, p &lt; 0.001), indicating male dogs have a significantly
+higher bite count compared to female dogs.</li>
+<li><code>Spay/Neuter Status</code>: Dogs who are neutered have have
+significantly lower bite counts (-0.11231, p &lt; 0.001).</li>
+</ul>
+<div id="evaluation-2" class="section level2">
+<h2>Evaluation</h2>
 <pre class="r"><code>library(DHARMa)
 residuals_glmm_sim = simulateResiduals(glmm_model)
 plot(residuals_glmm_sim)</code></pre>
-<p><img src="regression_files/figure-html/unnamed-chunk-7-1.png" width="672" />
-有outlier，所以该模型并不。。。</p>
-</div>
+<p><img src="regression_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><code>Q-Q Plot</code>:</p>
+<ul>
+<li>Kolmogorov-Smirnov (KS) Test: p-value = 0.05845: Indicates that the
+residual distribution is not significantly different from the expected
+distribution (n.s. means not significant). The model fits the overall
+data distribution well.</li>
+<li>Dispersion Test: p-value = 0.896: Suggests no evidence of
+overdispersion or underdispersion in the residuals. This confirms the
+appropriateness of using the negative binomial model for handling count
+data with dispersion.</li>
+<li>Outlier Test: p-value = 0.00056: Indicates significant deviations
+due to outliers. This suggests that there are specific data points that
+the model fails to fit well.</li>
+</ul>
+<p><code>Residuals vs. Predicted</code>:</p>
+<ul>
+<li>The red lines (quantile deviations) highlight significant deviations
+at certain ranges of predictions, particularly near the lower predicted
+values (around the 0.25 quantile). This indicates a slight mismatch
+between the model predictions and observed data for certain ranges.</li>
+<li>Despite the overall good fit, systematic patterns (e.g., slight
+curvature) in the residuals suggest possible room for improvement in
+model specification.</li>
+</ul>
 </div>
 <div id="model-comparison" class="section level1">
 <h1>Model comparison</h1>
 <p>三者相比，AIC。。。 并且，残差分析显示，只有with
 interaction的有意义。</p>
+<p>Comparison to the Previous Model</p>
+<p>主效应 vs glmm：</p>
+<p>The KS test and dispersion test results in both models are similar,
+suggesting both models handle overall distribution and dispersion
+well.</p>
+<p>However, the outlier test is significant in <code>glmm model</code>,
+whlie the outlier test is insignificant in the <code>model</code>,
+indicating that this alternative model has difficulty capturing certain
+extreme values or specific subsets of the data.</p>
 </div>
 <div id="conclusion" class="section level1">
 <h1>Conclusion</h1>
 <p>三个模型对比，只含有主效应的model。。。。 含有inter。。。
 后续生成的。。。但是能解释一些。。。</p>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>

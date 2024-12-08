@@ -8,6 +8,8 @@ output:
     toc_float: true
 ---
 
+This section investigated dog bite incidents temporal trends and the correlation between dog bite incidents and dogs' demographics. By looking more closely at the relation between variables and dog bite incidents, we hope to capture potential trends in the dog bites dataset.
+
 ## Trends in annual number of dog bite incidents
 
 ```{r, message = FALSE, warning = FALSE, include = FALSE}
@@ -24,6 +26,7 @@ library(reshape2)
 library(akima)
 library(wordcloud)
 library(tm)
+library(table1)
 ```
 
 
@@ -48,7 +51,7 @@ dog_bites_df = read_csv("data/Dog_Bites_Data.csv", na = c("NA", "", ".")) |>
   janitor::clean_names() |> 
   rename_with(~ gsub("^x", "", .))
 
-
+# Cleaning dog bite
 dog_bites_clean = dog_bites_df |> 
   mutate(date_of_bite = as.Date(date_of_bite, format = "%B %d %Y")) |> 
   mutate(year = format(date_of_bite, "%Y"),
@@ -121,15 +124,15 @@ dog_licensing_df = read_csv("data/NYC_Dog_Licensing_Dataset.csv", na = c("NA", "
 
 
 ```{r, message=FALSE, warning=FALSE}
-dog_bites_trend_plot = dog_bites_clean %>% 
+dog_bites_trend_plot = dog_bites_clean |> 
   mutate(
     year = as.factor(year),
     month = month(date_of_bite),
     day_of_month = day(date_of_bite), 
     common_date = mdy(paste(month, day_of_month, "2020"))
-  ) %>%
-  group_by(common_date, year) %>%  
-  summarise(bites_count = n(), .groups = "drop") %>%  # 显式设置 .groups = "drop"
+  ) |>
+  group_by(common_date, year) |>  
+  summarise(bites_count = n(), .groups = "drop") |>  
   ggplot(aes(x = common_date, y = bites_count, 
              group = year, color = year)) +
   geom_point(alpha = .3) +
@@ -150,9 +153,15 @@ dog_bites_trend_plot = dog_bites_clean %>%
 ggplotly(dog_bites_trend_plot)
 ```
 
+The scatter plot above illustrated the number of dog bite incidents across months for years 2015 to 2021. For most years, dog bite incidence peaked in the summer (June, July, and August), possibly due to the increase of outdoor activities in the summer when the weather permits and when students are on break. 
+
+However, for the year 2020, dog bite incidence dipped in May, and did not rise up to the similar level as previous years, even for months June, July, and August. This unusual trend could be attributed to the prevalence of COVID-19 in the US in 2020. During that period, public health measures like social distancing and quarantine were in place, which significantly reduced people's outdoor activity. 
+
+Note that for the year 2016, the fitted line plateaued during the summer instead of showing an obvious peak. This was likely due to extreme heat in the summer of 2016 that marked the 7th highest daily temperature at all time in New York City. Under this temperature, it was reasonable that people reduced outdoor activity and therefore suffered from less dog bite injuries.
+
 ```{r, message=FALSE, warning=FALSE}
-daily_bites <- dog_bites_clean %>%
-  group_by(year, date_of_bite) %>% 
+daily_bites <- dog_bites_clean |>
+  group_by(year, date_of_bite) |> 
   summarise(bite_count = n(), .groups = 'drop')
 
 hole_trend = ggplot(daily_bites, aes(x = date_of_bite, y = bite_count)) +
@@ -174,6 +183,10 @@ hole_trend = ggplot(daily_bites, aes(x = date_of_bite, y = bite_count)) +
 
 ggplotly(hole_trend)
 ```
+
+
+To look at a bigger picture, we visualized the number of daily dog bite incidents across the years 2015 to 2021. The scatterplot showed a consistent trend as described above where the number of dog bite incidents fluctuates from winter to summer. The fitted smooth line depicted the general temporal trend. From the start of 2015 to the ends of 2018, the daily dog bite incidence stayed around 9 cases, then slowly declined to 7 cases from the start of 2019 to the end of 2021. This decline could also be attributed to COVID outbreak from 2019 to 2021, where people spent less time outdoor.
+
 
 ```{r, warning=FALSE, message=FALSE}
 bites_by_year_month = dog_bites_clean |>
@@ -200,4 +213,40 @@ heatmap_interactive = plot_ly(
 heatmap_interactive
 ```
 
+The interactive heatmap also showed similar trend. The darker the shade of the block, the more dog bite incidents were recorded in the respective month and year. In most years, incidents concentrated during the summer from June to August. Like what we inferred from the previous visualizations, all blocks in 2020 observed a very light shade because of the pandemic. The heatmap showed a more drastic comparison between 2020 and the other years, especially April 2020 where the shade was almost white.
+
+
 ## Correlation between the number of dog bite incidents and dogs’ background
+
+```{r}
+top_breeds = dog_bites_clean |> 
+  group_by(breed) |> 
+  summarise(count = n()) |> 
+  arrange(desc(count)) |> 
+  filter(!is.na(breed) & breed != "unknown") |> 
+  slice_head(n = 10)
+
+dog_bites_top10 = dog_bites_clean |> 
+  filter(breed %in% top_breeds$breed) |> 
+  mutate(
+    breed = factor(breed),
+    gender = factor(gender),
+    spay_neuter = factor(spay_neuter),
+    borough = factor(borough)
+  )
+
+label(dog_bites_clean$breed) = "Top 10 Breeds"
+label(dog_bites_clean$gender) = "Gender"
+label(dog_bites_clean$spay_neuter) = "Neuter Status"
+label(dog_bites_clean$borough) = "Borough"
+
+table1 = table1(~ breed + gender + spay_neuter + borough, 
+                data = dog_bites_clean,
+                overall = "Total")
+
+table1
+```
+
+The table above displayed how dog bite incidence was distributed across different levels and groups in dog demographic features like breed, gender, neuter status, and the borough where the incident occurred (likely the borough they reside). The top demographic features that contributed the most dog bite incidents are being mixed, male, un-neutered, and active in Queens. 
+
+To further examine correlations and trends of NYC dog bites, please check out our thorough analyses and report.

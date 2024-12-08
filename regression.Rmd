@@ -434,7 +434,7 @@ plot(model_stepwise)
 
 From the analysis of the four diagnostic plots, the fitted model exhibits several shortcomings. Firstly, the tails of the residual distribution slightly deviate from the assumed negative binomial distribution. This deviation suggests that the residuals might not be perfectly modeled, indicating potential issues with the model fit or the distributional assumptions. Secondly, the distribution of points in the Scale-Location plot appears striated, and the red smooth line shows a non-horizontal trend. This pattern indicates that the variance of the residuals may change with fitted values, suggesting the presence of heteroscedasticity. This non-constant variance can affect the reliability of the model's standard errors and confidence intervals.Lastly, the Residuals vs Leverage Plot reveals the presence of points with high leverage, which could be overly influencing the model's predictions. These high leverage points warrant further investigation to determine whether they should be removed or adjusted to improve model accuracy and robustness.
 
-#### Prediction
+### Prediction
 
 Cross-validation of the final model is depicted in the following illustration, where the red dashed line represents the ideal prediction scenario (i.e., predicted values equal actual values). If points fall near this line, it indicates that the model predicts well. Points located above the diagonal line suggest that the model underestimates the actual values; conversely, if points are below the diagonal line, the model overestimates the actual values. 
 
@@ -482,7 +482,44 @@ glmm_model = glmer.nb(
   data = bites_by_group
 )
 summary(glmm_model)
+
+library(broom.mixed)
+glmm_model_summary <-
+  broom.mixed::tidy(glmm_model) %>%
+  mutate(
+    significance = case_when(
+      p.value < 0.001 ~ "***",
+      p.value < 0.01 ~ "**",
+      p.value < 0.05 ~ "*",
+      TRUE ~ ""
+    )
+  ) |> 
+  dplyr::select(-effect, -group)
 ```
+
+
+```{r}
+kable(
+  glmm_model_summary,
+  col.names = c("Term", "Estimate", "SE", "Statistic", "P-value", "Significance"),
+  caption = "Summary of Negative Binomial Regression Results"
+) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = TRUE) %>%
+  scroll_box(height = "400px")
+```
+
+Random Effects：
+
+`Borough`: Variance: 0.1297, standard Deviation: 0.3601. Indicates moderate variability between boroughs in the baseline bite count.
+
+Fixed Effects:
+
+* `Year`: 2017 has *positive* coefficient (0.15336, p < 0.001), suggesting a higher bite count compared to 2015. While 2020 and 2021 have strong *negative* coefficients (-0.27884 and -0.28669, p < 0.001), indicating a substantial reduction in bite counts. This could relate to external factors like the COVID-19 pandemic.
+* `Month`: Positive coefficient (0.12734, p = 0.026), suggesting higher bite counts in April. In May, June and July, all p < 0.001, maybe there is a seasonal peak during summer.
+* `Gender`: Male dogs have strong positive coefficient (0.88482, p < 0.001), indicating male dogs have a significantly higher bite count compared to female dogs.
+* `Spay/Neuter Status`: Dogs who are neutered have have significantly lower bite counts (-0.11231, p < 0.001).
+
+
 
 ## Evaluation
 
@@ -491,12 +528,30 @@ library(DHARMa)
 residuals_glmm_sim = simulateResiduals(glmm_model)
 plot(residuals_glmm_sim)
 ```
-有outlier，所以该模型并不。。。
+
+`Q-Q Plot`:
+
+* Kolmogorov-Smirnov (KS) Test: p-value = 0.05845: Indicates that the residual distribution is not significantly different from the expected distribution (n.s. means not significant). The model fits the overall data distribution well.
+* Dispersion Test: p-value = 0.896: Suggests no evidence of overdispersion or underdispersion in the residuals. This confirms the appropriateness of using the negative binomial model for handling count data with dispersion.
+* Outlier Test: p-value = 0.00056: Indicates significant deviations due to outliers. This suggests that there are specific data points that the model fails to fit well.
+
+`Residuals vs. Predicted`:
+
+* The red lines (quantile deviations) highlight significant deviations at certain ranges of predictions, particularly near the lower predicted values (around the 0.25 quantile). This indicates a slight mismatch between the model predictions and observed data for certain ranges.
+* Despite the overall good fit, systematic patterns (e.g., slight curvature) in the residuals suggest possible room for improvement in model specification.
 
 # Model comparison
 
 三者相比，AIC。。。
 并且，残差分析显示，只有with interaction的有意义。
+
+Comparison to the Previous Model
+
+主效应 vs glmm：
+
+The KS test and dispersion test results in both models are similar, suggesting both models handle overall distribution and dispersion well.
+
+However, the outlier test is significant in `glmm model`, whlie the outlier test is insignificant in the `model`, indicating that this alternative model has difficulty capturing certain extreme values or specific subsets of the data.
 
 # Conclusion
 
