@@ -197,7 +197,7 @@ The NYC dog licensing dataset we utilized includes the following variables:
 
 ### Exploratory Analysis
 
-Our exploratory analysis is segmented into three distinct areas of focus: Dog bites by breeds, gender & neuter status, and borough.
+Our exploratory analysis is segmented into three distinct areas of focus: Dog bites by breeds, gender & neuter status, and borough. We also conducted a more in-depth analysis focusing on trends in NYC dog bite incidents over time, the correlation between dog bite incidents and NYC dog licensing
 
 ## Dog Bites vs. Breed
 In the Breed section, we found that the top 10 dog breeds that contributed to the most dog bite incidences are shown in the pie chart above. Besides the mixed and the unknown categories, the breed that contributed to the most dog bite incidences are *bulls* (29.2%), followed by *shepards* (5.06%) and *shih tzus* (4.51%).
@@ -284,12 +284,6 @@ rate_borough_data |>
   caption = "Dog Bite to License Ratio by Borough")
 ```
 
-<br><br> 
-
-### Additional analysis
-
-We conducted a more in-depth analysis focusing on trends in NYC dog bite incidents over time, the correlation between dog bite incidents and NYC dog licensing, and modeling factors associated with dog bite incidents.
-
 ## Trends of Dog Bite Incidents over Time
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
@@ -358,7 +352,9 @@ scatter_plot_interactive
 
 Overall, the positive slope of the regression line indicates a positive correlation between the number of licenses and the number of bite incidents. In areas with fewer licenses, the distribution of data points is denser, suggesting that bite incident variability is more stable and the model fit might be better in these regions. Conversely, in areas with a high number of licenses, the data points are more dispersed, indicating that bite incident variability is less predictable when license counts are high. Lastly, the confidence interval, depicted in gray, gradually widens after the license count reaches 3000, indicating increased uncertainty in the model's predictions in areas with higher numbers of licenses. 
 
-## Modeling Dog Bite Incidents
+<br><br> 
+
+### Modeling Dog Bite Incidents
 
 To measure the combined effects of year, dog demographic characteristics (i.e., gender and whether neutered) and the Borough they belong to on the incidence of dog bites, we first conduct a negative binomial regression analysis using records of dog bite incidents in New York.
 
@@ -366,7 +362,7 @@ The negative binomial regression model is a type of count model designed for dep
 
 We employed three different regression models and compared their outcomes.
 
-# Regularized Model (Lasso)
+1. Regularized Model (Lasso)
 
 
 
