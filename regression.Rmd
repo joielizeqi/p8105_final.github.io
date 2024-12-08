@@ -474,7 +474,7 @@ For the dog bite incidents dataset, the response variable $y$ represents the num
 
 ## Results
 
-```{r glmer_nb, warning=FALSE, message=FALSE}
+```{r glmer_nb, warning=FALSE, message=FALSE, results='hide'}
 library(lme4)
 glmm_model = glmer.nb(
   bite_count ~ year + month + gender + spay_neuter + (1 | borough), 
@@ -494,9 +494,7 @@ glmm_model_summary <-
     )
   ) |> 
   dplyr::select(-effect, -group)
-```
 
-```{r}
 kable(
   glmm_model_summary,
   col.names = c("Term", "Estimate", "SE", "Statistic", "P-value", "Significance"),
