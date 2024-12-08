@@ -592,7 +592,7 @@ Coefficient
 X.Intercept.
 </td>
 <td style="text-align:center;">
-1.1137
+1.1045
 </td>
 </tr>
 <tr>
@@ -608,7 +608,7 @@ X.Intercept..1
 year2016
 </td>
 <td style="text-align:center;">
-0.0566
+0.0596
 </td>
 </tr>
 <tr>
@@ -616,7 +616,7 @@ year2016
 year2017
 </td>
 <td style="text-align:center;">
-0.1449
+0.1478
 </td>
 </tr>
 <tr>
@@ -624,7 +624,7 @@ year2017
 year2018
 </td>
 <td style="text-align:center;">
-0.0689
+0.0718
 </td>
 </tr>
 <tr>
@@ -632,7 +632,7 @@ year2018
 year2019
 </td>
 <td style="text-align:center;">
-0.0927
+0.0956
 </td>
 </tr>
 <tr>
@@ -640,7 +640,7 @@ year2019
 year2020
 </td>
 <td style="text-align:center;">
--0.2825
+-0.2817
 </td>
 </tr>
 <tr>
@@ -648,7 +648,7 @@ year2020
 year2021
 </td>
 <td style="text-align:center;">
--0.2850
+-0.2844
 </td>
 </tr>
 <tr>
@@ -656,7 +656,7 @@ year2021
 month2
 </td>
 <td style="text-align:center;">
--0.0189
+-0.0156
 </td>
 </tr>
 <tr>
@@ -664,7 +664,7 @@ month2
 month3
 </td>
 <td style="text-align:center;">
-0.0000
+0.0016
 </td>
 </tr>
 <tr>
@@ -672,7 +672,7 @@ month3
 month4
 </td>
 <td style="text-align:center;">
-0.0992
+0.1053
 </td>
 </tr>
 <tr>
@@ -680,7 +680,7 @@ month4
 month5
 </td>
 <td style="text-align:center;">
-0.1525
+0.1585
 </td>
 </tr>
 <tr>
@@ -688,7 +688,7 @@ month5
 month6
 </td>
 <td style="text-align:center;">
-0.2211
+0.2270
 </td>
 </tr>
 <tr>
@@ -696,7 +696,7 @@ month6
 month7
 </td>
 <td style="text-align:center;">
-0.1790
+0.1850
 </td>
 </tr>
 <tr>
@@ -704,7 +704,7 @@ month7
 month8
 </td>
 <td style="text-align:center;">
-0.2009
+0.2069
 </td>
 </tr>
 <tr>
@@ -712,7 +712,7 @@ month8
 month9
 </td>
 <td style="text-align:center;">
-0.1142
+0.1204
 </td>
 </tr>
 <tr>
@@ -720,7 +720,7 @@ month9
 month10
 </td>
 <td style="text-align:center;">
-0.0635
+0.0697
 </td>
 </tr>
 <tr>
@@ -728,7 +728,7 @@ month10
 month11
 </td>
 <td style="text-align:center;">
-0.0544
+0.0606
 </td>
 </tr>
 <tr>
@@ -736,7 +736,7 @@ month11
 month12
 </td>
 <td style="text-align:center;">
--0.0032
+0.0000
 </td>
 </tr>
 <tr>
@@ -744,7 +744,7 @@ month12
 genderM
 </td>
 <td style="text-align:center;">
-0.8872
+0.8882
 </td>
 </tr>
 <tr>
@@ -752,7 +752,7 @@ genderM
 spay_neuterNeutered
 </td>
 <td style="text-align:center;">
--0.1027
+-0.1036
 </td>
 </tr>
 <tr>
@@ -760,7 +760,7 @@ spay_neuterNeutered
 boroughBrooklyn
 </td>
 <td style="text-align:center;">
-0.2970
+0.2997
 </td>
 </tr>
 <tr>
@@ -768,7 +768,7 @@ boroughBrooklyn
 boroughManhattan
 </td>
 <td style="text-align:center;">
-0.2242
+0.2269
 </td>
 </tr>
 <tr>
@@ -776,7 +776,7 @@ boroughManhattan
 boroughQueens
 </td>
 <td style="text-align:center;">
-0.4922
+0.4948
 </td>
 </tr>
 <tr>
@@ -784,7 +784,7 @@ boroughQueens
 boroughStaten.Island
 </td>
 <td style="text-align:center;">
--0.5575
+-0.5572
 </td>
 </tr>
 </tbody>
@@ -1339,22 +1339,23 @@ boroughStaten Island
 </ul></li>
 </ul></li>
 </ul>
-<p>Year: Some years (e.g., 2017, 2019) show statistically significant
-coefficients, suggesting that the number of bite incidents varies
-significantly across years. <code>year2021</code> (Coefficient =
--0.28710, p &lt; 0.001) indicates a significant <em>decrease</em> in
-bite counts compared to year2015.</p>
-<p>Month: Some months show no significant effects on bite counts (e.g.,
-month2: p = 0.97; month3: p = 0.61). Several months (e.g., May, June,
-August) have significant coefficients, indicating seasonality in bite
-incidents.</p>
-<p>Gender: Male dogs (genderM) are associated with a significantly
-higher bite count, as indicated by the large positive coefficient.</p>
-<p>Spay/Neuter: Neutered dogs are associated with a lower bite count,
-with a statistically significant negative coefficient.</p>
-<p>Boroughs: Bite counts vary across boroughs, with Staten Island
-showing a significant negative association compared to the reference
-borough.</p>
+<p><code>Year</code>: Some years (e.g., 2017, 2019) show statistically
+significant coefficients, suggesting that the number of bite incidents
+varies significantly across years. <code>year2021</code> (Coefficient =
+-0.28710, p &lt; 0.001) indicates a significant
+<strong>decrease</strong> in bite counts compared to year2015.</p>
+<p><code>Month</code>: Some months show no significant effects on bite
+counts (e.g., month2: p = 0.97; month3: p = 0.61). Several months (e.g.,
+May, June, August) have significant coefficients, indicating seasonality
+in bite incidents.</p>
+<p><code>Gender</code>: Male dogs (genderM) are associated with a
+significantly higher bite count, as indicated by the large positive
+coefficient.</p>
+<p><code>Spay/Neuter</code>: Neutered dogs are associated with a lower
+bite count, with a statistically significant negative coefficient.</p>
+<p><code>Boroughs</code>: Bite counts vary across boroughs, with Staten
+Island showing a significant negative association compared to the
+reference borough.</p>
 <p>From the coefficient of fitting results, this study draws the
 following conclusions:</p>
 <ul>
@@ -1536,8 +1537,8 @@ suggests slight issues with model fit in extreme predictions, but these
 deviations are minor.</li>
 </ul>
 <p>This shows some spread and potential systematic patterns, indicating
-the main effects model might <em>not fully</em> capture the variability
-in the data.</p>
+the main effects model might <strong>not fully</strong> capture the
+variability in the data.</p>
 </div>
 <div id="model-with-interaction" class="section level2">
 <h2>Model with interaction</h2>
@@ -3557,18 +3558,18 @@ kable(
 ) %&gt;%
   kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;, &quot;condensed&quot;), full_width = TRUE) %&gt;%
   scroll_box(height = &quot;400px&quot;)</code></pre>
-<p>Random Effects：</p>
+<p><strong>Random Effects:</strong></p>
 <p><code>Borough</code>: Variance: 0.1297, standard Deviation: 0.3601.
 Indicates moderate variability between boroughs in the baseline bite
 count.</p>
-<p>Fixed Effects:</p>
+<p><strong>Fixed Effects:</strong></p>
 <ul>
-<li><code>Year</code>: 2017 has <em>positive</em> coefficient (0.15336,
-p &lt; 0.001), suggesting a higher bite count compared to 2015. While
-2020 and 2021 have strong <em>negative</em> coefficients (-0.27884 and
--0.28669, p &lt; 0.001), indicating a substantial reduction in bite
-counts. This could relate to external factors like the COVID-19
-pandemic.</li>
+<li><code>Year</code>: 2017 has <strong>positive</strong> coefficient
+(0.15336, p &lt; 0.001), suggesting a higher bite count compared to
+2015. While 2020 and 2021 have strong <strong>negative</strong>
+coefficients (-0.27884 and -0.28669, p &lt; 0.001), indicating a
+substantial reduction in bite counts. This could relate to external
+factors like the COVID-19 pandemic.</li>
 <li><code>Month</code>: Positive coefficient (0.12734, p = 0.026),
 suggesting higher bite counts in April. In May, June and July, all p
 &lt; 0.001, maybe there is a seasonal peak during summer.</li>
@@ -3730,19 +3731,19 @@ Negative binomial mixed model with random intercept for Borough
 </tbody>
 </table>
 </div>
-<p><em>Performance:</em></p>
+<p><strong>Performance:</strong></p>
 <p>The <code>filter_model</code> has the lowest AIC and Residual
 Deviance, suggesting the best fit among the three. However, its lack of
 random effects might overlook some unobserved variability (e.g., between
 boroughs).</p>
-<p><em>Complexity:</em></p>
+<p><strong>Complexity:</strong></p>
 <p><code>glmm_model</code> introduces random effects, which makes it
 more flexible and suitable for accounting for regional differences, but
 this increases its AIC and Residual Deviance slightly.</p>
-<p><em>Interpretability:</em></p>
+<p><strong>Interpretability:</strong></p>
 <p><code>model</code> is the simplest and easiest to interpret but
 underperforms compared to the other two models.</p>
-<p><em>Residual Diagnosis:</em></p>
+<p><strong>Residual Diagnosis:</strong></p>
 <p><code>model</code> VS <code>glmm_model</code>: The KS test and
 dispersion test results in both models are similar, suggesting both
 models handle overall distribution and dispersion well. However, the
