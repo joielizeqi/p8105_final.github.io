@@ -52,15 +52,15 @@ license = read.csv("./data/NYC_Dog_Licensing_Dataset.csv",
   filter(grepl("^\\d{5}$", zip_code))
 
 license_2019 = license |>
-  filter(license_expired_date >= as.Date("2020-01-01")) |> # 筛选日期
-  mutate(extract_year = 2019)  # 修改 Extract Year
+  filter(license_expired_date >= as.Date("2020-01-01")) |>
+  mutate(extract_year = 2019)  
 
 license_2020 = license |>
-  filter(license_expired_date >= as.Date("2021-01-01")) |> # 筛选日期
+  filter(license_expired_date >= as.Date("2021-01-01")) |> 
   mutate(extract_year = 2020) 
 
 license_2021 = license |>
-  filter(license_expired_date >= as.Date("2022-01-01")) |> # 筛选日期
+  filter(license_expired_date >= as.Date("2022-01-01")) |> 
   mutate(extract_year = 2021)  
 
 license = license_2019 |>
@@ -214,7 +214,6 @@ map_2022 <- tm_shape(shp_NY2022) +
   tm_polygons("license_count", palette = "Blues", title = "License Count (2022)") +
   tm_layout(title = "Spatial Distribution of License Count - 2022")
 
-# 保存两个地图为 HTML 片段
 tmap_save(map_2015, "map_2015.html")
 tmap_save(map_2016, "map_2016.html")
 tmap_save(map_2017, "map_2017.html")
@@ -224,7 +223,6 @@ tmap_save(map_2020, "map_2020.html")
 tmap_save(map_2021, "map_2021.html")
 tmap_save(map_2022, "map_2022.html")
 
-# 创建 HTML 页面，带按钮切换功能
 html_page <- tags$html(
   tags$head(
     tags$title("Interactive Map of Dog Bite & License Count"),
@@ -266,7 +264,6 @@ html_page <- tags$html(
   )
 )
 
-# 保存 HTML 页面
 save_html(html_page, "Dog_Bite_Count_Switchable.html")
 
 
