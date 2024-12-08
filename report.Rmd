@@ -502,7 +502,11 @@ Based on our study, neutered dogs were associated with fewer reported bite incid
 
 # Limitations
 
-Despite the insights achieved by the project, there are several limitations of note. 
+Despite the insights achieved by the project, there are several limitations of note. The `age` variable contains a substantial amount of data that is either unreasonable, inconsistent, or difficult to interpret, making it unsuitable for meaningful analysis. This could include missing values, unrealistic age entries, or ambiguous data that lack clarity or reliability. Retaining such a variable could introduce noise into our analysis, skew the results, or lead to incorrect conclusions. After careful consideration, we determined that excluding the `age` variable was the most appropriate decision to maintain the integrity and accuracy of our findings. 
+
+Additionally, when generating the map of dog bite incidents, we were unable to pinpoint specific locations using the `street` variable due to limitations in the data. Instead, we mapped each dog bite incident based on the `zip_code`, which provides a less precise representation of the exact locations. This limitation reduces the spatial accuracy of the map and may obscure finer-scale patterns, such as clustering of incidents on certain streets or neighborhoods. Future improvements in data collection, including more consistent and accurate recording of street-level information, would enhance the spatial analysis and allow for a more detailed understanding of dog bite incident distribution.
+
+
 
 <br><br> 
 

@@ -589,7 +589,5 @@ The `filter_model` has the lowest AIC and Residual Deviance, suggesting the best
 `model` VS `glmm_model`: The KS test and dispersion test results in both models are similar, suggesting both models handle overall distribution and dispersion well. However, the outlier test is significant in `glmm model`, whlie the outlier test is insignificant in the `model`, indicating that this alternative model has difficulty capturing certain extreme values or specific subsets of the data.
 
 
-# Conclusion
-
 
 
