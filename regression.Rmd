@@ -214,6 +214,7 @@ lasso_coefficients_df <- as.data.frame(as.matrix(lasso_coefficients)) %>%
 
 kable(
   lasso_coefficients_df,
+  col.names = c("Term", "Coefficient"),
   caption = "Cross-Validation Results for Lasso Regression",
   align = "c",
   digits = 4
@@ -541,20 +542,61 @@ plot(residuals_glmm_sim)
 
 # Model comparison
 
-三者相比，AIC。。。
-并且，残差分析显示，只有with interaction的有意义。
 
-Comparison to the Previous Model
+```{r, include=FALSE}
+summary(model)
+summary(filter_model)
+summary(glmm_model)
+```
 
-主效应 vs glmm：
 
-The KS test and dispersion test results in both models are similar, suggesting both models handle overall distribution and dispersion well.
+```{r}
+model_comparison <- data.frame(
+  Model = c("model", "filter_model", "glmm_model"),
+  AIC = c(7403.4, 7045.8, 7428.7),
+  Null_Deviance = c(3914.5, 4944.9, NA),
+  Residual_Deviance = c(1549.7, 1437.1, 1551),
+  Random_Effects = c("None", "None", "Borough"),
+  Description = c(
+    "Negative binomial regression with main effects only",
+    "Negative binomial regression with main effects and interaction terms",
+    "Negative binomial mixed model with random intercept for Borough"
+  )
+)
 
-However, the outlier test is significant in `glmm model`, whlie the outlier test is insignificant in the `model`, indicating that this alternative model has difficulty capturing certain extreme values or specific subsets of the data.
+model_comparison %>%
+  kbl(
+    caption = "Model Comparison Table",
+    align = "lcccccc",  
+    col.names = c("Model", "AIC", "Null Deviance", 
+                  "Residual Deviance", "Random Effects", "Description")
+  ) %>%
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed", "responsive"), 
+    full_width = TRUE
+  ) %>%
+  scroll_box(width = "100%", height = "400px")
+```
+
+
+*Performance:*
+
+The `filter_model` has the lowest AIC and Residual Deviance, suggesting the best fit among the three. However, its lack of random effects might overlook some unobserved variability (e.g., between boroughs).
+
+*Complexity:*
+
+`glmm_model` introduces random effects, which makes it more flexible and suitable for accounting for regional differences, but this increases its AIC and Residual Deviance slightly.
+
+*Interpretability:*
+
+`model` is the simplest and easiest to interpret but underperforms compared to the other two models.
+
+*Residual Diagnosis:*
+
+`model` VS `glmm_model`: The KS test and dispersion test results in both models are similar, suggesting both models handle overall distribution and dispersion well. However, the outlier test is significant in `glmm model`, whlie the outlier test is insignificant in the `model`, indicating that this alternative model has difficulty capturing certain extreme values or specific subsets of the data.
+
 
 # Conclusion
 
-三个模型对比，只含有主效应的model。。。。
-含有inter。。。
-后续生成的。。。但是能解释一些。。。
+
 
