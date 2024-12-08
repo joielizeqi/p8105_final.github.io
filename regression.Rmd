@@ -166,7 +166,7 @@ $$\ln ({\hat y_i}) = {\beta _0} + {\beta _1}{X_{i1}} + {\beta _2}{X_{i2}} +  \cd
 
 Here, ${y_i}$ represents the frequency of dog bite incidents within a year, ${\beta _m}$ is the coefficient, $X_m$ are the explanatory variables, and $\xi$ represents the heterogeneity across observations.
 
-In negative binomial regression, where the conditional expectation $E(Y|X) = {e^{{\beta _0} + {\beta _1}{X_{i1}} + {\beta _2}{X_{i2}} +  \cdots {\beta _m}{X_{im}}}}$, the interpretation of the model's coefficients is as follows: when the explanatory variable ${X_k}$ increases by one unit, the average occurrence rate of dog bite incidents becomes ${e^{{\beta _k}}}$ times what it was originally.
+In negative binomial regression, where the conditional expectation $E(Y|X) = e^{\beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \cdots + \beta_m X_{im}}$, the interpretation of the model's coefficients is as follows: when the explanatory variable ${X_k}$ increases by one unit, the average occurrence rate of dog bite incidents becomes ${e^{{\beta _k}}}$ times what it was originally.
 
 $$
 \frac{E(Y|X^*)}{E(Y|X)} = \frac{e^{\beta_0 + \beta_1 X_{i1} + \cdots + \beta_k (X_{ik} + 1) + \cdots + \beta_m X_{im}}}{e^{\beta_0 + \beta_1 X_{i1} + \cdots + \beta_k X_{ik} + \cdots + \beta_m X_{im}}} = e^{\beta_k}
@@ -463,13 +463,17 @@ The Generalized Linear Mixed Model (GLMM) is an extension of the Generalized Lin
 
 Let the response variable $y$ belongs to the exponential family, its conditional distribution can be expressed as follows:
 
-$$f(y|b) = \prod\limits_{i = 1}^n {f({y_i}|{\eta _i})}$$
+$$
+f(y|b) = \prod_{i=1}^n f(y_i|\eta_i)
+$$
 
 Where ${\eta _i} = {x_i}^ \top \beta  + {z_i}^ \top b$. Additionally, the random effect $b$ is assumed to be distributed according to $b \sim {\rm N}(0,\Sigma )$.
 
 Therefore the GLMM is structured as follows:
 
-$$g(\vec {\rm E}(y)) = {\rm X}\vec \beta  + {\rm Z}\vec b + \varepsilon$$
+$$
+g(\mathbf{E}(y)) = \mathbf{X}\vec{\beta} + \mathbf{Z}\vec{b} + \varepsilon
+$$
 
 In the model, $g( \cdot )$ represents the link function, which connects the expected value of the response variable to the linear predictor. Here, the logarithm function $g(\mu ) = \ln (\mu )$ is used, which is appropriate for the Poisson distribution. $\vec{\mathrm{E}}(y)$ denotes the vector of expected values for the response variable, and $\varepsilon$ represents the error term, capturing random noise or the unexplained variance. ${\rm X}\vec \beta  + {\rm Z}\vec b$ represents the linear combination of fixed and random effects, ${\rm X}\vec \beta$ is used to explain global trends, and ${\rm Z}\vec b$ is utilized to capture differences among observations. In this context, ${\rm X}$ is the design matrix for fixed effects, which is of order $n \times p$, where $n$ is the number of observations and $p$ is the number of fixed effect variables; $\vec \beta$ is the vector of coefficients for fixed effects, with each element representing the regression coefficient of a fixed effect variable. Similarly, ${\rm Z}$ also serves as the design matrix for random effects, of order $n \times q$, where $q$ is the number of random effect variables. $\vec b$ is the vector of coefficients for random effects, representing inter-group deviations used to explain random differences between groups. The model assumes $b \sim {\rm N}(0,\Sigma )$, thereby the random effects are normally distributed with a mean of $0$ and a covariance matrix $\Sigma$.
 

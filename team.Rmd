@@ -68,7 +68,7 @@ knitr::include_graphics("./pictures/zeqi.JPG")
 ```
 
 <strong style="text-align: center; display: block; text-align: center;">
-[Zeqi Li](https://joielizeqi.github.io/)
+[Zeqi Li](https://joielizeqi.github.io/zl3545.github.io/)
 </strong>
 
 <em style="text-align: center; display: block; text-align: center;">
