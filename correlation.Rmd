@@ -242,7 +242,7 @@ $$
 I_i = \frac{{y_i - \bar{y}}}{{S^2}} \sum\limits_{j \ne i}^n w_{ij} (y_j - \bar{y})
 $$
 
-Where $n$ represents the total number of spatial elements, ${S^2} = \frac{1}{n}\sum\limits_{i = 1}^n {{{({y_i} - \bar y)}^2}}$, $y_i$ and $y_j$ denote the attribute values of the $i^{th}$ and $j^{th}$ spatial elements, respectively, $\bar y$ is the mean of the attribute values for all spatial elements, ${w_{ij}}$ is the spatial weight between elements $i$ and $j$. $I_i$, the local Moran's I of the $i^{th}$ spatial elements, is not restricted in range. The specific implications of local Moran's I are as shown in the following table.
+Where $n$ represents the total number of spatial elements, $S^2 = \frac{1}{n} \sum_{i=1}^n (y_i - \bar{y})^2$, $y_i$ and $y_j$ denote the attribute values of the $i^{th}$ and $j^{th}$ spatial elements, respectively, $\bar y$ is the mean of the attribute values for all spatial elements, ${w_{ij}}$ is the spatial weight between elements $i$ and $j$. $I_i$, the local Moran's I of the $i^{th}$ spatial elements, is not restricted in range. The specific implications of local Moran's I are as shown in the following table.
 
 ```{r Implication_local, message=FALSE, warning=FALSE}
 data <- data.frame(
