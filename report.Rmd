@@ -290,7 +290,9 @@ rate_borough_data |>
 
 We conducted a more in-depth analysis focusing on trends in NYC dog bite incidents over time, the correlation between dog bite incidents and NYC dog licensing, and modeling factors associated with dog bite incidents.
 
-# 
+# Trends of Dog Bite Incidents over Time
+
+
 
 ## Discussion
 
