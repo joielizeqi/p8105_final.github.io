@@ -472,6 +472,8 @@ In the model, $g( \cdot )$ represents the link function, which connects the expe
 
 For the dog bite incidents dataset, the response variable $y$ represents the number of dog bite incidents per zipcode per month. Fixed effects in the model include year, month, gender, and sterilization status. Random effects are attributed to different boroughs (5 boroughs in total). Thus, for all response variables, ${\rm X}$ is a matrix containing year, month, gender, and sterilization status; $\vec \beta$ represents the coefficients for the fixed effects; ${\rm X}$ indicates the matrix for the borough each response variable belongs to; and $\vec b$ denotes the deviation for each borough (random effects). This setup allows the model to adjust for the influence of both environmental conditions and borough-specific variations in the occurrence of dog bites.
 
+## Results
+
 ```{r glmer_nb, warning=FALSE, message=FALSE}
 library(lme4)
 glmm_model = glmer.nb(
@@ -481,7 +483,7 @@ glmm_model = glmer.nb(
 summary(glmm_model)
 ```
 
-#### Residual analysis
+## Evaluation
 
 ```{r, warning=FALSE, message=FALSE}
 library(DHARMa)
