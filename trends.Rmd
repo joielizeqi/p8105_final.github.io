@@ -250,5 +250,3 @@ table1
 ```
 
 The table above displayed how dog bite incidence was distributed across different levels and groups in dog demographic features like breed, gender, neuter status, and the borough where the incident occurred (likely the borough they reside). The top demographic features that contributed the most dog bite incidents are being mixed, male, un-neutered, and active in Queens. 
-
-To further examine correlations and trends of NYC dog bites, please check out our thorough analyses and report.

@@ -341,4 +341,4 @@ combined_pies
 ```
 
 
-The first and second pie charts display the proportions of dog bites and dog licenses by boroughs, and they are consistent with the bar plot above. The third pie chart displays the bite-to-license ratios by boroughs. Looking at this metric, Queens has a high ratio of 23.6% but is topped by Bronx, which has the highest bite-to-license ratio of 30.6%. This means that Bronx is also a possible hotspot for dog bite incidents. Next, we will use the Moran's I value in our [spatial correlation analysis](correlation.html) part to more accurately determine areas with high dog bite incidence.
+The first and second pie charts display the proportions of dog bites and dog licenses by boroughs, and they are consistent with the bar plot above. The third pie chart displays the bite-to-license ratios by boroughs. Looking at this metric, Queens has a high ratio of 23.6% but is topped by Bronx, which has the highest bite-to-license ratio of 30.6%. This means that Bronx is also a possible hotspot for dog bite incidents. In our [spatial correlation analysis](correlation.html), we will examine areas with high dog bite incidence more in-depth.
