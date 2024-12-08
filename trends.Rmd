@@ -235,13 +235,13 @@ dog_bites_top10 = dog_bites_clean |>
     borough = factor(borough)
   )
 
-label(dog_bites_clean$breed) = "Top 10 Breeds"
-label(dog_bites_clean$gender) = "Gender"
-label(dog_bites_clean$spay_neuter) = "Neuter Status"
-label(dog_bites_clean$borough) = "Borough"
+label(dog_bites_top10$breed) = "Top 10 Breeds"
+label(dog_bites_top10$gender) = "Gender"
+label(dog_bites_top10$spay_neuter) = "Neuter Status"
+label(dog_bites_top10$borough) = "Borough"
 
 table1 = table1(~ breed + gender + spay_neuter + borough, 
-                data = dog_bites_clean,
+                data = dog_bites_top10,
                 overall = "Total")
 
 table1

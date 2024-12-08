@@ -277,7 +277,11 @@ rate_borough_data = borough_data |>
          Ratio_Percentage = Bite_to_License_Ratio / sum(Bite_to_License_Ratio) * 100,
          Ratio_Label = paste0(borough, " (", round(Ratio_Percentage, 1), "%)"))
 rate_borough_data |> 
+<<<<<<< HEAD
   dplyr::select(borough, Bite_Count, License_Count, Bite_to_License_Ratio) %>% 
+=======
+  dplyr::select(borough, Bite_Count, License_Count, Bite_to_License_Ratio) %>% #
+>>>>>>> 149228bf9f43d5a509e43949e779953d5a03c4ac
   mutate(Bite_to_License_Ratio = scales::percent(Bite_to_License_Ratio)) |>
   kable(col.names = c("Borough", "Bite Count", "License Count", "Bite to License Ratio (%)"),
         align = c("l", "c", "c", "c"),
@@ -449,5 +453,16 @@ Overall, the `filter_model` with interaction provided the best fit.
 
 ### Discussion
 
+Overall, we found that dog bite incidents shared similar patterns regarding top breeds, locations, gender, and spay/neuter status from 2015 to 2021. According to our analysis, the number of dog bite incidents exhibited a decreasing trend over the observed period, which aligns the result of other studies.^1^ Several factors may contribute to this downtrend. One possible explanation is increased public awareness and education on responsible pet ownership, which could lead to better management of dogs and reduced aggressive behavior. Additionally, stricter enforcement of leash laws and regulations in urban areas may have minimized opportunities for uncontrolled interactions between dogs and the public. Another contributing factor could be the rise in spay/neuter programs, as research suggests that neutered dogs are less likely to display aggressive tendencies. Finally, as NYC Department ofHealth and Mental Hygiene (DOHMH) began its EDsyndromic surveillance system in November 2001 in response to bioterrorism preparedness and animal bite incidents, we believe improvements in data reporting in recent years could also influence the observed decline.^2^ 
+
+
+
+
 
 ### References
+
+1. https://link.springer.com/article/10.1186/s40621-020-00281-y
+
+2. https://journals.sagepub.com/doi/abs/10.1177/003335491212700208
+
+3. 

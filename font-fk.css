@@ -17,6 +17,10 @@ h2 {
   font-size: 22px; /* Subheaing */
 }
 
+h3 {
+  font-size: 18px; /* Subheaing */
+}
+
 
 /* Move subdropdown to the left */
 #navbar .navbar-right .dropdown .show .dropdown-submenu .dropdown-menu {
