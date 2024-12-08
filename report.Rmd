@@ -358,6 +358,40 @@ Overall, the positive slope of the regression line indicates a positive correlat
 
 <br><br> 
 
+### Spatial Correlations of Bite Incidents and Licenses
+
+To assess whether the spatial distribution of dog license issuance and dog bite incidents in New York City exhibits spatial correlations and clustering characteristics, this study calculated both the global and local Moran’s I for these variables during the research period.
+
+*   Global Moran’s I
+
+Analyzing dog bite incidents from 2015 to 2021, the observed global Moran’s Index is 0.35, which is greater than 0, and both the expected Moran’s I and the p-value are close to 0. Consequently, the distribution of dog bite incidents in New York City significantly exhibits positive spatial autocorrelation.
+
+```{r}
+data <- data.frame(
+  Metric = c("Observed Moran’s I", "Expected Moran’s I", "Standard Deviation", "P-value"),
+  Value = c(0.350, -0.005, 0.064, 0.000)
+)
+
+kable(data, format = "pipe", align = "l", caption = "Global Moran’s I Test of Dog Bite Incidents")
+```
+
+Similarly, we can discover the correlation in the distribution of dog licenses across New York City. The global Moran’s Index of 0.29 suggests that similar values tend to cluster spatially, indicating that certain adjacent zip code areas may exhibit concentrations of dog ownership or areas where few dogs are kept.
+
+```{r}
+data <- data.frame(
+  Metric = c("Observed Moran’s I", "Expected Moran’s I", "Standard Deviation", "P-value"),
+  Value = c(0.293, -0.005, 0.064, 0.000)
+)
+
+kable(data, format = "pipe", align = "l", caption = "Global Moran’s I Test of Dog Licenses")
+```
+
+*   Local Moran’s I
+
+Local Moran’s I is used to further explore specific areas exhibiting spatial clustering. The results show that he zip codes 10029, 10035, 11217, and 11237 on the map all exhibit significant high-high clustering for both dog bite incidents and licenses, with neighboring areas also showing trends of high concentrations of dog licenses.  This indicates that a higher number of dogs in these areas is a non-negligible factor contributing to the increase in dog bite incidents.  Additionally, there is a significant high-value clustering of dog bite incidents in the northern part of New York City, without a corresponding high concentration of dog ownership.  
+
+<br><br> 
+
 ### Modeling Dog Bite Incidents
 
 To measure the combined effects of year, dog demographic characteristics (i.e., gender and whether neutered) and the Borough they belong to on the incidence of dog bites, we first conduct a negative binomial regression analysis using records of dog bite incidents in New York.
