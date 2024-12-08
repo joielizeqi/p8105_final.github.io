@@ -560,6 +560,7 @@ lasso_coefficients_df &lt;- as.data.frame(as.matrix(lasso_coefficients)) %&gt;%
 
 kable(
   lasso_coefficients_df,
+  col.names = c(&quot;Term&quot;, &quot;Coefficient&quot;),
   caption = &quot;Cross-Validation Results for Lasso Regression&quot;,
   align = &quot;c&quot;,
   digits = 4
@@ -578,10 +579,10 @@ Cross-Validation Results for Lasso Regression
 <thead>
 <tr>
 <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
-Coefficient
+Term
 </th>
 <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
-s1
+Coefficient
 </th>
 </tr>
 </thead>
@@ -591,7 +592,7 @@ s1
 X.Intercept.
 </td>
 <td style="text-align:center;">
-1.1022
+1.1137
 </td>
 </tr>
 <tr>
@@ -607,7 +608,7 @@ X.Intercept..1
 year2016
 </td>
 <td style="text-align:center;">
-0.0602
+0.0566
 </td>
 </tr>
 <tr>
@@ -615,7 +616,7 @@ year2016
 year2017
 </td>
 <td style="text-align:center;">
-0.1484
+0.1449
 </td>
 </tr>
 <tr>
@@ -623,7 +624,7 @@ year2017
 year2018
 </td>
 <td style="text-align:center;">
-0.0724
+0.0689
 </td>
 </tr>
 <tr>
@@ -631,7 +632,7 @@ year2018
 year2019
 </td>
 <td style="text-align:center;">
-0.0962
+0.0927
 </td>
 </tr>
 <tr>
@@ -639,7 +640,7 @@ year2019
 year2020
 </td>
 <td style="text-align:center;">
--0.2816
+-0.2825
 </td>
 </tr>
 <tr>
@@ -647,7 +648,7 @@ year2020
 year2021
 </td>
 <td style="text-align:center;">
--0.2843
+-0.2850
 </td>
 </tr>
 <tr>
@@ -655,7 +656,7 @@ year2021
 month2
 </td>
 <td style="text-align:center;">
--0.0144
+-0.0189
 </td>
 </tr>
 <tr>
@@ -663,7 +664,7 @@ month2
 month3
 </td>
 <td style="text-align:center;">
-0.0033
+0.0000
 </td>
 </tr>
 <tr>
@@ -671,7 +672,7 @@ month3
 month4
 </td>
 <td style="text-align:center;">
-0.1070
+0.0992
 </td>
 </tr>
 <tr>
@@ -679,7 +680,7 @@ month4
 month5
 </td>
 <td style="text-align:center;">
-0.1602
+0.1525
 </td>
 </tr>
 <tr>
@@ -687,7 +688,7 @@ month5
 month6
 </td>
 <td style="text-align:center;">
-0.2287
+0.2211
 </td>
 </tr>
 <tr>
@@ -695,7 +696,7 @@ month6
 month7
 </td>
 <td style="text-align:center;">
-0.1866
+0.1790
 </td>
 </tr>
 <tr>
@@ -703,7 +704,7 @@ month7
 month8
 </td>
 <td style="text-align:center;">
-0.2085
+0.2009
 </td>
 </tr>
 <tr>
@@ -711,7 +712,7 @@ month8
 month9
 </td>
 <td style="text-align:center;">
-0.1220
+0.1142
 </td>
 </tr>
 <tr>
@@ -719,7 +720,7 @@ month9
 month10
 </td>
 <td style="text-align:center;">
-0.0713
+0.0635
 </td>
 </tr>
 <tr>
@@ -727,7 +728,7 @@ month10
 month11
 </td>
 <td style="text-align:center;">
-0.0622
+0.0544
 </td>
 </tr>
 <tr>
@@ -735,7 +736,7 @@ month11
 month12
 </td>
 <td style="text-align:center;">
-0.0000
+-0.0032
 </td>
 </tr>
 <tr>
@@ -743,7 +744,7 @@ month12
 genderM
 </td>
 <td style="text-align:center;">
-0.8885
+0.8872
 </td>
 </tr>
 <tr>
@@ -751,7 +752,7 @@ genderM
 spay_neuterNeutered
 </td>
 <td style="text-align:center;">
--0.1038
+-0.1027
 </td>
 </tr>
 <tr>
@@ -759,7 +760,7 @@ spay_neuterNeutered
 boroughBrooklyn
 </td>
 <td style="text-align:center;">
-0.3002
+0.2970
 </td>
 </tr>
 <tr>
@@ -767,7 +768,7 @@ boroughBrooklyn
 boroughManhattan
 </td>
 <td style="text-align:center;">
-0.2275
+0.2242
 </td>
 </tr>
 <tr>
@@ -775,7 +776,7 @@ boroughManhattan
 boroughQueens
 </td>
 <td style="text-align:center;">
-0.4953
+0.4922
 </td>
 </tr>
 <tr>
@@ -783,7 +784,7 @@ boroughQueens
 boroughStaten.Island
 </td>
 <td style="text-align:center;">
--0.5571
+-0.5575
 </td>
 </tr>
 </tbody>
@@ -1608,7 +1609,21 @@ knitr::kable(data, format = &quot;pipe&quot;, align = &quot;l&quot;, caption = &
 </tr>
 </tbody>
 </table>
-<p>The final model with interaction is as follows:</p>
+<p>The final model with interaction is detailed in the following table.
+Initially, the intercept is 3.83 with a p-value near zero, indicating
+that the baseline level of the response variable (on a logarithmic
+scale) is significant when other variables are not considered. For the
+main effect variables, the years 2016, 2018, and 2019 show a significant
+increase in the log change of event counts compared to 2015; male dogs,
+compared to female dogs, exhibit stronger aggression, with a 10.59 times
+increase in the incidence of dog bite events, calculated as with <span
+class="math inline">\(e^{2.36}\)</span>. The coefficient for neutering,
+0.3960, indicates a significant reduction in the log count of bite
+incidents for neutered dogs compared to unneutered dogs. Geographically,
+the coefficients for Manhattan and Staten Island are 0.72 and 0.48,
+respectively, showing significantly lower event counts compared to the
+Bronx. Regarding interaction terms, the years 2018, 2020, and 2021 show
+a significant reduction in interaction with the neutering status.</p>
 <pre class="r"><code>filter_model = glm.nb(bite_count ~ year + month + gender + spay_neuter + 
     borough + year:spay_neuter + year:borough + month:spay_neuter + 
     gender:spay_neuter + gender:borough + spay_neuter:borough, 
@@ -3520,50 +3535,9 @@ glmm_model = glmer.nb(
   bite_count ~ year + month + gender + spay_neuter + (1 | borough), 
   data = bites_by_group
 )
-summary(glmm_model)</code></pre>
-<pre><code>## Generalized linear mixed model fit by maximum likelihood (Laplace
-##   Approximation) [glmerMod]
-##  Family: Negative Binomial(24.7739)  ( log )
-## Formula: bite_count ~ year + month + gender + spay_neuter + (1 | borough)
-##    Data: bites_by_group
-## 
-##      AIC      BIC   logLik deviance df.resid 
-##   7428.7   7546.6  -3692.3   7384.7     1551 
-## 
-## Scaled residuals: 
-##     Min      1Q  Median      3Q     Max 
-## -2.2530 -0.7004 -0.1379  0.5946  4.3986 
-## 
-## Random effects:
-##  Groups  Name        Variance Std.Dev.
-##  borough (Intercept) 0.1297   0.3601  
-## Number of obs: 1573, groups:  borough, 5
-## 
-## Fixed effects:
-##                      Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)          1.180466   0.169985   6.945 3.80e-12 ***
-## year2016             0.069807   0.041693   1.674 0.094071 .  
-## year2017             0.153530   0.040995   3.745 0.000180 ***
-## year2018             0.075276   0.041613   1.809 0.070459 .  
-## year2019             0.094146   0.041424   2.273 0.023043 *  
-## year2020            -0.278894   0.045542  -6.124 9.13e-10 ***
-## year2021            -0.286869   0.045945  -6.244 4.27e-10 ***
-## month2               0.002486   0.058859   0.042 0.966312    
-## month3               0.029950   0.058421   0.513 0.608193    
-## month4               0.127434   0.057260   2.226 0.026045 *  
-## month5               0.180648   0.056723   3.185 0.001449 ** 
-## month6               0.244653   0.056072   4.363 1.28e-05 ***
-## month7               0.201824   0.056634   3.564 0.000366 ***
-## month8               0.227600   0.056477   4.030 5.58e-05 ***
-## month9               0.142905   0.057233   2.497 0.012529 *  
-## month10              0.091131   0.057893   1.574 0.115462    
-## month11              0.088930   0.057918   1.535 0.124671    
-## month12              0.018499   0.059010   0.313 0.753909    
-## genderM              0.884882   0.024565  36.023  &lt; 2e-16 ***
-## spay_neuterNeutered -0.112301   0.022910  -4.902 9.50e-07 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<pre class="r"><code>library(broom.mixed)
+summary(glmm_model)
+
+library(broom.mixed)
 glmm_model_summary &lt;-
   broom.mixed::tidy(glmm_model) %&gt;%
   mutate(
@@ -3574,461 +3548,15 @@ glmm_model_summary &lt;-
       TRUE ~ &quot;&quot;
     )
   ) |&gt; 
-  dplyr::select(-effect, -group)</code></pre>
-<pre class="r"><code>kable(
+  dplyr::select(-effect, -group)
+
+kable(
   glmm_model_summary,
   col.names = c(&quot;Term&quot;, &quot;Estimate&quot;, &quot;SE&quot;, &quot;Statistic&quot;, &quot;P-value&quot;, &quot;Significance&quot;),
   caption = &quot;Summary of Negative Binomial Regression Results&quot;
 ) %&gt;%
   kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;, &quot;condensed&quot;), full_width = TRUE) %&gt;%
   scroll_box(height = &quot;400px&quot;)</code></pre>
-<div
-style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; ">
-<table class="table table-striped table-hover table-condensed" style="margin-left: auto; margin-right: auto;">
-<caption>
-Summary of Negative Binomial Regression Results
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-Term
-</th>
-<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
-Estimate
-</th>
-<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
-SE
-</th>
-<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
-Statistic
-</th>
-<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
-P-value
-</th>
-<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
-Significance
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-(Intercept)
-</td>
-<td style="text-align:right;">
-1.1804665
-</td>
-<td style="text-align:right;">
-0.1699854
-</td>
-<td style="text-align:right;">
-6.9445164
-</td>
-<td style="text-align:right;">
-0.0000000
-</td>
-<td style="text-align:left;">
-***
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-year2016
-</td>
-<td style="text-align:right;">
-0.0698070
-</td>
-<td style="text-align:right;">
-0.0416932
-</td>
-<td style="text-align:right;">
-1.6743026
-</td>
-<td style="text-align:right;">
-0.0940711
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-year2017
-</td>
-<td style="text-align:right;">
-0.1535296
-</td>
-<td style="text-align:right;">
-0.0409953
-</td>
-<td style="text-align:right;">
-3.7450517
-</td>
-<td style="text-align:right;">
-0.0001804
-</td>
-<td style="text-align:left;">
-***
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-year2018
-</td>
-<td style="text-align:right;">
-0.0752759
-</td>
-<td style="text-align:right;">
-0.0416131
-</td>
-<td style="text-align:right;">
-1.8089477
-</td>
-<td style="text-align:right;">
-0.0704591
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-year2019
-</td>
-<td style="text-align:right;">
-0.0941456
-</td>
-<td style="text-align:right;">
-0.0414242
-</td>
-<td style="text-align:right;">
-2.2727192
-</td>
-<td style="text-align:right;">
-0.0230431
-</td>
-<td style="text-align:left;">
-<ul>
-<li></td>
-</tr>
-<tr>
-<td style="text-align:left;">
-year2020
-</td>
-<td style="text-align:right;">
--0.2788938
-</td>
-<td style="text-align:right;">
-0.0455420
-</td>
-<td style="text-align:right;">
--6.1238848
-</td>
-<td style="text-align:right;">
-0.0000000
-</td>
-<td style="text-align:left;">
-***
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-year2021
-</td>
-<td style="text-align:right;">
--0.2868691
-</td>
-<td style="text-align:right;">
-0.0459453
-</td>
-<td style="text-align:right;">
--6.2437123
-</td>
-<td style="text-align:right;">
-0.0000000
-</td>
-<td style="text-align:left;">
-***
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-month2
-</td>
-<td style="text-align:right;">
-0.0024859
-</td>
-<td style="text-align:right;">
-0.0588592
-</td>
-<td style="text-align:right;">
-0.0422342
-</td>
-<td style="text-align:right;">
-0.9663120
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-month3
-</td>
-<td style="text-align:right;">
-0.0299497
-</td>
-<td style="text-align:right;">
-0.0584208
-</td>
-<td style="text-align:right;">
-0.5126548
-</td>
-<td style="text-align:right;">
-0.6081928
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-month4
-</td>
-<td style="text-align:right;">
-0.1274342
-</td>
-<td style="text-align:right;">
-0.0572598
-</td>
-<td style="text-align:right;">
-2.2255456
-</td>
-<td style="text-align:right;">
-0.0260446
-</td>
-<td style="text-align:left;">
-<ul>
-<li></td>
-</tr>
-<tr>
-<td style="text-align:left;">
-month5
-</td>
-<td style="text-align:right;">
-0.1806481
-</td>
-<td style="text-align:right;">
-0.0567229
-</td>
-<td style="text-align:right;">
-3.1847452
-</td>
-<td style="text-align:right;">
-0.0014488
-</td>
-<td style="text-align:left;">
-**
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-month6
-</td>
-<td style="text-align:right;">
-0.2446528
-</td>
-<td style="text-align:right;">
-0.0560720
-</td>
-<td style="text-align:right;">
-4.3631934
-</td>
-<td style="text-align:right;">
-0.0000128
-</td>
-<td style="text-align:left;">
-***
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-month7
-</td>
-<td style="text-align:right;">
-0.2018245
-</td>
-<td style="text-align:right;">
-0.0566339
-</td>
-<td style="text-align:right;">
-3.5636679
-</td>
-<td style="text-align:right;">
-0.0003657
-</td>
-<td style="text-align:left;">
-***
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-month8
-</td>
-<td style="text-align:right;">
-0.2276003
-</td>
-<td style="text-align:right;">
-0.0564774
-</td>
-<td style="text-align:right;">
-4.0299325
-</td>
-<td style="text-align:right;">
-0.0000558
-</td>
-<td style="text-align:left;">
-***
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-month9
-</td>
-<td style="text-align:right;">
-0.1429054
-</td>
-<td style="text-align:right;">
-0.0572333
-</td>
-<td style="text-align:right;">
-2.4968912
-</td>
-<td style="text-align:right;">
-0.0125287
-</td>
-<td style="text-align:left;">
-<ul>
-<li></td>
-</tr>
-<tr>
-<td style="text-align:left;">
-month10
-</td>
-<td style="text-align:right;">
-0.0911307
-</td>
-<td style="text-align:right;">
-0.0578934
-</td>
-<td style="text-align:right;">
-1.5741114
-</td>
-<td style="text-align:right;">
-0.1154617
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-month11
-</td>
-<td style="text-align:right;">
-0.0889304
-</td>
-<td style="text-align:right;">
-0.0579177
-</td>
-<td style="text-align:right;">
-1.5354601
-</td>
-<td style="text-align:right;">
-0.1246709
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-month12
-</td>
-<td style="text-align:right;">
-0.0184990
-</td>
-<td style="text-align:right;">
-0.0590100
-</td>
-<td style="text-align:right;">
-0.3134894
-</td>
-<td style="text-align:right;">
-0.7539089
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-genderM
-</td>
-<td style="text-align:right;">
-0.8848816
-</td>
-<td style="text-align:right;">
-0.0245647
-</td>
-<td style="text-align:right;">
-36.0225275
-</td>
-<td style="text-align:right;">
-0.0000000
-</td>
-<td style="text-align:left;">
-***
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-spay_neuterNeutered
-</td>
-<td style="text-align:right;">
--0.1123005
-</td>
-<td style="text-align:right;">
-0.0229100
-</td>
-<td style="text-align:right;">
--4.9018117
-</td>
-<td style="text-align:right;">
-0.0000009
-</td>
-<td style="text-align:left;">
-***
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-sd__(Intercept)
-</td>
-<td style="text-align:right;">
-0.3600968
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-</tbody>
-</table>
-</div></li>
-</ul></li>
-</ul></li>
-</ul>
 <p>Random Effects：</p>
 <p><code>Borough</code>: Variance: 0.1297, standard Deviation: 0.3601.
 Indicates moderate variability between boroughs in the baseline bite
@@ -4050,12 +3578,13 @@ higher bite count compared to female dogs.</li>
 <li><code>Spay/Neuter Status</code>: Dogs who are neutered have have
 significantly lower bite counts (-0.11231, p &lt; 0.001).</li>
 </ul>
+</div>
 <div id="evaluation-2" class="section level2">
 <h2>Evaluation</h2>
 <pre class="r"><code>library(DHARMa)
 residuals_glmm_sim = simulateResiduals(glmm_model)
 plot(residuals_glmm_sim)</code></pre>
-<p><img src="regression_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="regression_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p><code>Q-Q Plot</code>:</p>
 <ul>
 <li>Kolmogorov-Smirnov (KS) Test: p-value = 0.05845: Indicates that the
@@ -4081,27 +3610,149 @@ curvature) in the residuals suggest possible room for improvement in
 model specification.</li>
 </ul>
 </div>
+</div>
 <div id="model-comparison" class="section level1">
 <h1>Model comparison</h1>
-<p>三者相比，AIC。。。 并且，残差分析显示，只有with
-interaction的有意义。</p>
-<p>Comparison to the Previous Model</p>
-<p>主效应 vs glmm：</p>
-<p>The KS test and dispersion test results in both models are similar,
-suggesting both models handle overall distribution and dispersion
-well.</p>
-<p>However, the outlier test is significant in <code>glmm model</code>,
-whlie the outlier test is insignificant in the <code>model</code>,
-indicating that this alternative model has difficulty capturing certain
-extreme values or specific subsets of the data.</p>
+<pre class="r"><code>model_comparison &lt;- data.frame(
+  Model = c(&quot;model&quot;, &quot;filter_model&quot;, &quot;glmm_model&quot;),
+  AIC = c(7403.4, 7045.8, 7428.7),
+  Null_Deviance = c(3914.5, 4944.9, NA),
+  Residual_Deviance = c(1549.7, 1437.1, 1551),
+  Random_Effects = c(&quot;None&quot;, &quot;None&quot;, &quot;Borough&quot;),
+  Description = c(
+    &quot;Negative binomial regression with main effects only&quot;,
+    &quot;Negative binomial regression with main effects and interaction terms&quot;,
+    &quot;Negative binomial mixed model with random intercept for Borough&quot;
+  )
+)
+
+model_comparison %&gt;%
+  kbl(
+    caption = &quot;Model Comparison Table&quot;,
+    align = &quot;lcccccc&quot;,  
+    col.names = c(&quot;Model&quot;, &quot;AIC&quot;, &quot;Null Deviance&quot;, 
+                  &quot;Residual Deviance&quot;, &quot;Random Effects&quot;, &quot;Description&quot;)
+  ) %&gt;%
+  kable_styling(
+    bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;, &quot;condensed&quot;, &quot;responsive&quot;), 
+    full_width = TRUE
+  ) %&gt;%
+  scroll_box(width = &quot;100%&quot;, height = &quot;400px&quot;)</code></pre>
+<div
+style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; overflow-x: scroll; width:100%; ">
+<table class="table table-striped table-hover table-condensed table-responsive" style="margin-left: auto; margin-right: auto;">
+<caption>
+Model Comparison Table
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+Model
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+AIC
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Null Deviance
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Residual Deviance
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Random Effects
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Description
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+model
+</td>
+<td style="text-align:center;">
+7403.4
+</td>
+<td style="text-align:center;">
+3914.5
+</td>
+<td style="text-align:center;">
+1549.7
+</td>
+<td style="text-align:center;">
+None
+</td>
+<td style="text-align:center;">
+Negative binomial regression with main effects only
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+filter_model
+</td>
+<td style="text-align:center;">
+7045.8
+</td>
+<td style="text-align:center;">
+4944.9
+</td>
+<td style="text-align:center;">
+1437.1
+</td>
+<td style="text-align:center;">
+None
+</td>
+<td style="text-align:center;">
+Negative binomial regression with main effects and interaction terms
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+glmm_model
+</td>
+<td style="text-align:center;">
+7428.7
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+1551.0
+</td>
+<td style="text-align:center;">
+Borough
+</td>
+<td style="text-align:center;">
+Negative binomial mixed model with random intercept for Borough
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><em>Performance:</em></p>
+<p>The <code>filter_model</code> has the lowest AIC and Residual
+Deviance, suggesting the best fit among the three. However, its lack of
+random effects might overlook some unobserved variability (e.g., between
+boroughs).</p>
+<p><em>Complexity:</em></p>
+<p><code>glmm_model</code> introduces random effects, which makes it
+more flexible and suitable for accounting for regional differences, but
+this increases its AIC and Residual Deviance slightly.</p>
+<p><em>Interpretability:</em></p>
+<p><code>model</code> is the simplest and easiest to interpret but
+underperforms compared to the other two models.</p>
+<p><em>Residual Diagnosis:</em></p>
+<p><code>model</code> VS <code>glmm_model</code>: The KS test and
+dispersion test results in both models are similar, suggesting both
+models handle overall distribution and dispersion well. However, the
+outlier test is significant in <code>glmm model</code>, whlie the
+outlier test is insignificant in the <code>model</code>, indicating that
+this alternative model has difficulty capturing certain extreme values
+or specific subsets of the data.</p>
 </div>
 <div id="conclusion" class="section level1">
 <h1>Conclusion</h1>
-<p>三个模型对比，只含有主效应的model。。。。 含有inter。。。
-后续生成的。。。但是能解释一些。。。</p>
-</div>
-</div>
-</div>
 </div>
 </div>
 </div>
