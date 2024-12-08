@@ -12,9 +12,9 @@ output:
 
 The following map displays the spatial distribution of dog licenses and dog bite incidents across various zip codes in New York City from 2015 to 2022. The color fill of the map indicates the number of dog licenses in each zip code, while the dots represent the total number of dog bite incidents in each area.
 
-The preliminary findings of the study suggest that the geographic distribution of dog bite incidents exhibits spatial autocorrelation, with certain zip codes, particularly in Midtown Manhattan, identified as high-frequency areas for such incidents.
+The map suggest that the geographic distribution of dog bite incidents exhibits spatial autocorrelation, with certain zip codes, particularly in Midtown Manhattan, identified as high-frequency areas for such incidents.
 
-Additionally, the data indicates that areas with a higher number of dog licenses, such as zip codes 10025, 10024, and 10314, typically have higher numbers of dog bite incidents.   Therefore, there may be a positive correlation between the number of dog licenses and dog bite incidents.
+Additionally, the dog licensing data indicates that areas with a higher number of dog licenses, such as zip codes 10025, 10024, and 10314, typically have higher numbers of dog bite incidents. Therefore, there may be a positive correlation between the number of dog licenses and dog bite incidents.
 
 <iframe src="maps/Dog_Bite_Count_Switchable.html" style="width: 100%; height: 700px; border: none;"></iframe>
 
@@ -72,7 +72,7 @@ dog_licensing_df = read_csv("data/NYC_Dog_Licensing_Dataset.csv", na = c("NA", "
 
 # Relationship between dog licenses and dog bites
 
-In order to further explore the relationship between dog license count and dog bites count, treat each zipcode as an observation. Then for each zipcode, the number of dog licenses and dog bite incidents from 2014 to 2022 are compared as shown in the figure below. 
+To further investigate the relationship between dog license counts and dog bite incidents, we created a scatter plot to visualize their correlation. Each zip code was treated as a single observation, with the number of dog licenses and dog bite incidents from 2014 to 2022 compared for each zip code, as shown in the figure below.
 
 ```{r message=FALSE, warning=FALSE}
 valid_zipcodes = pull(ny_zip_codes, zip_code)
