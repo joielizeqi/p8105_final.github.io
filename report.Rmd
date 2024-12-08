@@ -364,12 +364,88 @@ After utilizing Lasso regression to select main effect variables, we employed tw
 
 *   Negative Binomial Regression Model
 
+$$\ln ({\hat y_i}) = {\beta _0} + {\beta _1}{X_{i1}} + {\beta _2}{X_{i2}} +  \cdots {\beta _m}{X_{im}} + \xi$$
+The results of the main effects model fitting are as follows:
+
+`Year`: Some years (e.g., 2017, 2019) show statistically significant coefficients, suggesting that the number of bite incidents varies significantly across years. `year2021` (Coefficient = -0.28710, p < 0.001) indicates a significant **decrease** in bite counts compared to year2015.
+
+`Month`: Some months show no significant effects on bite counts (e.g., month2: p = 0.97; month3: p = 0.61). Several months (e.g., May, June, August) have significant coefficients, indicating seasonality in bite incidents.
+
+`Gender`: Male dogs (genderM) are associated with a significantly higher bite count, as indicated by the large positive coefficient.
+
+`Spay/Neuter`: Neutered dogs are associated with a lower bite count, with a statistically significant negative coefficient.
+
+`Boroughs`: Bite counts vary across boroughs, with Staten Island showing a significant negative association compared to the reference borough.
+
+To further increase the precision of the model fit, interaction terms between variables were added. After using stepwise reduction to simplify the model complexity, the variables of final negative binomial regression model are as follow:
+
+```{r}
+data <- data.frame(
+  `Main Effect` = c("year", "month", "gender", "spay_neuter", "borough", " "),
+  `Double Interaction Effect` = c(
+    "year * spay_neuter",
+    "year * borough",
+    "month * spay_neuter",
+    "gender * spay_neuter",
+    "gender * borough",
+    "spay_neuter * borough"
+  )
+)
+
+knitr::kable(data, format = "pipe", align = "l", caption = "Final Negative Binomial Regression Model", escape = FALSE)
+```
+
+Firstly, the intercept is 3.83 with a p-value near zero, indicating that the baseline level of the response variable (on a logarithmic scale) is significant when other variables are not considered. For the main effect variables, the years 2016, 2018, and 2019 show a significant increase in the log change of event counts compared to 2015; male dogs, compared to female dogs, exhibit stronger aggression, with a 10.59 times increase in the incidence of dog bite events, calculated as with $e^{2.36}$. The coefficient for neutering, 0.3960, indicates a significant reduction in the log count of bite incidents for neutered dogs compared to unneutered dogs. Geographically, the coefficients for Manhattan and Staten Island are 0.72 and 0.48, respectively, showing significantly lower event counts compared to the Bronx. Regarding interaction terms, the years 2018, 2020, and 2021 show a significant reduction in interaction with the neutering status.
+
 *   Generalized Linear Mixed Model (GLMM)
 
+To address the model fitting issue, a generalized linear mixed model is employed. The GLMM is structured as follows:
 
+$$g(\vec {\rm E}(y)) = {\rm X}\vec \beta  + {\rm Z}\vec b + \varepsilon$$
+Result interpretation should be divided into the following two parts.
 
+**Random Effects:**
 
+`Borough`: Variance: 0.1297, standard Deviation: 0.3601. Indicates moderate variability between boroughs in the baseline bite count.
 
+**Fixed Effects:**
+
+* `Year`: 2017 has **positive** coefficient (0.15336, p < 0.001), suggesting a higher bite count compared to 2015. While 2020 and 2021 have strong **negative** coefficients (-0.27884 and -0.28669, p < 0.001), indicating a substantial reduction in bite counts. This could relate to external factors like the COVID-19 pandemic.
+* `Month`: Positive coefficient (0.12734, p = 0.026), suggesting higher bite counts in April. In May, June and July, all p < 0.001, maybe there is a seasonal peak during summer.
+* `Gender`: Male dogs have strong positive coefficient (0.88482, p < 0.001), indicating male dogs have a significantly higher bite count compared to female dogs.
+* `Spay/Neuter Status`: Dogs who are neutered have have significantly lower bite counts (-0.11231, p < 0.001).
+
+Finally, this study compared the fit, model complexity, interpretability, and residual diagnosis results of three regression models. 
+
+```{r}
+model_comparison <- data.frame(
+  Model = c("model", "filter_model", "glmm_model"),
+  AIC = c(7403.4, 7045.8, 7428.7),
+  Null_Deviance = c(3914.5, 4944.9, NA),
+  Residual_Deviance = c(1549.7, 1437.1, 1551),
+  Random_Effects = c("None", "None", "Borough"),
+  Description = c(
+    "Negative binomial regression with main effects only",
+    "Negative binomial regression with main effects and interaction terms",
+    "Negative binomial mixed model with random intercept for Borough"
+  )
+)
+
+model_comparison %>%
+  kbl(
+    caption = "Model Comparison Table",
+    align = "lcccccc",  
+    col.names = c("Model", "AIC", "Null Deviance", 
+                  "Residual Deviance", "Random Effects", "Description")
+  ) %>%
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed", "responsive"), 
+    full_width = TRUE
+  ) %>%
+  scroll_box(width = "100%", height = "400px")
+```
+
+Overall, the `filter_model` with interaction provided the best fit.
 
 ### Discussion
 
