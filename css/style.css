@@ -496,12 +496,13 @@ body {
 }
 
 .feature_card_front {
-  background-color: #fff;
-  border: 1px solid #ddd;
+  background-color: #f9ece6;
+  border: 1px;
+  border-radius: 5px;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #666;
+  color: #333;
   font-weight: bold;
   text-align: center;
 }
@@ -511,12 +512,13 @@ body {
 }
 
 .feature_card_back {
-  background-color: #fff;
-  border: 1px solid #ddd;
+  background-color: #f9ece6;
+  border: 1px;
+  border-radius: 5px;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #666;
+  color: #333;
   padding: 20px;
   font-size: 16px;
   text-align: center;

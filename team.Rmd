@@ -13,52 +13,68 @@ Thank you for visiting our project website
 ::: {.col}
 
 ```{r, echo=FALSE, fig.width = 15, fig.align = 'center'}
-knitr::include_graphics("./pictures/")
+knitr::include_graphics("./pictures/shiyu.JPG")
 ```
 
-**Shiyu Zhang**
+<strong style="text-align: center; display: block; text-align: center;">
+Shiyu Zhang
+</strong>
 
-*Department of Biostatistics*
-*Public Health Data Science*
+<em style="text-align: center; display: block; text-align: center;">
+Department of Biostatistics<br>
+Public Health Data Science
+</em>
 
 :::
 
 ::: {.col}
 
 ```{r, echo=FALSE, fig.width = 15, fig.align = 'center'}
-knitr::include_graphics("./pictures/")
+knitr::include_graphics("./pictures/weiqi.JPG")
 ```
 
-**Weiqi Liang**
+<strong style="text-align: center; display: block; text-align: center;">
+Weiqi Liang
+</strong>
 
-*Department of Biostatistics*
-*Theory and Methods*
+<em style="text-align: center; display: block; text-align: center;">
+Department of Biostatistics<br>
+Theory and Methods
+</em>
 
 :::
 
 ::: {.col}
 
 ```{r, echo=FALSE, fig.width = 15, fig.align = 'center'}
-knitr::include_graphics("./pictures/")
+knitr::include_graphics("./pictures/zhenkun.JPG")
 ```
 
-**Zhenkun Fang**
+<strong style="text-align: center; display: block; text-align: center;">
+Zhenkun Fang
+</strong>
 
-*Department of Biostatistics*
-*Theory and Methods*
+<em style="text-align: center; display: block; text-align: center;">
+Department of Biostatistics<br>
+Theory and Methods
+</em>
 
 :::
 
 ::: {.col}
 
 ```{r, echo=FALSE, fig.width = 15, fig.align = 'center'}
-knitr::include_graphics("./pictures/")
+knitr::include_graphics("./pictures/zeqi.JPG")
 ```
 
-**Zeqi Li**
+<strong style="text-align: center; display: block; text-align: center;">
+Zeqi Li
+</strong>
 
-*Department of Biostatistics*
-*Pharmaceutical Statistics*
+<em style="text-align: center; display: block; text-align: center;">
+Department of Biostatistics<br>
+Pharmaceutical Statistics
+</em>
 
 
 :::

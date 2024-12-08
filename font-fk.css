@@ -10,18 +10,13 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
 
 /* Adjust title sizes */
 h1 {
-  font-size: 20px; /* Main title */
+  font-size: 28px; /* Main title */
 }
 
 h2 {
-  font-size: 16px; /* Subheaing */
+  font-size: 22px; /* Subheaing */
 }
 
-strong, em {
-  text-align: center;
-  display: block; 
-  text-align: center;
-}
 
 /* Move subdropdown to the left */
 #navbar .navbar-right .dropdown .show .dropdown-submenu .dropdown-menu {
