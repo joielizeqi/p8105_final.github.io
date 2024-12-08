@@ -1,7 +1,67 @@
 ---
 title: "Meet our team!"
-output:
-  html_document:
-    toc: true
-    toc_float: true
+output: html_document
 ---
+
+<h1 style="text-align: center; color: #f89cab; font-size: 30px; margin: 40px 0;"> 
+Thank you for visiting our project website
+</h1>
+
+
+:::: {style="display: flex; margin-top: 25px"}
+
+::: {.col}
+
+```{r, echo=FALSE, fig.width = 15, fig.align = 'center'}
+knitr::include_graphics("./pictures/")
+```
+
+**Shiyu Zhang**
+
+*Department of Biostatistics*
+*Public Health Data Science*
+
+:::
+
+::: {.col}
+
+```{r, echo=FALSE, fig.width = 15, fig.align = 'center'}
+knitr::include_graphics("./pictures/")
+```
+
+**Weiqi Liang**
+
+*Department of Biostatistics*
+*Theory and Methods*
+
+:::
+
+::: {.col}
+
+```{r, echo=FALSE, fig.width = 15, fig.align = 'center'}
+knitr::include_graphics("./pictures/")
+```
+
+**Zhenkun Fang**
+
+*Department of Biostatistics*
+*Theory and Methods*
+
+:::
+
+::: {.col}
+
+```{r, echo=FALSE, fig.width = 15, fig.align = 'center'}
+knitr::include_graphics("./pictures/")
+```
+
+**Zeqi Li**
+
+*Department of Biostatistics*
+*Pharmaceutical Statistics*
+
+
+:::
+
+::::
+
