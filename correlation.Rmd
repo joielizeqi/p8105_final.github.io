@@ -28,7 +28,7 @@ library(dplyr)
 ```{r load_shp&bites, include=FALSE}
 # read shp file
 shp_NY = st_read("./maps/data/NYC_zipcode/ZIP_CODE_040114.shp") |>
-    dplyr::select(-BLDGZIP, -PO_NAME, -POPULATION, -STATE, -URL)
+  dplyr::select(-BLDGZIP, -PO_NAME, -POPULATION, -STATE, -URL)
 
 # read Dog_Bites_Data
 bite = read.csv("./maps/data/Dog_Bites_Data.csv", 
