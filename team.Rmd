@@ -17,7 +17,7 @@ knitr::include_graphics("./pictures/shiyu.JPG")
 ```
 
 <strong style="text-align: center; display: block; text-align: center;">
-Shiyu Zhang
+[Shiyu Zhang](https://shireen-zsy.github.io/)
 </strong>
 
 <em style="text-align: center; display: block; text-align: center;">
@@ -34,7 +34,7 @@ knitr::include_graphics("./pictures/weiqi.JPG")
 ```
 
 <strong style="text-align: center; display: block; text-align: center;">
-Weiqi Liang
+[Weiqi Liang](https://weiqiliang022.github.io/WL3011/)
 </strong>
 
 <em style="text-align: center; display: block; text-align: center;">
@@ -51,7 +51,7 @@ knitr::include_graphics("./pictures/zhenkun.JPG")
 ```
 
 <strong style="text-align: center; display: block; text-align: center;">
-Zhenkun Fang
+[Zhenkun Fang](https://zhenkunnfang.github.io/)
 </strong>
 
 <em style="text-align: center; display: block; text-align: center;">
@@ -68,7 +68,7 @@ knitr::include_graphics("./pictures/zeqi.JPG")
 ```
 
 <strong style="text-align: center; display: block; text-align: center;">
-Zeqi Li
+[Zeqi Li](https://joielizeqi.github.io/)
 </strong>
 
 <em style="text-align: center; display: block; text-align: center;">

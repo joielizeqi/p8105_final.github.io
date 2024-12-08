@@ -13,7 +13,7 @@
 
 <title>Exploratory Data Analysis</title>
 
-<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 <link href="site_libs/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet" />
@@ -36,8 +36,8 @@
 <script src="site_libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
 <link href="site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet" />
 <script src="site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
-<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
-<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -377,7 +377,7 @@ div.tocify {
   <a href="https://zhenkunnfang.shinyapps.io/shiny_app-1/">Shiny App</a>
 </li>
 <li>
-  <a href="https://www.youtube.com/">
+  <a href="https://youtu.be/AMWRBR1nbH8">
     <span class="fa fa-youtube-play"></span>
      
   </a>
@@ -515,12 +515,12 @@ dog_licensing_df = read_csv(&quot;data/NYC_Dog_Licensing_Dataset.csv&quot;, na =
   janitor::clean_names() |&gt; 
   rename_with(~ gsub(&quot;^x&quot;, &quot;&quot;, .))</code></pre>
 <p>This project used three datasets: NYC zip code data, NYC dog bite
-incidences data, and NYC dog licensing data. The NYC zip code dataset
-was obtained from the P8105 course website; the NYC dog bite incidences
+incidents data, and NYC dog licensing data. The NYC zip code dataset was
+obtained from the P8105 course website; the NYC dog bite incidents
 dataset was obtained from NYC Open Data; the NYC dog licensing dataset
 was obtained from the DOHMH Dog Licensing System.</p>
 <p>In our exploratory data analysis below, we will examine how dog bite
-incidences are distributed by different variables in our data, including
+incidents are distributed by different variables in our data, including
 breed, gender, neuter status, borough, time, and license status.</p>
 </div>
 <div id="dog-bites-by-breeds" class="section level1">
@@ -548,12 +548,12 @@ top_breed_inter = plot_ly(
   )
 
 top_breed_inter</code></pre>
-<div class="plotly html-widget html-fill-item" id="htmlwidget-0b7e35bae38764f0454a" style="width:672px;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-0b7e35bae38764f0454a">{"x":{"visdat":{"5cc777a1a552":["function () ","plotlyVisDat"]},"cur_data":"5cc777a1a552","attrs":{"5cc777a1a552":{"labels":{},"values":{},"textinfo":"label+percent","hoverinfo":"label+value+percent","marker":{"line":{"color":"#FFFFFF","width":2}},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"pie"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Top 10 Breeds Involved in Bite Count","xaxis":{"showgrid":false,"zeroline":false,"showticklabels":false},"yaxis":{"showgrid":false,"zeroline":false,"showticklabels":false},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"labels":["Mixed","Bull","Unknown","Shepherd","Shih Tzu","Chihuahua","Yorkshire","Poodle","Terrier","Maltese"],"values":[5167,4760,2425,825,735,648,488,476,402,376],"textinfo":"label+percent","hoverinfo":["label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent"],"marker":{"color":"rgba(31,119,180,1)","line":{"color":"#FFFFFF","width":2}},"type":"pie","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
-<p>The top 10 dog breeds that contributed to the most dog bite
-incidences are shown in the pie chart above. Besides the mixed and the
-unknown categories, the breed that contributed to the most dog bite
-incidences are bulls (29.2%), followed by shepards (5.06%) and shih tzus
+<div class="plotly html-widget html-fill-item" id="htmlwidget-878f3a25ab3e8bbf3dab" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-878f3a25ab3e8bbf3dab">{"x":{"visdat":{"11b9b384ba1e3":["function () ","plotlyVisDat"]},"cur_data":"11b9b384ba1e3","attrs":{"11b9b384ba1e3":{"labels":{},"values":{},"textinfo":"label+percent","hoverinfo":"label+value+percent","marker":{"line":{"color":"#FFFFFF","width":2}},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"pie"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Top 10 Breeds Involved in Bite Count","xaxis":{"showgrid":false,"zeroline":false,"showticklabels":false},"yaxis":{"showgrid":false,"zeroline":false,"showticklabels":false},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"labels":["Mixed","Bull","Unknown","Shepherd","Shih Tzu","Chihuahua","Yorkshire","Poodle","Terrier","Maltese"],"values":[5167,4760,2425,825,735,648,488,476,402,376],"textinfo":"label+percent","hoverinfo":["label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent"],"marker":{"color":"rgba(31,119,180,1)","line":{"color":"#FFFFFF","width":2}},"type":"pie","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>The top 10 dog breeds that contributed to the most dog bite incidents
+are shown in the pie chart above. Besides the mixed and the unknown
+categories, the breed that contributed to the most dog bite incidents
+are bulls (29.2%), followed by shepards (5.06%) and shih tzus
 (4.51%).</p>
 <p>Despite delibrate data cleaning, there are still many dogs in our
 dataset whose breed information were either unknown or too complicated
@@ -580,9 +580,9 @@ wordcloud(
 )</code></pre>
 <p><img src="eda_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>The above word cloud consists of all breeds recorded in the dog bite
-incidence dataset. The most frequent breed names are “bulls,”
-“shepards,” “shih tzus,” and “chihuahuas,” which is consistent with
-results from the pie chart.</p>
+incident dataset. The most frequent breed names are “bulls,” “shepards,”
+“shih tzus,” and “chihuahuas,” which is consistent with results from the
+pie chart.</p>
 </div>
 <div id="dog-bites-by-gender-and-neuter-status" class="section level1">
 <h1>Dog bites by gender and neuter status</h1>
@@ -599,19 +599,19 @@ results from the pie chart.</p>
 # Display the static plot
 gender_spay_plot_inter = ggplotly(gender_spay_plot)
 gender_spay_plot_inter</code></pre>
-<div class="plotly html-widget html-fill-item" id="htmlwidget-69bc02727cb1cce4b84a" style="width:672px;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-69bc02727cb1cce4b84a">{"x":{"data":[{"orientation":"v","width":[0.44999999999999996,0.45000000000000018,0.45000000000000018],"base":[0,0,0],"x":[0.77500000000000002,1.7749999999999999,2.7749999999999999],"y":[1667,4653,10467],"text":["count:  1667<br />gender: F<br />spay_neuter: FALSE","count:  4653<br />gender: M<br />spay_neuter: FALSE","count: 10467<br />gender: U<br />spay_neuter: FALSE"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(228,26,28,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"FALSE","legendgroup":"FALSE","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.45000000000000018,0.45000000000000018,0.45000000000000018],"base":[0,0,0],"x":[1.2250000000000001,2.2250000000000001,3.2250000000000001],"y":[1722,4086,68],"text":["count:  1722<br />gender: F<br />spay_neuter:  TRUE","count:  4086<br />gender: M<br />spay_neuter:  TRUE","count:    68<br />gender: U<br />spay_neuter:  TRUE"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(55,126,184,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"TRUE","legendgroup":"TRUE","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":46.153590701535919,"r":7.3059360730593621,"b":40.182648401826498,"l":54.794520547945211},"font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Dog Bites by Gender and Spay/Neuter Status","font":{"color":"rgba(0,0,0,1)","family":"","size":19.925280199252807},"x":0.5,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,3.6000000000000001],"tickmode":"array","ticktext":["F","M","U"],"tickvals":[1,2,3],"categoryorder":"array","categoryarray":["F","M","U"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Gender","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-523.35000000000002,10990.35],"tickmode":"array","ticktext":["0","2500","5000","7500","10000"],"tickvals":[0,2500,5000,7500,10000],"categoryorder":"array","categoryarray":["0","2500","5000","7500","10000"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Count of Dog Bites","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"title":{"text":"Spay/Neuter Status","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"5cc74651bec1":{"x":{},"fill":{},"type":"bar"}},"cur_data":"5cc74651bec1","visdat":{"5cc74651bec1":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
-<p>Across dog bite data with known genders, dog bite incidences appeared
+<div class="plotly html-widget html-fill-item" id="htmlwidget-95d6b96ff4cb8a8e5703" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-95d6b96ff4cb8a8e5703">{"x":{"data":[{"orientation":"v","width":[0.44999999999999996,0.45000000000000018,0.45000000000000018],"base":[0,0,0],"x":[0.77500000000000002,1.7749999999999999,2.7749999999999999],"y":[1667,4653,10467],"text":["count:  1667<br />gender: F<br />spay_neuter: FALSE","count:  4653<br />gender: M<br />spay_neuter: FALSE","count: 10467<br />gender: U<br />spay_neuter: FALSE"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(228,26,28,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"FALSE","legendgroup":"FALSE","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.45000000000000018,0.45000000000000018,0.45000000000000018],"base":[0,0,0],"x":[1.2250000000000001,2.2250000000000001,3.2250000000000001],"y":[1722,4086,68],"text":["count:  1722<br />gender: F<br />spay_neuter:  TRUE","count:  4086<br />gender: M<br />spay_neuter:  TRUE","count:    68<br />gender: U<br />spay_neuter:  TRUE"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(55,126,184,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"TRUE","legendgroup":"TRUE","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":46.153590701535919,"r":7.3059360730593621,"b":40.182648401826498,"l":54.794520547945211},"font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Dog Bites by Gender and Spay/Neuter Status","font":{"color":"rgba(0,0,0,1)","family":"","size":19.925280199252807},"x":0.5,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,3.6000000000000001],"tickmode":"array","ticktext":["F","M","U"],"tickvals":[1,2,3],"categoryorder":"array","categoryarray":["F","M","U"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Gender","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-523.35000000000002,10990.35],"tickmode":"array","ticktext":["0","2500","5000","7500","10000"],"tickvals":[0,2500,5000,7500,10000],"categoryorder":"array","categoryarray":["0","2500","5000","7500","10000"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Count of Dog Bites","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"title":{"text":"Spay/Neuter Status","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"11b9b71b17ee5":{"x":{},"fill":{},"type":"bar"}},"cur_data":"11b9b71b17ee5","visdat":{"11b9b71b17ee5":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>Across dog bite data with known genders, dog bite incidents appeared
 more than twice as frequent for male dogs compared to female dogs, for
 both neutered and un-neutered dogs. Comparing their neutered status,
-there is only a slight difference in dog bite incidences between the
+there is only a slight difference in dog bite incidence between the
 neutered and un-neutered groups. Neutered female dogs contributed to
-slightly more dog bite incidences than un-neitered female dogs, while
+slightly more dog bite incidents than un-neitered female dogs, while
 un-neutered male dogs contributed to slightly more dog bite
-incidences.</p>
+incidents.</p>
 <p>It is worth noting that a significant portion of dog bite data had
 missing data for the dogs’ gender, and that among the unknown gender
-group, most dogs appeared to be neutered. The amount of missing
+group, most dogs appeared to be un-neutered. The amount of missing
 information in these two variables could be leading us to an incomplete
 analysis of how dog bites were associated with gender and neuter
 status.</p>
@@ -676,16 +676,16 @@ borough_grouped_bar_plot = ggplot(borough_data_long, aes(x = borough, y = Count,
 
 borough_interactive = ggplotly(borough_grouped_bar_plot)
 borough_interactive</code></pre>
-<div class="plotly html-widget html-fill-item" id="htmlwidget-47c90119018a570014bb" style="width:672px;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-47c90119018a570014bb">{"x":{"data":[{"orientation":"v","width":[0.30000000000000004,0.29999999999999982,0.29999999999999982,0.29999999999999982,0.29999999999999893],"base":[0,0,0,0,0],"x":[0.82499999999999996,1.825,2.8250000000000002,3.8250000000000002,4.8250000000000002],"y":[3782,4985,5270,5773,1872],"text":["borough: Bronx<br />Count:   3782<br />Count_Type: Bite_Count","borough: Brooklyn<br />Count:   4985<br />Count_Type: Bite_Count","borough: Manhattan<br />Count:   5270<br />Count_Type: Bite_Count","borough: Queens<br />Count:   5773<br />Count_Type: Bite_Count","borough: Staten Island<br />Count:   1872<br />Count_Type: Bite_Count"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(255,165,0,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Bite_Count","legendgroup":"Bite_Count","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.30000000000000027,0.29999999999999982,0.29999999999999982,0.29999999999999893,0.29999999999999893],"base":[0,0,0,0,0],"x":[1.175,2.1749999999999998,3.1749999999999998,4.1749999999999998,5.1749999999999998],"y":[52627,135596,182398,104288,44477],"text":["borough: Bronx<br />Count:  52627<br />Count_Type: License_Count","borough: Brooklyn<br />Count: 135596<br />Count_Type: License_Count","borough: Manhattan<br />Count: 182398<br />Count_Type: License_Count","borough: Queens<br />Count: 104288<br />Count_Type: License_Count","borough: Staten Island<br />Count:  44477<br />Count_Type: License_Count"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(135,206,235,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"License_Count","legendgroup":"License_Count","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":46.153590701535919,"r":7.3059360730593621,"b":40.182648401826498,"l":60.639269406392714},"font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Dog Licenses and Bites by Borough","font":{"color":"rgba(0,0,0,1)","family":"","size":19.925280199252807},"x":0.5,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,5.5999999999999996],"tickmode":"array","ticktext":["Bronx","Brooklyn","Manhattan","Queens","Staten Island"],"tickvals":[1,2,3,4,5],"categoryorder":"array","categoryarray":["Bronx","Brooklyn","Manhattan","Queens","Staten Island"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Borough","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-9119.8999999999996,191517.89999999999],"tickmode":"array","ticktext":["0","50000","100000","150000"],"tickvals":[0,50000,100000.00000000001,150000],"categoryorder":"array","categoryarray":["0","50000","100000","150000"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Count","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"title":{"text":"Count Type","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"5cc76fdbe373":{"x":{},"y":{},"fill":{},"type":"bar"}},"cur_data":"5cc76fdbe373","visdat":{"5cc76fdbe373":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-a3e689e33dba0a052858" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-a3e689e33dba0a052858">{"x":{"data":[{"orientation":"v","width":[0.30000000000000004,0.29999999999999982,0.29999999999999982,0.29999999999999982,0.29999999999999893],"base":[0,0,0,0,0],"x":[0.82499999999999996,1.825,2.8250000000000002,3.8250000000000002,4.8250000000000002],"y":[3782,4985,5270,5773,1872],"text":["borough: Bronx<br />Count:   3782<br />Count_Type: Bite_Count","borough: Brooklyn<br />Count:   4985<br />Count_Type: Bite_Count","borough: Manhattan<br />Count:   5270<br />Count_Type: Bite_Count","borough: Queens<br />Count:   5773<br />Count_Type: Bite_Count","borough: Staten Island<br />Count:   1872<br />Count_Type: Bite_Count"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(255,165,0,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Bite_Count","legendgroup":"Bite_Count","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.30000000000000027,0.29999999999999982,0.29999999999999982,0.29999999999999893,0.29999999999999893],"base":[0,0,0,0,0],"x":[1.175,2.1749999999999998,3.1749999999999998,4.1749999999999998,5.1749999999999998],"y":[52627,135596,182398,104288,44477],"text":["borough: Bronx<br />Count:  52627<br />Count_Type: License_Count","borough: Brooklyn<br />Count: 135596<br />Count_Type: License_Count","borough: Manhattan<br />Count: 182398<br />Count_Type: License_Count","borough: Queens<br />Count: 104288<br />Count_Type: License_Count","borough: Staten Island<br />Count:  44477<br />Count_Type: License_Count"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(135,206,235,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"License_Count","legendgroup":"License_Count","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":46.153590701535919,"r":7.3059360730593621,"b":40.182648401826498,"l":60.639269406392714},"font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Dog Licenses and Bites by Borough","font":{"color":"rgba(0,0,0,1)","family":"","size":19.925280199252807},"x":0.5,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,5.5999999999999996],"tickmode":"array","ticktext":["Bronx","Brooklyn","Manhattan","Queens","Staten Island"],"tickvals":[1,2,3,4,5],"categoryorder":"array","categoryarray":["Bronx","Brooklyn","Manhattan","Queens","Staten Island"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Borough","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-9119.8999999999996,191517.89999999999],"tickmode":"array","ticktext":["0","50000","100000","150000"],"tickvals":[0,50000,100000.00000000001,150000],"categoryorder":"array","categoryarray":["0","50000","100000","150000"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Count","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"title":{"text":"Count Type","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"11b9b3ff858fa":{"x":{},"y":{},"fill":{},"type":"bar"}},"cur_data":"11b9b3ff858fa","visdat":{"11b9b3ff858fa":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 <p>Looking at license counts across boroughs, Manhattan has the most
 licensed dogs, followed by Brooklyn, Queens, Bronx, and Staten Island.
-Looking at dog bite incidences across these boroughs, however, Queens
-reported the most incidences, followed by Manhattan, Brooklyn, Bronx,
-and lastly Staten Island. The mismatch between these two sets of bar
-likely implies that Queens may be a hotspot for dog bite incidences. We
-will take a closer look at this by analyzing the bite-to-license ratio
-in the pie charts below.</p>
+Looking at dog bite incidents across these boroughs, however, Queens
+reported the most incidents, followed by Manhattan, Brooklyn, Bronx, and
+lastly Staten Island. The mismatch between these two sets of bar likely
+implies that Queens may be a hotspot for dog bite incidents. We will
+take a closer look at this by analyzing the bite-to-license ratio in the
+pie charts below.</p>
 <pre class="r"><code>bite_borough_data = borough_data |&gt;
   mutate(Bite_Percentage = Bite_Count / sum(Bite_Count) * 100,
          Bite_Label = paste0(borough, &quot; (&quot;, round(Bite_Percentage, 1), &quot;%)&quot;))
@@ -697,6 +697,7 @@ bite_pie_interactive = plot_ly(
   type = &#39;pie&#39;,
   textinfo = &#39;label+percent&#39;,
   hoverinfo = &#39;label+value+percent&#39;,
+  textfont = list(size = 8),
   title = &quot;Dog Bites by Borough&quot;,
   domain = list(x = c(0, 0.3)), 
   marker = list(colors = RColorBrewer::brewer.pal(n = length(bite_borough_data$borough), name = &quot;Set3&quot;))
@@ -713,6 +714,7 @@ license_pie_interactive = plot_ly(
   type = &#39;pie&#39;,
   textinfo = &#39;label+percent&#39;,
   hoverinfo = &#39;label+value+percent&#39;,
+  textfont = list(size = 8),
   title = &quot;Dog Licenses by Borough&quot;,
   domain = list(x = c(0.35, 0.65)),
   marker = list(colors = RColorBrewer::brewer.pal(n = length(license_pie_data$borough), name = &quot;Set3&quot;))
@@ -784,30 +786,43 @@ rate_borough_data |&gt;
   type = &#39;pie&#39;,
   textinfo = &#39;label+percent&#39;,
   hoverinfo = &#39;label+value+percent&#39;,
+  textfont = list(size = 8),
   title = &quot;Ratio of Bites to Licenses by Borough&quot;,
   domain = list(x = c(0.7, 1)), 
   marker = list(colors = RColorBrewer::brewer.pal(n = length(rate_borough_data$borough), name = &quot;Set3&quot;))
 ) 
 
-combined_pies = subplot(
+
+combined_pies &lt;- subplot(
   bite_pie_interactive, 
   license_pie_interactive, 
   ratio_pie_interactive,
-  nrows = 1 
+  nrows = 1,
+  margin = 0.05 
+) %&gt;% layout(
+  title = &quot;Comprehensive Dog Data by Borough&quot;, 
+  titlefont = list(size = 16, color = &#39;black&#39;),
+  legend = list(
+    orientation = &quot;h&quot;, 
+    x = 0.5,            
+    xanchor = &quot;center&quot;, 
+    y = -0.2,          
+    yanchor = &quot;bottom&quot; 
+  ),
+  margin = list(b = 100) 
 )
-
 combined_pies</code></pre>
-<div class="plotly html-widget html-fill-item" id="htmlwidget-f8541627eb092db54143" style="width:672px;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-f8541627eb092db54143">{"x":{"data":[{"labels":["Bronx","Brooklyn","Manhattan","Queens","Staten Island"],"values":[3782,4985,5270,5773,1872],"textinfo":"label+percent","hoverinfo":["label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent"],"title":"Dog Bites by Borough","domain":{"x":[0,0.29999999999999999]},"marker":{"color":"rgba(31,119,180,1)","colors":["#8DD3C7","#FFFFB3","#BEBADA","#FB8072","#80B1D3"],"line":{"color":"rgba(255,255,255,1)"}},"type":"pie","frame":null},{"labels":["Bronx","Brooklyn","Manhattan","Queens","Staten Island"],"values":[52627,135596,182398,104288,44477],"textinfo":"label+percent","hoverinfo":["label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent"],"title":"Dog Licenses by Borough","domain":{"x":[0.34999999999999998,0.65000000000000002]},"marker":{"color":"rgba(255,127,14,1)","colors":["#8DD3C7","#FFFFB3","#BEBADA","#FB8072","#80B1D3"],"line":{"color":"rgba(255,255,255,1)"}},"type":"pie","frame":null},{"labels":["Bronx","Brooklyn","Manhattan","Queens","Staten Island"],"values":[0.071864252189940525,0.036763621345762415,0.02889286066733188,0.055356320957348881,0.042089169683207049],"textinfo":"label+percent","hoverinfo":["label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent"],"title":"Ratio of Bites to Licenses by Borough","domain":{"x":[0.69999999999999996,1]},"marker":{"color":"rgba(44,160,44,1)","colors":["#8DD3C7","#FFFFB3","#BEBADA","#FB8072","#80B1D3"],"line":{"color":"rgba(255,255,255,1)"}},"type":"pie","frame":null}],"layout":{"NA":{"anchor":[],"domain":[0,1]},"NA2":{"anchor":[],"domain":[0,1]},"NA3":{"anchor":[],"domain":[0,1]},"margin":{"b":40,"l":60,"t":25,"r":10},"hovermode":"closest","showlegend":true},"attrs":{"5cc719ef7e7e":{"labels":{},"values":{},"textinfo":"label+percent","hoverinfo":"label+value+percent","title":"Dog Bites by Borough","domain":{"x":[0,0.29999999999999999]},"marker":{"colors":["#8DD3C7","#FFFFB3","#BEBADA","#FB8072","#80B1D3"]},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"pie"},"5cc73a598f7f":{"labels":{},"values":{},"textinfo":"label+percent","hoverinfo":"label+value+percent","title":"Dog Licenses by Borough","domain":{"x":[0.34999999999999998,0.65000000000000002]},"marker":{"colors":["#8DD3C7","#FFFFB3","#BEBADA","#FB8072","#80B1D3"]},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"pie"},"5cc74ddbf8c6":{"labels":{},"values":{},"textinfo":"label+percent","hoverinfo":"label+value+percent","title":"Ratio of Bites to Licenses by Borough","domain":{"x":[0.69999999999999996,1]},"marker":{"colors":["#8DD3C7","#FFFFB3","#BEBADA","#FB8072","#80B1D3"]},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"pie"}},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"subplot":true,"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-5885f96846804026f94e" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-5885f96846804026f94e">{"x":{"data":[{"labels":["Bronx","Brooklyn","Manhattan","Queens","Staten Island"],"values":[3782,4985,5270,5773,1872],"textinfo":"label+percent","hoverinfo":["label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent"],"textfont":{"size":8},"title":"Dog Bites by Borough","domain":{"x":[0,0.29999999999999999]},"marker":{"color":"rgba(31,119,180,1)","colors":["#8DD3C7","#FFFFB3","#BEBADA","#FB8072","#80B1D3"],"line":{"color":"rgba(255,255,255,1)"}},"type":"pie","frame":null},{"labels":["Bronx","Brooklyn","Manhattan","Queens","Staten Island"],"values":[52627,135596,182398,104288,44477],"textinfo":"label+percent","hoverinfo":["label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent"],"textfont":{"size":8},"title":"Dog Licenses by Borough","domain":{"x":[0.34999999999999998,0.65000000000000002]},"marker":{"color":"rgba(255,127,14,1)","colors":["#8DD3C7","#FFFFB3","#BEBADA","#FB8072","#80B1D3"],"line":{"color":"rgba(255,255,255,1)"}},"type":"pie","frame":null},{"labels":["Bronx","Brooklyn","Manhattan","Queens","Staten Island"],"values":[0.071864252189940525,0.036763621345762415,0.02889286066733188,0.055356320957348881,0.042089169683207049],"textinfo":"label+percent","hoverinfo":["label+value+percent","label+value+percent","label+value+percent","label+value+percent","label+value+percent"],"textfont":{"size":8},"title":"Ratio of Bites to Licenses by Borough","domain":{"x":[0.69999999999999996,1]},"marker":{"color":"rgba(44,160,44,1)","colors":["#8DD3C7","#FFFFB3","#BEBADA","#FB8072","#80B1D3"],"line":{"color":"rgba(255,255,255,1)"}},"type":"pie","frame":null}],"layout":{"NA":{"anchor":[],"domain":[0,1]},"NA2":{"anchor":[],"domain":[0,1]},"NA3":{"anchor":[],"domain":[0,1]},"margin":{"b":100,"l":60,"t":25,"r":10},"hovermode":"closest","showlegend":true,"title":"Comprehensive Dog Data by Borough","titlefont":{"size":16,"color":"black"},"legend":{"orientation":"h","x":0.5,"xanchor":"center","y":-0.20000000000000001,"yanchor":"bottom"}},"attrs":{"11b9b20577217":{"labels":{},"values":{},"textinfo":"label+percent","hoverinfo":"label+value+percent","textfont":{"size":8},"title":"Dog Bites by Borough","domain":{"x":[0,0.29999999999999999]},"marker":{"colors":["#8DD3C7","#FFFFB3","#BEBADA","#FB8072","#80B1D3"]},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"pie"},"11b9b4d035497":{"labels":{},"values":{},"textinfo":"label+percent","hoverinfo":"label+value+percent","textfont":{"size":8},"title":"Dog Licenses by Borough","domain":{"x":[0.34999999999999998,0.65000000000000002]},"marker":{"colors":["#8DD3C7","#FFFFB3","#BEBADA","#FB8072","#80B1D3"]},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"pie"},"11b9b15a6ad01":{"labels":{},"values":{},"textinfo":"label+percent","hoverinfo":"label+value+percent","textfont":{"size":8},"title":"Ratio of Bites to Licenses by Borough","domain":{"x":[0.69999999999999996,1]},"marker":{"colors":["#8DD3C7","#FFFFB3","#BEBADA","#FB8072","#80B1D3"]},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"pie"}},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"subplot":true,"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 <p>The first and second pie charts display the proportions of dog bites
 and dog licenses by boroughs, and they are consistent with the bar plot
 above. The third pie chart displays the bite-to-license ratios by
 boroughs. Looking at this metric, Queens has a high ratio of 23.6% but
 is topped by Bronx, which has the highest bite-to-license ratio of
 30.6%. This means that Bronx is also a possible hotspot for dog bite
-incidences. Next, we will use the Moran’s I value in our <a
-href="correlation.html">spatial correlation analysis</a> part to more
-accurately determine areas with high dog bite incidences.</p>
+incidents. In our <a href="correlation.html">spatial correlation
+analysis</a>, we will examine areas with high dog bite incidence more
+in-depth.</p>
 </div>
 
 

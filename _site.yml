@@ -29,7 +29,7 @@ navbar:
     - text: "Shiny App"
       href: https://zhenkunnfang.shinyapps.io/shiny_app-1/
     - icon: fa fa-youtube-play
-      href: https://www.youtube.com/
+      href: https://youtu.be/AMWRBR1nbH8
     - icon: fa-github fa-lg
       href: https://github.com/joielizeqi/p8105_final.github.io.git
 output:

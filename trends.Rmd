@@ -134,7 +134,8 @@ dog_bites_trend_plot = dog_bites_clean |>
   group_by(common_date, year) |>  
   summarise(bites_count = n(), .groups = "drop") |>  
   ggplot(aes(x = common_date, y = bites_count, 
-             group = year, color = year)) +
+             group = year, color = year,
+             text = paste("Count:", bites_count, "<br>Year:", year))) +
   geom_point(alpha = .3) +
   geom_smooth(se = FALSE, span = 0.5) + 
   labs(
@@ -147,10 +148,11 @@ dog_bites_trend_plot = dog_bites_clean |>
     text = element_text(size = 15), 
     axis.text.x = element_text(angle = 60, hjust = 1, size = 10)
   ) +
-  scale_color_viridis_d(end = .8) +  
+  scale_color_viridis_d(end = .8) + 
   scale_x_date(date_breaks = "1 month", labels = function(x) format(x, "%b"))
 
-ggplotly(dog_bites_trend_plot)
+plotly_trend <- ggplotly(dog_bites_trend_plot, tooltip = "text")
+plotly_trend
 ```
 
 The scatter plot above illustrated the number of dog bite incidents across months for years 2015 to 2021. For most years, dog bite incidence peaked in the summer (June, July, and August), possibly due to the increase of outdoor activities in the summer when the weather permits and when students are on break. 
@@ -166,7 +168,7 @@ daily_bites <- dog_bites_clean |>
 
 hole_trend = ggplot(daily_bites, aes(x = date_of_bite, y = bite_count)) +
   geom_point(aes(color = as.factor(year(date_of_bite))), alpha = 0.5, size = 1) + 
-  geom_smooth(se = FALSE, method = "loess", span = 1, linetype = "solid", color = "blue") + 
+  geom_smooth(se = FALSE, method = "loess", span = 1, linetype = "solid", color = "pink") + 
   labs(
     title = "Daily Dog Bite Trends (Overall Smooth Line)",
     x = "Year",
@@ -248,5 +250,3 @@ table1
 ```
 
 The table above displayed how dog bite incidence was distributed across different levels and groups in dog demographic features like breed, gender, neuter status, and the borough where the incident occurred (likely the borough they reside). The top demographic features that contributed the most dog bite incidents are being mixed, male, un-neutered, and active in Queens. 
-
-To further examine correlations and trends of NYC dog bites, please check out our thorough analyses and report.
