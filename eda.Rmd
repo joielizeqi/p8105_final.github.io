@@ -271,6 +271,7 @@ bite_pie_interactive = plot_ly(
   type = 'pie',
   textinfo = 'label+percent',
   hoverinfo = 'label+value+percent',
+  textfont = list(size = 8),
   title = "Dog Bites by Borough",
   domain = list(x = c(0, 0.3)), 
   marker = list(colors = RColorBrewer::brewer.pal(n = length(bite_borough_data$borough), name = "Set3"))
@@ -287,6 +288,7 @@ license_pie_interactive = plot_ly(
   type = 'pie',
   textinfo = 'label+percent',
   hoverinfo = 'label+value+percent',
+  textfont = list(size = 8),
   title = "Dog Licenses by Borough",
   domain = list(x = c(0.35, 0.65)),
   marker = list(colors = RColorBrewer::brewer.pal(n = length(license_pie_data$borough), name = "Set3"))
@@ -310,19 +312,33 @@ ratio_pie_interactive = plot_ly(
   type = 'pie',
   textinfo = 'label+percent',
   hoverinfo = 'label+value+percent',
+  textfont = list(size = 8),
   title = "Ratio of Bites to Licenses by Borough",
   domain = list(x = c(0.7, 1)), 
   marker = list(colors = RColorBrewer::brewer.pal(n = length(rate_borough_data$borough), name = "Set3"))
 ) 
 
-combined_pies = subplot(
+
+combined_pies <- subplot(
   bite_pie_interactive, 
   license_pie_interactive, 
   ratio_pie_interactive,
-  nrows = 1 
+  nrows = 1,
+  margin = 0.05 
+) %>% layout(
+  title = "Comprehensive Dog Data by Borough", 
+  titlefont = list(size = 16, color = 'black'),
+  legend = list(
+    orientation = "h", 
+    x = 0.5,            
+    xanchor = "center", 
+    y = -0.2,          
+    yanchor = "bottom" 
+  ),
+  margin = list(b = 100) 
 )
-
 combined_pies
 ```
+
 
 The first and second pie charts display the proportions of dog bites and dog licenses by boroughs, and they are consistent with the bar plot above. The third pie chart displays the bite-to-license ratios by boroughs. Looking at this metric, Queens has a high ratio of 23.6% but is topped by Bronx, which has the highest bite-to-license ratio of 30.6%. This means that Bronx is also a possible hotspot for dog bite incidents. Next, we will use the Moran's I value in our [spatial correlation analysis](correlation.html) part to more accurately determine areas with high dog bite incidence.

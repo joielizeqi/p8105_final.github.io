@@ -24,21 +24,22 @@ library(reshape2)
 library(akima)
 library(wordcloud)
 library(tm)
+library(kableExtra)
 ```
 
-### Motivation
+# Motivation
 
 While dogs are a common part of many households, the increasing number of dog bite incidents has become a significant public health concern. In 2022, dog bites ranked among the top 15 causes of nonfatal emergency department visits across all age groups. This project investigates the factors contributing to dog bite incidents, focusing on dog-specific traits such as breed, age, gender, and spay/neuter status, along with their geographical distribution and trends over time. In this project, we aim to identify hotspots and examine the relationship between dog characteristics and bite frequency. The findings will help inform data-driven strategies to prevent dog bites and enhance public safety.
 
 <br><br> 
 
-### Related Work
+# Related Work
 
 We were inspired to perform this analysis after discovering dog bites data from [NYC DOHMH](https://www.health.ny.gov/health_care/medicaid/redesign/ehr/registry/nycdohmh.htm). The New York State Department of Health (the Department) has been overseeing the health, safety, and well-being of New Yorkers since 1901 – from vaccinations to utilizing new developments in science as critical tools in the prevention and treatment of infectious diseases. The data could be found on [NYC OpenData](https://data.cityofnewyork.us/Health/DOHMH-Dog-Bite-Data/rsgh-akpg/about_data). Given that the dataset includes details such as the date of each dog bite, the borough, and various dog demographic variables, we saw this as an excellent opportunity to apply and explore the visualization and interactivity concepts covered in class.
 
 <br><br> 
 
-### Initial Questions
+# Initial Questions
 
 We began by exploring trends in NYC dog bite incidents over time, along with their associations with dog demographics and spay/neuter status. We were interested in the following:
 
@@ -50,7 +51,7 @@ We began by exploring trends in NYC dog bite incidents over time, along with the
 
 <br><br> 
 
-### Evolution of Questions
+# Evolution of Questions
 
 As our project evolved, we delved into more in-depth questions:
 
@@ -62,7 +63,7 @@ As our project evolved, we delved into more in-depth questions:
 
 <br><br> 
 
-### Data
+# Data
 
 ```{r, message = FALSE, include=FALSE}
 # NYC zip code
@@ -195,7 +196,7 @@ The NYC dog licensing dataset we utilized includes the following variables:
 
 <br><br> 
 
-### Exploratory Analysis
+# Exploratory Analysis
 
 Our exploratory analysis is segmented into three distinct areas of focus: Dog bites by breeds, gender & neuter status, and borough. We also conducted a more in-depth analysis focusing on trends in NYC dog bite incidents over time, the correlation between dog bite incidents and NYC dog licensing
 
@@ -277,11 +278,10 @@ rate_borough_data = borough_data |>
          Ratio_Percentage = Bite_to_License_Ratio / sum(Bite_to_License_Ratio) * 100,
          Ratio_Label = paste0(borough, " (", round(Ratio_Percentage, 1), "%)"))
 rate_borough_data |> 
-<<<<<<< HEAD
+
   dplyr::select(borough, Bite_Count, License_Count, Bite_to_License_Ratio) %>% 
-=======
+
   dplyr::select(borough, Bite_Count, License_Count, Bite_to_License_Ratio) %>% #
->>>>>>> 149228bf9f43d5a509e43949e779953d5a03c4ac
   mutate(Bite_to_License_Ratio = scales::percent(Bite_to_License_Ratio)) |>
   kable(col.names = c("Borough", "Bite Count", "License Count", "Bite to License Ratio (%)"),
         align = c("l", "c", "c", "c"),
@@ -358,7 +358,7 @@ Overall, the positive slope of the regression line indicates a positive correlat
 
 <br><br> 
 
-### Spatial Correlations of Bite Incidents and Licenses
+# Spatial Correlations of Bite Incidents and Licenses
 
 To assess whether the spatial distribution of dog license issuance and dog bite incidents in New York City exhibits spatial correlations and clustering characteristics, this study calculated both the global and local Moran’s I for these variables during the research period.
 
@@ -366,7 +366,7 @@ To assess whether the spatial distribution of dog license issuance and dog bite 
 
 Analyzing dog bite incidents from 2015 to 2021, the observed global Moran’s Index is 0.35, which is greater than 0, and both the expected Moran’s I and the p-value are close to 0. Consequently, the distribution of dog bite incidents in New York City significantly exhibits positive spatial autocorrelation.
 
-```{r}
+```{r echo=FALSE}
 data <- data.frame(
   Metric = c("Observed Moran’s I", "Expected Moran’s I", "Standard Deviation", "P-value"),
   Value = c(0.350, -0.005, 0.064, 0.000)
@@ -377,7 +377,7 @@ kable(data, format = "pipe", align = "l", caption = "Global Moran’s I Test of 
 
 Similarly, we can discover the correlation in the distribution of dog licenses across New York City. The global Moran’s Index of 0.29 suggests that similar values tend to cluster spatially, indicating that certain adjacent zip code areas may exhibit concentrations of dog ownership or areas where few dogs are kept.
 
-```{r}
+```{r echo=FALSE}
 data <- data.frame(
   Metric = c("Observed Moran’s I", "Expected Moran’s I", "Standard Deviation", "P-value"),
   Value = c(0.293, -0.005, 0.064, 0.000)
@@ -392,7 +392,7 @@ Local Moran’s I is used to further explore specific areas exhibiting spatial c
 
 <br><br> 
 
-### Modeling Dog Bite Incidents
+# Modeling Dog Bite Incidents
 
 To measure the combined effects of year, dog demographic characteristics (i.e., gender and whether neutered) and the Borough they belong to on the incidence of dog bites, we first conduct a negative binomial regression analysis using records of dog bite incidents in New York.
 
@@ -407,6 +407,7 @@ The results of the main effects model fitting are as follows:
 
 `Year`: Some years (e.g., 2017, 2019) show statistically significant coefficients, suggesting that the number of bite incidents varies significantly across years. `year2021` (Coefficient = -0.28710, p < 0.001) indicates a significant **decrease** in bite counts compared to year2015.
 
+
 `Month`: Some months show no significant effects on bite counts (e.g., month2: p = 0.97; month3: p = 0.61). Several months (e.g., May, June, August) have significant coefficients, indicating seasonality in bite incidents.
 
 `Gender`: Male dogs (genderM) are associated with a significantly higher bite count, as indicated by the large positive coefficient.
@@ -417,7 +418,7 @@ The results of the main effects model fitting are as follows:
 
 To further increase the precision of the model fit, interaction terms between variables were added. After using stepwise reduction to simplify the model complexity, the variables of final negative binomial regression model are as follow:
 
-```{r}
+```{r echo=FALSE}
 data <- data.frame(
   `Main Effect` = c("year", "month", "gender", "spay_neuter", "borough", " "),
   `Double Interaction Effect` = c(
@@ -455,7 +456,7 @@ Result interpretation should be divided into the following two parts.
 
 Finally, this study compared the fit, model complexity, interpretability, and residual diagnosis results of three regression models. 
 
-```{r}
+```{r echo=FALSE}
 model_comparison <- data.frame(
   Model = c("model", "filter_model", "glmm_model"),
   AIC = c(7403.4, 7045.8, 7428.7),
@@ -485,18 +486,32 @@ model_comparison %>%
 
 Overall, the `filter_model` with interaction provided the best fit.
 
-### Discussion
+<br><br> 
 
-Overall, we found that dog bite incidents shared similar patterns regarding top breeds, locations, gender, and spay/neuter status from 2015 to 2021. According to our analysis, the number of dog bite incidents exhibited a decreasing trend over the observed period, which aligns the result of other studies.^1^ Several factors may contribute to this downtrend. One possible explanation is increased public awareness and education on responsible pet ownership, which could lead to better management of dogs and reduced aggressive behavior. Additionally, stricter enforcement of leash laws and regulations in urban areas may have minimized opportunities for uncontrolled interactions between dogs and the public. Another contributing factor could be the rise in spay/neuter programs, as research suggests that neutered dogs are less likely to display aggressive tendencies. Finally, as NYC Department ofHealth and Mental Hygiene (DOHMH) began its EDsyndromic surveillance system in November 2001 in response to bioterrorism preparedness and animal bite incidents, we believe improvements in data reporting in recent years could also influence the observed decline.^2^ 
+# Discussion
+
+Overall, we found that dog bite incidents shared similar patterns regarding top breeds, locations, gender, and spay/neuter status from 2015 to 2021. According to our analysis, the number of dog bite incidents exhibited a decreasing trend over the observed period, which aligns the result of other studies.^1^ Several factors may contribute to this downtrend. One possible explanation is increased public awareness and education on responsible pet ownership, which could lead to better management of dogs and reduced aggressive behavior. Additionally, stricter enforcement of leash laws and regulations in urban areas may have minimized opportunities for uncontrolled interactions between dogs and the public. Another contributing factor could be the rise in spay/neuter programs, as research suggests that neutered dogs are less likely to display aggressive tendencies. Finally, as NYC Department of Health and Mental Hygiene (DOHMH) began its emergency department syndromic surveillance system in November 2001 in response to bioterrorism preparedness and animal bite incidents, we believe improvements in data reporting in recent years could also influence the observed decline.^2^ 
+
+It is notable that pit bulls account for a significant percentage of reported dog bites, despite comprising a small proportion of all registered dogs. This leads us to question what might be unique about this breed. It also aligns with other studies, indicating that Pit Bull-type breeds have accounted for a significant portion of dog-related maulings and fatalities over the past three decades.^3^ Based on our research, pit bulls are often trained by their owners to exhibit aggressive behaviors, including fighting and attacking. Additionally, pit bulls are frequently associated with illegal dog fighting rings, where they are bred to be larger, stronger, and more powerful than average.^4^
+
+Based on our study, neutered dogs were associated with fewer reported bite incidents. This could be due to several factors. Neutering is known to reduce certain aggressive behaviors in dogs, such as territoriality, dominance, and mating-related aggression, which are often linked to biting incidents. Additionally, neutered dogs may be more likely to live in controlled and stable environments, as owners who choose to neuter their pets often demonstrate greater responsibility in managing their behavior. It is also possible that neutering reduces hormone-driven impulses that may trigger biting behavior. While these explanations are plausible, further research would be needed to fully understand the relationship between neutering and the reduced frequency of dog bite incidents.
 
 
 
+<br><br> 
 
+# Limitations
 
-### References
+Despite the insights achieved by the project, there are several limitations of note. 
+
+<br><br> 
+
+# References
 
 1. https://link.springer.com/article/10.1186/s40621-020-00281-y
 
 2. https://journals.sagepub.com/doi/abs/10.1177/003335491212700208
 
-3. 
+3. https://pubmed.ncbi.nlm.nih.gov/33136964/
+
+4. https://atlantaadvocate.com/legal-guides/dog-bites/pitbull-dog-attacks/
