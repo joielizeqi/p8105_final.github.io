@@ -51,7 +51,7 @@ knitr::include_graphics("./pictures/zhenkun.JPG")
 ```
 
 <strong style="text-align: center; display: block; text-align: center;">
-Zhenkun Fang
+[Zhenkun Fang](https://zhenkunnfang.github.io/)
 </strong>
 
 <em style="text-align: center; display: block; text-align: center;">

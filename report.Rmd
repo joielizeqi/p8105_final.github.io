@@ -480,8 +480,7 @@ model_comparison %>%
   kable_styling(
     bootstrap_options = c("striped", "hover", "condensed", "responsive"), 
     full_width = TRUE
-  ) %>%
-  scroll_box(width = "100%", height = "400px")
+  ) 
 ```
 
 Overall, the `filter_model` with interaction provided the best fit.
@@ -496,7 +495,9 @@ It is notable that pit bulls account for a significant percentage of reported do
 
 Based on our study, neutered dogs were associated with fewer reported bite incidents. This could be due to several factors. Neutering is known to reduce certain aggressive behaviors in dogs, such as territoriality, dominance, and mating-related aggression, which are often linked to biting incidents. Additionally, neutered dogs may be more likely to live in controlled and stable environments, as owners who choose to neuter their pets often demonstrate greater responsibility in managing their behavior. It is also possible that neutering reduces hormone-driven impulses that may trigger biting behavior. While these explanations are plausible, further research would be needed to fully understand the relationship between neutering and the reduced frequency of dog bite incidents.
 
+For our modeling analysis, we selected the model with interaction terms as our final predictive model. This choice was made because the interaction effects between variables provided a more nuanced understanding of how different factors, such as location, time, and other dog-specific or environmental characteristics, combine to influence the likelihood of dog bite incidents. By accounting for these interactions, the model can better capture the complex relationships between variables and improve the accuracy of predictions.
 
+In the future, this model could serve as a valuable tool to inform communities, policymakers, and public health officials about areas and time periods with a higher risk of dog bite incidents. For example, the model could help identify specific zip codes or neighborhoods where dog bites are more likely to occur during certain months, days of the week, or times of day. Such insights could be used to develop targeted interventions, such as public awareness campaigns, stricter enforcement of leash laws, or educational programs promoting responsible pet ownership. Ultimately, leveraging predictive modeling in this way has the potential to enhance public safety and reduce the frequency of dog bite incidents.
 
 <br><br> 
 
@@ -506,7 +507,7 @@ Despite the insights achieved by the project, there are several limitations of n
 
 Additionally, when generating the map of dog bite incidents, we were unable to pinpoint specific locations using the `street` variable due to limitations in the data. Instead, we mapped each dog bite incident based on the `zip_code`, which provides a less precise representation of the exact locations. This limitation reduces the spatial accuracy of the map and may obscure finer-scale patterns, such as clustering of incidents on certain streets or neighborhoods. Future improvements in data collection, including more consistent and accurate recording of street-level information, would enhance the spatial analysis and allow for a more detailed understanding of dog bite incident distribution.
 
-
+In the Residuals vs. Leverage plot, several influential points were identified. These points warrant further investigation as they may significantly impact the model's performance. Examining these influential observations could help identify potential data issues, such as outliers or errors, or reveal areas where the model may require further refinement to better account for underlying patterns in the data.
 
 <br><br> 
 
