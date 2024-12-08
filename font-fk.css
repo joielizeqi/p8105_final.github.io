@@ -17,6 +17,12 @@ h2 {
   font-size: 16px; /* Subheaing */
 }
 
+strong, em {
+  text-align: center;
+  display: block; 
+  text-align: center;
+}
+
 /* Move subdropdown to the left */
 #navbar .navbar-right .dropdown .show .dropdown-submenu .dropdown-menu {
   top: 0;

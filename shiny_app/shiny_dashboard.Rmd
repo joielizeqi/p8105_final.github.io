@@ -286,7 +286,7 @@ ui <- fluidPage(
       radioButtons(
         inputId = "year_choice",
         label = "Select Year:",
-        choices = unique(bite$year),
+        choices = c(2015, 2016, 2017, 2018, 2019, 2020, 2021),
         selected = max(bite$year),  # Default to most recent year
         inline = TRUE  # Display radio buttons in one line
       )

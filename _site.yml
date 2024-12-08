@@ -39,3 +39,4 @@ output:
       version: 5
       bootswatch: minty
     css: font-fk.css
+    favicon: pictures/favicon.png

@@ -388,7 +388,7 @@ data <- data.frame(
 knitr::kable(data, format = "pipe", align = "l", caption = "Final Negative Binomial Regression Model", escape = FALSE)
 ```
 
-The final model with interaction is as follows:
+The final model with interaction is detailed in the following table. Initially, the intercept is 3.83 with a p-value near zero, indicating that the baseline level of the response variable (on a logarithmic scale) is significant when other variables are not considered. For the main effect variables, the years 2016, 2018, and 2019 show a significant increase in the log change of event counts compared to 2015; male dogs, compared to female dogs, exhibit stronger aggression, with a 10.59 times increase in the incidence of dog bite events, calculated as with $e^{2.36}$. The coefficient for neutering, 0.3960, indicates a significant reduction in the log count of bite incidents for neutered dogs compared to unneutered dogs. Geographically, the coefficients for Manhattan and Staten Island are 0.72 and 0.48, respectively, showing significantly lower event counts compared to the Bronx. Regarding interaction terms, the years 2018, 2020, and 2021 show a significant reduction in interaction with the neutering status.
 
 ```{r final_interaction, message=FALSE, warning=FALSE}
 filter_model = glm.nb(bite_count ~ year + month + gender + spay_neuter + 
@@ -475,7 +475,7 @@ For the dog bite incidents dataset, the response variable $y$ represents the num
 
 ## Results
 
-```{r glmer_nb, warning=FALSE, message=FALSE}
+```{r glmer_nb, warning=FALSE, message=FALSE, results='hide'}
 library(lme4)
 glmm_model = glmer.nb(
   bite_count ~ year + month + gender + spay_neuter + (1 | borough), 
@@ -495,10 +495,7 @@ glmm_model_summary <-
     )
   ) |> 
   dplyr::select(-effect, -group)
-```
 
-
-```{r}
 kable(
   glmm_model_summary,
   col.names = c("Term", "Estimate", "SE", "Statistic", "P-value", "Significance"),
@@ -518,8 +515,6 @@ Fixed Effects:
 * `Month`: Positive coefficient (0.12734, p = 0.026), suggesting higher bite counts in April. In May, June and July, all p < 0.001, maybe there is a seasonal peak during summer.
 * `Gender`: Male dogs have strong positive coefficient (0.88482, p < 0.001), indicating male dogs have a significantly higher bite count compared to female dogs.
 * `Spay/Neuter Status`: Dogs who are neutered have have significantly lower bite counts (-0.11231, p < 0.001).
-
-
 
 ## Evaluation
 

@@ -26,19 +26,19 @@ library(wordcloud)
 library(tm)
 ```
 
-## Motivation
+### Motivation
 
 While dogs are a common part of many households, the increasing number of dog bite incidents has become a significant public health concern. In 2022, dog bites ranked among the top 15 causes of nonfatal emergency department visits across all age groups. This project investigates the factors contributing to dog bite incidents, focusing on dog-specific traits such as breed, age, gender, and spay/neuter status, along with their geographical distribution and trends over time. In this project, we aim to identify hotspots and examine the relationship between dog characteristics and bite frequency. The findings will help inform data-driven strategies to prevent dog bites and enhance public safety.
 
 <br><br> 
 
-## Related Work
+### Related Work
 
 We were inspired to perform this analysis after discovering dog bites data from [NYC DOHMH](https://www.health.ny.gov/health_care/medicaid/redesign/ehr/registry/nycdohmh.htm). The New York State Department of Health (the Department) has been overseeing the health, safety, and well-being of New Yorkers since 1901 – from vaccinations to utilizing new developments in science as critical tools in the prevention and treatment of infectious diseases. The data could be found on [NYC OpenData](https://data.cityofnewyork.us/Health/DOHMH-Dog-Bite-Data/rsgh-akpg/about_data). Given that the dataset includes details such as the date of each dog bite, the borough, and various dog demographic variables, we saw this as an excellent opportunity to apply and explore the visualization and interactivity concepts covered in class.
 
 <br><br> 
 
-## Initial Questions
+### Initial Questions
 
 We began by exploring trends in NYC dog bite incidents over time, along with their associations with dog demographics and spay/neuter status. We were interested in the following:
 
@@ -50,7 +50,7 @@ We began by exploring trends in NYC dog bite incidents over time, along with the
 
 <br><br> 
 
-## Evolution of Questions
+### Evolution of Questions
 
 As our project evolved, we delved into more in-depth questions:
 
@@ -62,7 +62,7 @@ As our project evolved, we delved into more in-depth questions:
 
 <br><br> 
 
-## Data
+### Data
 
 ```{r, message = FALSE, include=FALSE}
 # NYC zip code
@@ -195,11 +195,11 @@ The NYC dog licensing dataset we utilized includes the following variables:
 
 <br><br> 
 
-## Exploratory Analysis
+### Exploratory Analysis
 
 Our exploratory analysis is segmented into three distinct areas of focus: Dog bites by breeds, gender & neuter status, and borough.
 
-# Dog Bites vs. Breed
+## Dog Bites vs. Breed
 In the Breed section, we found that the top 10 dog breeds that contributed to the most dog bite incidences are shown in the pie chart above. Besides the mixed and the unknown categories, the breed that contributed to the most dog bite incidences are *bulls* (29.2%), followed by *shepards* (5.06%) and *shih tzus* (4.51%).
 
 ```{r echo=FALSE, fig.align='center'}
@@ -229,7 +229,7 @@ top_breed_inter
 
 ```
 
-# Dog Bites vs. Gender & Spy/Neuter Status
+## Dog Bites vs. Gender & Spy/Neuter Status
 Across dog bite data with known genders, dog bite incidences appeared more than twice as frequent for male dogs compared to female dogs, for both neutered and un-neutered dogs. Comparing their neutered status, there is only a slight difference in dog bite incidences between the neutered and un-neutered groups. Neutered female dogs contributed to slightly more dog bite incidences than un-neitered female dogs, while un-neutered male dogs contributed to slightly more dog bite incidences. It is worth noting that a significant portion of dog bite data had missing data for the dogs’ gender, and that among the unknown gender group, most dogs appeared to be neutered.
 
 ```{r echo=FALSE, fig.align='center'}
@@ -248,7 +248,7 @@ gender_spay_plot_inter = ggplotly(gender_spay_plot)
 gender_spay_plot_inter
 ```
 
-# Dog Bites vs. Borough
+## Dog Bites vs. Borough
 
 Looking at license counts across boroughs, Manhattan has the most licensed dogs, followed by Brooklyn, Queens, Bronx, and Staten Island. Looking at dog bite incidences across these boroughs, however, Queens reported the most incidences, followed by Manhattan, Brooklyn, Bronx, and lastly Staten Island. The mismatch between these two sets of bar likely implies that Queens may be a hotspot for dog bite incidences. 
 
@@ -286,15 +286,92 @@ rate_borough_data |>
 
 <br><br> 
 
-## Additional analysis
+### Additional analysis
 
 We conducted a more in-depth analysis focusing on trends in NYC dog bite incidents over time, the correlation between dog bite incidents and NYC dog licensing, and modeling factors associated with dog bite incidents.
 
-# Trends of Dog Bite Incidents over Time
+## Trends of Dog Bite Incidents over Time
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+dog_bites_trend_plot = dog_bites_clean %>% 
+  mutate(
+    year = as.factor(year),
+    month = month(date_of_bite),
+    day_of_month = day(date_of_bite), 
+    common_date = mdy(paste(month, day_of_month, "2020"))
+  ) %>%
+  group_by(common_date, year) %>%  
+  summarise(bites_count = n(), .groups = "drop") %>%  # 显式设置 .groups = "drop"
+  ggplot(aes(x = common_date, y = bites_count, 
+             group = year, color = year)) +
+  geom_point(alpha = .3) +
+  geom_smooth(se = FALSE, span = 0.5) + 
+  labs(
+    title = "Dog Bite Trends by Month",
+    x = "Month",
+    y = "Number of Bites"
+  ) +
+  theme_minimal() +
+  theme(
+    text = element_text(size = 15), 
+    axis.text.x = element_text(angle = 60, hjust = 1, size = 10)
+  ) +
+  scale_color_viridis_d(end = .8) +  
+  scale_x_date(date_breaks = "1 month", labels = function(x) format(x, "%b"))
+
+ggplotly(dog_bites_trend_plot)
+```
+
+Across all years, there is a noticeable seasonal trend, with incidents peaking during the summer months (June to August) and declining in the colder months (November to January). While the general patterns remain consistent, some variability exists, with years like 2020 and 2021 showing slightly lower bite rates compared to earlier years, such as 2015-2017. This trend suggests a potential link between warmer weather, increased outdoor activities, and higher human-dog interactions, contributing to a rise in dog bite incidents during summer.
+
+## Dog Bites vs. Dog Licensing
+
+We created a scatter plot to visualize their correlation. Each zip code was treated as a single observation, with the number of dog licenses and dog bite incidents from 2014 to 2022 compared for each zip code, as shown in the figure below.
+
+```{r echo=FALSE}
+valid_zipcodes = pull(ny_zip_codes, zip_code)
+bites_by_zip = dog_bites_clean |>
+  group_by(zip_code) |>
+  summarise(Bite_Count = n())
+
+licenses_by_zip = dog_licensing_df |>
+  group_by(zip_code) |>
+  summarise(License_Count = n())
+
+zip_data = merge(bites_by_zip, licenses_by_zip, by = "zip_code", all = TRUE) |> 
+  mutate(
+    zip_code = as.factor(zip_code)
+  ) |> 
+  filter(zip_code %in% valid_zipcodes) |> 
+  filter(!is.na(License_Count), !is.na(Bite_Count))
+
+scatter_plot_interactive = ggplotly(
+  ggplot(data = zip_data, aes(x = License_Count, y = Bite_Count)) +
+    geom_point(color = "blue", alpha = 0.6) +
+    geom_smooth(method = "lm", color = "red") +
+    labs(title = "License vs. Bite", x = "License Count", y = "Bite Count") +
+    theme_minimal()
+)
+
+scatter_plot_interactive
+```
+
+Overall, the positive slope of the regression line indicates a positive correlation between the number of licenses and the number of bite incidents. In areas with fewer licenses, the distribution of data points is denser, suggesting that bite incident variability is more stable and the model fit might be better in these regions. Conversely, in areas with a high number of licenses, the data points are more dispersed, indicating that bite incident variability is less predictable when license counts are high. Lastly, the confidence interval, depicted in gray, gradually widens after the license count reaches 3000, indicating increased uncertainty in the model's predictions in areas with higher numbers of licenses. 
+
+## Modeling Dog Bite Incidents
+
+To measure the combined effects of year, dog demographic characteristics (i.e., gender and whether neutered) and the Borough they belong to on the incidence of dog bites, we first conduct a negative binomial regression analysis using records of dog bite incidents in New York.
+
+The negative binomial regression model is a type of count model designed for dependent variables that can only take non-negative integer values. From the Spatial Correlations section, the study area meets the three prerequisites for negative binomial regression: the dog bite incidents are not independent, exhibiting spatial clustering; the dependent variable shows overdispersion; and the frequency of dog bite incidents is sufficiently low. Let the dependent variable follows a negative binomial distribution.
+
+We employed three different regression models and compared their outcomes.
+
+# Regularized Model (Lasso)
 
 
 
-## Discussion
+
+### Discussion
 
 
-## References
+### References
