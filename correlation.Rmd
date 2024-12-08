@@ -116,7 +116,10 @@ Moran's I is a statistical metric commonly used in spatial data analysis to meas
 
 The global Moran's I is used to describe the average degree of association between all spatial elements and their neighboring elements across the entire study area. The formula for calculation is as follows:
 
-$$I = \frac{n}{{{S_0}}} \times \frac{{\sum\limits_{i = 1}^n {\sum\limits_{j = 1}^n {{w_{ij}}({y_i} - \bar y)({y_j} - \bar y)} } }}{{\sum\limits_{i = 1}^n {{{({y_i} - \bar y)}^2}} }}$$
+$$
+I = \frac{n}{{S_0}} \times \frac{\sum\limits_{i = 1}^n \sum\limits_{j = 1}^n w_{ij}(y_i - \bar{y})(y_j - \bar{y})}{\sum\limits_{i = 1}^n (y_i - \bar{y})^2}
+$$
+
 Where $n$ represents the total number of spatial elements,${S_0} = \sum\limits_{i = 1}^n {\sum\limits_{j = 1}^n {{w_{ij}}} }$ is the sum of all spatial weights, $y_i$ and $y_j$ denote the attribute values of the $i^{th}$ and $j^{th}$ spatial elements, respectively, $\bar y$ is the mean of the attribute values for all spatial elements, ${w_{ij}}$ is the spatial weight between elements $i$ and $j$, and $I$ is the global Moran's I, which ranges from $[-1, 1]$. The specific implications of this range are as shown in the following table.
 
 ```{r Implication, message=FALSE, warning=FALSE}
@@ -238,6 +241,7 @@ To further explore specific areas exhibiting spatial clustering, the involvement
 $$
 I_i = \frac{{y_i - \bar{y}}}{{S^2}} \sum\limits_{j \ne i}^n w_{ij} (y_j - \bar{y})
 $$
+
 Where $n$ represents the total number of spatial elements, ${S^2} = \frac{1}{n}\sum\limits_{i = 1}^n {{{({y_i} - \bar y)}^2}}$, $y_i$ and $y_j$ denote the attribute values of the $i^{th}$ and $j^{th}$ spatial elements, respectively, $\bar y$ is the mean of the attribute values for all spatial elements, ${w_{ij}}$ is the spatial weight between elements $i$ and $j$. $I_i$, the local Moran's I of the $i^{th}$ spatial elements, is not restricted in range. The specific implications of local Moran's I are as shown in the following table.
 
 ```{r Implication_local, message=FALSE, warning=FALSE}
