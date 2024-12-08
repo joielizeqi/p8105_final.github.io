@@ -168,7 +168,9 @@ Here, ${y_i}$ represents the frequency of dog bite incidents within a year, ${\b
 
 In negative binomial regression, where the conditional expectation $E(Y|X) = {e^{{\beta _0} + {\beta _1}{X_{i1}} + {\beta _2}{X_{i2}} +  \cdots {\beta _m}{X_{im}}}}$, the interpretation of the model's coefficients is as follows: when the explanatory variable ${X_k}$ increases by one unit, the average occurrence rate of dog bite incidents becomes ${e^{{\beta _k}}}$ times what it was originally.
 
-$$\frac{{E(Y|{X^*})}}{{E(Y|X)}} = \frac{{{e^{{\beta _0} + {\beta _1}{X_{i1}} +  \cdots  + {\beta _k}({X_{ik}} + 1) +  \cdots  + {\beta _m}{X_{im}}}}}}{{{e^{{\beta _0} + {\beta _1}{X_{i1}} +  \cdots  + {\beta _k}{X_{ik}} +  \cdots  + {\beta _m}{X_{im}}}}}} = {e^{{\beta _k}}}$$
+$$
+\frac{E(Y|X^*)}{E(Y|X)} = \frac{e^{\beta_0 + \beta_1 X_{i1} + \cdots + \beta_k (X_{ik} + 1) + \cdots + \beta_m X_{im}}}{e^{\beta_0 + \beta_1 X_{i1} + \cdots + \beta_k X_{ik} + \cdots + \beta_m X_{im}}} = e^{\beta_k}
+$$
 
 ## Regularized Model (Lasso)
 
