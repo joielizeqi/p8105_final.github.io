@@ -22,12 +22,13 @@ library(ape)
 library(tmap)
 library(tmaptools)
 library(htmltools)
+library(dplyr)
 ```
 
 ```{r load_shp&bites, include=FALSE}
 # read shp file
 shp_NY = st_read("./maps/data/NYC_zipcode/ZIP_CODE_040114.shp") |>
-  select(-BLDGZIP, -PO_NAME, -POPULATION, -STATE, -URL)
+    dplyr::select(-BLDGZIP, -PO_NAME, -POPULATION, -STATE, -URL)
 
 # read Dog_Bites_Data
 bite = read.csv("./maps/data/Dog_Bites_Data.csv", 
@@ -272,7 +273,7 @@ locaI = localmoran(shp_NYall$sc, weight_NY, alternative = "greater") |>
 
 shp_locaI <- cbind(shp_NY, locaI) |>  
    mutate(I = ifelse(is.na(I), 0, I)) |>
-   select(-ST_FIPS, -CTY_FIPS, -SHAPE_AREA, -SHAPE_LEN)
+   dplyr::select(-ST_FIPS, -CTY_FIPS, -SHAPE_AREA, -SHAPE_LEN)
 
 locaI_license = localmoran(shp_NYall_license$license_sc, weight_NY, alternative = "greater") |>
   as.data.frame() |>
@@ -280,7 +281,7 @@ locaI_license = localmoran(shp_NYall_license$license_sc, weight_NY, alternative 
 
 shp_locaI_license <- cbind(shp_NY, locaI_license) |>  
    mutate(I = ifelse(is.na(I), 0, I)) |>
-   select(-ST_FIPS, -CTY_FIPS, -SHAPE_AREA, -SHAPE_LEN)
+   dplyr::select(-ST_FIPS, -CTY_FIPS, -SHAPE_AREA, -SHAPE_LEN)
 ###############################################################################
 tmap_mode("view")
 
