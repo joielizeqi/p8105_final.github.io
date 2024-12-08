@@ -124,15 +124,15 @@ dog_licensing_df = read_csv("data/NYC_Dog_Licensing_Dataset.csv", na = c("NA", "
 
 
 ```{r, message=FALSE, warning=FALSE}
-dog_bites_trend_plot = dog_bites_clean %>% 
+dog_bites_trend_plot = dog_bites_clean |> 
   mutate(
     year = as.factor(year),
     month = month(date_of_bite),
     day_of_month = day(date_of_bite), 
     common_date = mdy(paste(month, day_of_month, "2020"))
-  ) %>%
-  group_by(common_date, year) %>%  # 按日期和年份分组
-  summarise(bites_count = n(), .groups = "drop") %>%  # 显式设置 .groups = "drop"
+  ) |>
+  group_by(common_date, year) |>  
+  summarise(bites_count = n(), .groups = "drop") |>  
   ggplot(aes(x = common_date, y = bites_count, 
              group = year, color = year,
              text = paste("Count:", bites_count, "<br>Year:", year))) +
@@ -148,10 +148,8 @@ dog_bites_trend_plot = dog_bites_clean %>%
     text = element_text(size = 15), 
     axis.text.x = element_text(angle = 60, hjust = 1, size = 10)
   ) +
-  scale_color_viridis_d(end = .8) +  # 颜色映射
+  scale_color_viridis_d(end = .8) + 
   scale_x_date(date_breaks = "1 month", labels = function(x) format(x, "%b"))
-
-# 生成交互式图表
 
 plotly_trend <- ggplotly(dog_bites_trend_plot, tooltip = "text")
 plotly_trend
