@@ -13,6 +13,10 @@ h1 {
   font-size: 20px; /* Main title */
 }
 
+h2 {
+  font-size: 16px; /* Subheaing */
+}
+
 /* Move subdropdown to the left */
 #navbar .navbar-right .dropdown .show .dropdown-submenu .dropdown-menu {
   top: 0;

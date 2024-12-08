@@ -197,7 +197,7 @@ gender_spay_plot_inter
 
 Across dog bite data with known genders, dog bite incidences appeared more than twice as frequent for male dogs compared to female dogs, for both neutered and un-neutered dogs. Comparing their neutered status, there is only a slight difference in dog bite incidences between the neutered and un-neutered groups. Neutered female dogs contributed to slightly more dog bite incidences than un-neitered female dogs, while un-neutered male dogs contributed to slightly more dog bite incidences.
 
-It is worth noting that a significant portion of dog bite data had missing data for the dogs' gender, and that among the unknown gender group, most dogs appeared to be neutered. The amount of missing information in these two variables could be leading us to an incomplete analysis of how dog bites were associated with gender and neuter status.
+It is worth noting that a significant portion of dog bite data had missing data for the dogs' gender, and that among the unknown gender group, most dogs appeared to be un-neutered. The amount of missing information in these two variables could be leading us to an incomplete analysis of how dog bites were associated with gender and neuter status.
 
 # NYC Dog Licensing Counts
 ```{r, warning=FALSE, message=FALSE}
