@@ -1,4 +1,3 @@
-
 ---
 title: "Spatial correlations of dog bite incidents and dog licenses"
 output:
